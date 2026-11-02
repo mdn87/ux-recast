@@ -275,7 +275,7 @@ Acceptance is written when the phase is scheduled. Nothing in Phases 0 to 8 depe
 | Id | Item | Owner | Effect |
 | --- | --- | --- | --- |
 | B-01 | License choice (D-01). | User | Resolved 2026-11-02: Apache-2.0. |
-| B-02 | Real-device keyboard behavior on the user's phone, before and after the repair, as the installed PWA, with model and OS recorded; the fixture must be reachable from the phone on the LAN. | User observation | Required for Phase 5 acceptance, no longer optional (roundtable T-11). |
+| B-02 | Real-device keyboard behavior on the user's phone, before and after the repair, as the installed PWA, with model and OS recorded; the fixture must be reachable from the phone on the LAN. | User observation | Required for Phase 5 acceptance, no longer optional (roundtable T-11). **Before half done 2026-11-02:** iPhone 16e, iOS 27.0.1, installed PWA for the composer, Safari for the LAN fixture; four captures in `lugos-host-ops/docs/evidence/dias-pilot/before/device/`. The after half repeats in S5.11. |
 | B-03 | `dias-mobile` worktree is a detached HEAD with uncommitted edits, and local `app.js` build id differs from the documented deployed build. | User or a Dias session | Must be committed or discarded before any host-ops change lands. Not touched by this plan. |
 | B-04 | `submit` through the real `lugos.models` tool has never run live. | Phase 0 | Baseline live submits on legacy are now a Phase 0 step. |
 | B-05 | Approvals have no resumption receipt (`approval_http.py:206-207`). | Dias and host-ops product decision | Excluded from the receipt row; a likely pilot finding; closing it is host-ops work outside ux-recast. |
