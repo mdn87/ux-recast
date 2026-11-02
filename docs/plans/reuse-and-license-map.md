@@ -8,7 +8,7 @@ Revisions below were read from the GitHub API on 2026-11-02 (default-branch head
 
 | Reference | Revision inspected | License | Disposition | Phase |
 | --- | --- | --- | --- | --- |
-| Impeccable | `e89e3ada3e87` on `main`, release `cli-v4.8.0`, npm `impeccable@4.8.0` | Apache-2.0 | **Adapter + documented reference.** Consume its critique and audit vocabulary and its `PRODUCT.md`, `DESIGN.md` and `.impeccable/critique/*.md` records through a thin adapter. Do not vendor the skill or install its design hook from ux-recast. | 2 (context records), 4 (critique adapter) |
+| Impeccable | `e89e3ada3e87` on `main`, release `cli-v4.8.0`, npm `impeccable@4.8.0` | Apache-2.0 | **External tool where installed + documented reference.** Where a project already has the Impeccable skill, the review and repair passes invoke `critique`, `adapt`, `harden`, `polish`, `document` and `extract` by name; `detect --json` is an evidence pre-pass when the binary is on PATH. Its `PRODUCT.md` and `DESIGN.md` are read as text. ux-recast never vendors the skill, never installs through `npx`, and never installs the design hook (amended after the roundtable, P-2 and T-25). | 2 (context records), 4 (evidence pre-pass, command passes) |
 | Happy | `1a1bd4346c31` on `main`, release `cli-1.2.5` | MIT | **Documented reference.** Pattern source for the Dias pilot: session list hierarchy, pending-request framing, output on a phone, return to a session. No code copied in the initial phases. | 5 (Dias pilot) |
 | UI UX Pro Max | `3a13158ff1f3` on `main`, release `v2.15.0` | MIT | **Deferred.** Candidate searchable guidance library and per-project design-system persistence. Overlaps Impeccable `DESIGN.md` and the ux-recast style guide. Revisit only when a concrete guidance gap is recorded in a review. | Deferred |
 | React Grab | `ea4bbec9e80f` on `main`, release `@react-grab/cli@0.2.0`, last push 2026-08-22 | MIT | **Not applicable to the pilot, deferred otherwise.** It needs a React tree. The Dias phone client is server-rendered HTML with one vanilla JS file (see Dias inspection, below). Remains a candidate for React projects once a feedback-capture flow exists. | Deferred |
@@ -26,8 +26,9 @@ Observed at `e89e3ada3e87`:
 Plan consequences:
 
 - The concept's capability mapping (`critique`, `adapt`, `harden`, `polish`, `document` and `extract`) is preserved as the vocabulary of the review adapter. ux-recast does not reimplement those commands.
-- The adapter reads and writes Impeccable's record files where a project already has them, and otherwise writes the ux-recast equivalents. The plan does not create a second authority for product context or the visual system (concept Part II section 6).
-- The design hook is not installed by ux-recast. AGENTS.md forbids silently installing an overlapping toolset, and Lugos `ux-review` already defaults off. A project may opt in on its own.
+- ux-recast reads Impeccable's record files as text where a project already has them and writes starter templates only when absent. The plan does not create a second authority for product context or the visual system (concept Part II section 6).
+- The design hook is not installed by ux-recast, and `detect` is never run through `npx` auto-install. AGENTS.md forbids silently installing an overlapping toolset, and Lugos `ux-review` already defaults off. Installing the skill in a project (for the pilot, the host-ops repository) is the user's decision, B-10.
+- `detect` is an evidence pre-pass, not a review provider: it does not consume a packet or rubric, so modelling it as one would be a false abstraction (roundtable I-7).
 - Pin to `cli-v4.8.0` or later at implementation. Record the installed version in the review packet so a critique's rubric version is traceable.
 - Attribution: Apache-2.0 requires the license and any NOTICE to travel with redistributed material. Copying a rubric fragment into ux-recast triggers that duty; calling the CLI does not.
 

@@ -10,12 +10,12 @@ Disposition vocabulary: **planned** (in a numbered phase), **deferred** (kept vi
 
 | Id | Source | Origin | Proposal or constraint | Disposition |
 | --- | --- | --- | --- | --- |
-| C-01 | Turn 1 | User decision | Improve the Dias mobile interface's user experience and make it look sharper. | Planned, Phase 5. The pilot's acceptance is the user's acceptance of a revised flow, not a reviewer score. |
+| C-01 | Turn 1 | User decision | Improve the Dias mobile interface's user experience and make it look sharper. | Planned, Phase 5. After the roundtable (P-1, P-7): 5b establishes an accepted design direction before any repair, and the acceptance table carries visual criteria (one palette and type scale across the three pages, hierarchy, contrast). The pilot's acceptance is the user's Decision, not a reviewer score. |
 | C-02 | Turn 2 | User decision | Prefer something open source that lets the system self-improve for similar work on other projects. | Planned, Phases 1, 2 and 8. The core is standalone and the learning loop is validated on a second project. |
-| C-03 | Turn 3 | Assistant proposal | Impeccable as the main design-improvement capability, used to strengthen the optional Lugos `ux-review` workflow. | Planned, Phase 4 as an adapter. See the reuse map: not vendored, hook not installed. |
+| C-03 | Turn 3 | Assistant proposal | Impeccable as the main design-improvement capability, used to strengthen the optional Lugos `ux-review` workflow. | Planned, Phase 4. After the roundtable (P-2, D-11): its agent commands run by name where a project has the skill installed, `detect` is an evidence pre-pass when the binary is on PATH, and ux-recast installs nothing. Whether the host-ops repository gets Impeccable is B-10. |
 | C-04 | Turn 3 | Assistant proposal | Happy as the closest functional mobile reference to study. | Planned, Phase 5 as a documented reference. New finding: the Dias phone client is not Expo or React, so borrowing is pattern-level only. |
 | C-05 | Turn 3 | Assistant proposal | UI UX Pro Max as a reference library when a specific gap appears. | Deferred, trigger recorded in the reuse map. |
-| C-06 | Turn 3 | Assistant proposal | React Grab to let a person point at a Dias component and give source-linked feedback. | Not applicable to the pilot (new finding: no React tree in the phone client). Deferred for React projects. |
+| C-06 | Turn 3 | Assistant proposal | React Grab to let a person point at a Dias component and give source-linked feedback. | Not applicable to the pilot (new finding: no React tree in the phone client). The product need survives as the tap-to-target evidence helper, slice S4.5 (roundtable P-3). React Grab itself deferred for React projects. |
 | C-07 | Turn 3 | Assistant proposal | Start with Impeccable and Happy; the other two when a gap is identified. | Planned, this ordering is kept. |
 | C-08 | Turn 3 | Assistant proposal | Distinguish design quality (`critique`) from implementation quality (`audit`) and use both as inputs to the existing review system. | Planned, Phase 1 contracts carry a `kind` on findings; Phase 4 adapter maps both. |
 | C-09 | Turn 3 | Assistant proposal | Capability mapping for Dias: `critique` (is the pending action immediately understandable), `adapt` (phone rework), `harden` (long content, missing states, errors, overflow), `polish` (typography and spacing after the flow works), `document` and `extract` (preserve accepted rules). | Planned, Phase 5 uses this as the pass order; Phase 2 and 6 use `document` and `extract` outputs. |
@@ -73,7 +73,7 @@ Disposition vocabulary: **planned** (in a numbered phase), **deferred** (kept vi
 
 | Id | Question | Disposition |
 | --- | --- | --- |
-| Q-01 | How do the existing `ux-review` request and result contracts expose optional documentation outputs? | Resolved in Phase 3 and 6: documentation outputs are a separate request kind to the core, not a field on the review packet. The Lugos skill gains one additional invocation for it; review mode is untouched. Depends on the Lugos inspection for exact packet fields. |
+| Q-01 | How do the existing `ux-review` request and result contracts expose optional documentation outputs? | Resolved in Phase 6: documentation outputs are a separate request kind prepared as a documentation packet for a provider and validated on return (D-07); the Lugos skill gains one invocation for it (slice S6.2); review mode is untouched. |
 | Q-02 | Which guide and token formats fit the current projects and which belong in the initial phase? | Resolved: Markdown guide and JSON design data first; HTML sheets per the reference format; no CSS token emission until a project has tokens to emit (Dias does not). |
 | Q-03 | How are source inspection and rendered evidence captured, correlated and kept current? | Planned, Phase 1 evidence contract (capture manifest with revision, viewport, state, theme) and Phase 6 staleness check against the recorded revision. |
 | Q-04 | Is the drawing reference invoked as a tool, adapted narrowly, or used as a presentation reference? | Resolved: adapted narrowly for static sheets; motion renderer deferred until verified. |
@@ -96,3 +96,7 @@ Disposition vocabulary: **planned** (in a numbered phase), **deferred** (kept vi
 | K-09 | KICKOFF item 7 | Dias pilot covers the complete interaction, not a screenshot. | Phase 5 scenarios. |
 | K-10 | KICKOFF item 8 | A second small project proving independence from Lugos and Dias. | Phase 1 fixture; Phase 8. |
 | K-11 | KICKOFF | License selection belongs in the plan. | Decision log D-01: Apache-2.0, confirmed by the user 2026-11-02. |
+
+## Review
+
+The plan set was reviewed by a three-amigos roundtable on 2026-11-02 (plan section 7; [evidence record](../evidence/plan-roundtable-2026-11-02.md)). Rows C-01, C-03, C-06 and Q-01 above were amended as a result; no concept proposal was dropped.
