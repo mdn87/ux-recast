@@ -95,4 +95,4 @@ Disposition vocabulary: **planned** (in a numbered phase), **deferred** (kept vi
 | K-08 | KICKOFF item 6 | Staged migration preserving callers with recovery. | Phase 3. |
 | K-09 | KICKOFF item 7 | Dias pilot covers the complete interaction, not a screenshot. | Phase 5 scenarios. |
 | K-10 | KICKOFF item 8 | A second small project proving independence from Lugos and Dias. | Phase 1 fixture; Phase 8. |
-| K-11 | KICKOFF | License selection belongs in the plan. | Decision log D-01 in the plan. |
+| K-11 | KICKOFF | License selection belongs in the plan. | Decision log D-01: Apache-2.0, confirmed by the user 2026-11-02. |

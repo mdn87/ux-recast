@@ -8,7 +8,7 @@ A slice is done when its proof exists and is recorded. Slices inside a phase run
 
 | Slice | Outcome | Touches | Proof | Size |
 | --- | --- | --- | --- | --- |
-| S0.1 | License chosen and committed | `LICENSE`, `NOTICE`, README license line | Files present; decision D-01 marked confirmed in `docs/decisions/` | S (blocked on B-01) |
+| S0.1 | License chosen and committed | `LICENSE`, `NOTICE`, README license line | Done 2026-11-02: Apache-2.0 text from GitHub's canonical copy, `NOTICE` present, D-01 marked confirmed in the plan | S (done) |
 | S0.2 | Package skeleton installs | `pyproject.toml`, `src/ux_recast/__init__.py`, `tests/test_smoke.py` | `pip install -e .` and `python -m pytest` pass on Windows and Linux | S |
 | S0.3 | CI green on an empty suite | `.github/workflows/ci.yml` (ubuntu-latest, Python 3.11 and 3.13) | One green run linked from the decision log | S |
 | S0.4 | Decision log seeded | `docs/decisions/0001-license.md` through `0012-react-grab.md` from plan section 4 | Files present, linked from README | S (parallel with S0.2) |

@@ -29,4 +29,4 @@ The concept preserves the earlier recommendations and naming discussions in full
 
 Extract this directory as the new repository root. The planning agent should use the current name and existing GitHub authorization when creating or connecting a remote. The conversation previously proposed the personal `mdn87` account; no remote URL is asserted by this seed.
 
-License selection for ux-recast belongs in the initial plan. The references retain their own licenses. This seed does not vendor their source code or install their skills.
+ux-recast is licensed under [Apache-2.0](LICENSE); see [NOTICE](NOTICE). The references retain their own licenses. This seed does not vendor their source code or install their skills.

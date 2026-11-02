@@ -87,7 +87,7 @@ Dependencies run top to bottom unless stated. Each phase lists acceptance criter
 
 Outcome: a buildable, testable, licensed package skeleton.
 
-- Choose the license (decision D-01). Add `LICENSE`, `NOTICE` placeholder for Apache-2.0 attributions.
+- License chosen (decision D-01, Apache-2.0); `LICENSE` and `NOTICE` are committed.
 - `pyproject.toml` for `ux_recast`, Python 3.11+, no runtime dependencies; extras `playwright`, `mcp`.
 - CI on GitHub-hosted `ubuntu-latest` (public repository, no billing; the private-repository self-hosted rule does not apply), running pytest and a docs link check.
 - `docs/decisions/` for the decision log; this plan's log seeds it.
@@ -209,7 +209,7 @@ Acceptance: the second project's run records a Decision and an Outcome; the prom
 
 | Id | Decision | Reason | Reversibility |
 | --- | --- | --- | --- |
-| D-01 | **License: recommend Apache-2.0.** Pending user confirmation. | Rubric fragments may be adapted from Impeccable (Apache-2.0); same-license redistribution is simplest; MIT references compose freely. | Easy before first external contribution. |
+| D-01 | **License: Apache-2.0.** Confirmed by the user 2026-11-02; `LICENSE` and `NOTICE` committed. | Rubric fragments may be adapted from Impeccable (Apache-2.0); same-license redistribution is simplest; the explicit patent grant; MIT references compose freely. | Easy before first external contribution. |
 | D-02 | Python 3.11+, standard-library core, optional extras. | Matches `control.py` and `autowork_review.py` (stdlib only, 3.11+ in `docs/ux-review.md`), so the port is a move, not a rewrite. | Moderate. |
 | D-03 | Lugos controller state stays in `.ux-review/` with `schema_version: 1`; ux-recast records go to `PRODUCT.md`, `DESIGN.md` and `.ux-recast/`. | Preserves callers and recorded runs; avoids a second authority for product and design context (concept C-50). | Easy until Phase 3 Stage C. |
 | D-04 | The rubric moves into ux-recast; the Lugos copy becomes a distributed artifact checked by `test_distribution.py`. | One source of truth; the mirror discipline already exists. | Easy. |
@@ -226,7 +226,7 @@ Acceptance: the second project's run records a Decision and an Outcome; the prom
 
 | Id | Item | Owner | Effect |
 | --- | --- | --- | --- |
-| B-01 | License choice (D-01). | User | Blocks Phase 0 `LICENSE` only. |
+| B-01 | License choice (D-01). | User | Resolved 2026-11-02: Apache-2.0. |
 | B-02 | Real-device keyboard behavior on the user's phone; model and iOS version are unrecorded (`DIAS-MOBILE-NEEDS-YOU-INBOX.md:910-911`). | User observation | Phase 5 keyboard row is approximated by viewport height until observed. |
 | B-03 | `dias-mobile` worktree is a detached HEAD with uncommitted edits, and local `app.js` build id differs from the documented deployed build. | User or a Dias session | Must be committed or discarded before any host-ops change lands. Not touched by this plan. |
 | B-04 | `submit` through the real `lugos.models` tool has never run live. | Phase 3 Stage B | First live submit is a planned acceptance step, not an assumption. |
