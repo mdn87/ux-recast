@@ -1,0 +1,16 @@
+# Local development and generated review artifacts
+.DS_Store
+Thumbs.db
+node_modules/
+.venv/
+__pycache__/
+*.py[cod]
+.env
+.env.*
+!.env.example
+tmp/
+.cache/
+dist/
+build/
+
+# Keep deliberately curated documentation and evidence under docs/.
