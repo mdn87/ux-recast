@@ -20,3 +20,4 @@ One file per entry of the decision log in `docs/plans/initial-implementation-pla
 - [D-16](0016-an-accepted-design-direction-design-md-basis-acc.md): An accepted design direction (`DESIGN.md`, `basis: accepted`, approved by the user) preced
 - [D-17](0017-guide-builder-held-as-gated-phase-9.md): Guide Builder held as a gated Phase 9
 - [D-18](0018-phone-client-design-direction-accepted.md): Phone client design direction accepted (B-12)
+- [D-19](0019-dias-repairs-land-on-the-deployed-service.md): Dias pilot repairs land on the deployed service (B-09)
