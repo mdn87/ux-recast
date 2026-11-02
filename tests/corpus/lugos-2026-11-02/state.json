@@ -1,0 +1,93 @@
+{
+  "mode": "off",
+  "scope": [
+    "contact-request"
+  ],
+  "version": 1,
+  "shared": {},
+  "runs": [
+    {
+      "run_id": "8bcd9255d619",
+      "checkpoint": [
+        "live-baseline-text",
+        "plan",
+        "contact-request"
+      ],
+      "task": {
+        "flow": "contact-request",
+        "goal": "Send a support request and know it was received",
+        "starting_conditions": "A signed-out visitor has their name, email and a description; the local demonstration service can accept, reject or delay a request",
+        "expected_outcome": "One request is accepted and confirmation is visible; input mistakes and temporary failures can be corrected without re-entering valid work",
+        "device_input": "Desktop keyboard and pointer, plus a 375px-wide mobile viewport",
+        "source": "User's requested UX review demonstration, especially validation recovery and preservation of completed form entries",
+        "assumptions": [
+          "This is an isolated demonstration, not a real support service",
+          "Name, email and request are required",
+          "The local service is simulated; no messages or personal information leave the browser",
+          "Cancel during saving preserves the draft and prevents a later success message"
+        ],
+        "acceptance": [
+          "The primary action describes sending a request",
+          "Missing or invalid information is identified with a useful correction",
+          "A rejected email preserves the entered name and request",
+          "Keyboard users can discover the error and correct it",
+          "Correcting only the email permits completion without re-entering other fields",
+          "While saving, progress is visible and repeat submission is prevented",
+          "Cancellation and temporary failure preserve entries and permit retry",
+          "The form remains usable at 375px without horizontal scrolling"
+        ]
+      },
+      "status": "remaining",
+      "phase": "review",
+      "budget": {
+        "review_passes": 1,
+        "repair_batches": 1,
+        "verification_passes": 1,
+        "max_actionable_findings": 5
+      },
+      "report": "docs/evidence/ux-review-live-submit-baseline/text-receipt.json"
+    },
+    {
+      "run_id": "f5a3a0ea498c",
+      "checkpoint": [
+        "live-baseline-image",
+        "implementation",
+        "contact-request"
+      ],
+      "task": {
+        "flow": "contact-request",
+        "goal": "Send a support request and know it was received",
+        "starting_conditions": "A signed-out visitor has their name, email and a description; the local demonstration service can accept, reject or delay a request",
+        "expected_outcome": "One request is accepted and confirmation is visible; input mistakes and temporary failures can be corrected without re-entering valid work",
+        "device_input": "Desktop keyboard and pointer, plus a 375px-wide mobile viewport",
+        "source": "User's requested UX review demonstration, especially validation recovery and preservation of completed form entries",
+        "assumptions": [
+          "This is an isolated demonstration, not a real support service",
+          "Name, email and request are required",
+          "The local service is simulated; no messages or personal information leave the browser",
+          "Cancel during saving preserves the draft and prevents a later success message"
+        ],
+        "acceptance": [
+          "The primary action describes sending a request",
+          "Missing or invalid information is identified with a useful correction",
+          "A rejected email preserves the entered name and request",
+          "Keyboard users can discover the error and correct it",
+          "Correcting only the email permits completion without re-entering other fields",
+          "While saving, progress is visible and repeat submission is prevented",
+          "Cancellation and temporary failure preserve entries and permit retry",
+          "The form remains usable at 375px without horizontal scrolling"
+        ]
+      },
+      "status": "remaining",
+      "phase": "review",
+      "budget": {
+        "review_passes": 1,
+        "repair_batches": 1,
+        "verification_passes": 1,
+        "max_actionable_findings": 5
+      },
+      "report": "docs/evidence/ux-review-live-submit-baseline/image-receipt.json"
+    }
+  ],
+  "updated_at": "2026-11-02T03:44:34.000109+00:00"
+}

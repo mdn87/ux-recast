@@ -1,0 +1,10 @@
+{
+  "accepted": true,
+  "status": "completed",
+  "autowork_run_id": "20261102-034331-7bc23d076acf",
+  "selected_route": "claude:sonnet-medium",
+  "model": "sonnet",
+  "artifact_dir": "/autowork-runs/20261102-034331-7bc23d076acf",
+  "task_sha256": "589e73ad58faec77af81cbd63261dc913f2f23e48ff0403717db4cddec794832",
+  "meaning": "accepted describes matching completed advisory delivery only; parent evaluates findings and verifies repairs"
+}

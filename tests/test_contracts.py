@@ -7,6 +7,7 @@ import unittest
 from ux_recast.contracts import KINDS, ContractError, schema, validate
 
 CORPUS = Path(__file__).parent / "corpus" / "lugos-2026-10-24"
+LIVE = Path(__file__).parent / "corpus" / "lugos-2026-11-02"
 FIXTURE_TASK = Path(__file__).parents[1] / "fixtures" / "contact-request" / "task.json"
 
 
@@ -45,6 +46,38 @@ class Corpus(unittest.TestCase):
             text = path.read_text(encoding="utf-8")
             for needle in ("Users", "C:\\", "C:/", "AppData"):
                 self.assertNotIn(needle, text, path.name)
+
+
+class LiveBaseline(unittest.TestCase):
+    """S0.6 live submits on the legacy scripts: one text-only, one with image input, both accepted."""
+
+    def load(self, name):
+        return json.loads((LIVE / name).read_text(encoding="utf-8"))
+
+    def test_text_packet_and_receipt(self):
+        packet = validate("packet", self.load("packet-text.json"))
+        self.assertEqual(packet["request"]["input_modalities"], ["text"])
+        self.assertNotIn("visual_inputs", packet["request"])
+        receipt = validate("receipt", self.load("receipt-text.json"))
+        self.assertTrue(receipt["accepted"])
+        self.assertEqual(receipt["task_sha256"], packet["task_sha256"])
+
+    def test_image_packet_and_receipt(self):
+        packet = validate("packet", self.load("packet-image.json"))
+        self.assertEqual(packet["request"]["input_modalities"], ["text", "image"])
+        self.assertEqual(len(packet["request"]["visual_inputs"]), 2)
+        receipt = validate("receipt", self.load("receipt-image.json"))
+        self.assertTrue(receipt["accepted"])
+        self.assertEqual(receipt["task_sha256"], packet["task_sha256"])
+
+    def test_final_state_has_both_runs_finished(self):
+        state = validate("state", self.load("state.json"))
+        self.assertEqual(state["mode"], "off")
+        self.assertEqual([run["status"] for run in state["runs"]], ["remaining", "remaining"])
+
+    def test_no_local_paths(self):
+        for path in LIVE.glob("*.json"):
+            self.assertNotIn("Users", path.read_text(encoding="utf-8"), path.name)
 
 
 class Schemas(unittest.TestCase):
