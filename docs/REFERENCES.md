@@ -61,6 +61,18 @@ Role added at the user's request: component anatomy and dimensional sheets withi
 - User-supplied visual reference: [dimensional-drawing-reference.png](references/dimensional-drawing-reference.png)
 - Inspection and execution limits: [dimensional-drawing-assessment.md](references/dimensional-drawing-assessment.md)
 
+## Local knowledge base
+
+### UX Practices Knowledge Base
+
+Role: a secondary, local-only source of reusable UX method pages (about 100 pages across research, ideation, UI foundations, interaction systems, projects, and front-end basics) and the existing opt-in agent UX review write-up. It is not vendored into this repository and is not a dependency of the plan; the planning agent may cite it as evidence when a method page is relevant. Not yet a git repository and has no remote. Source: distilled from UX/UI bootcamp course materials, so confirm distribution rights before publishing it or copying pages into this repository.
+
+- Local path (sibling of this repository in MyDocs): `../ux-knowledge-base/`
+- Start page: `../ux-knowledge-base/README.md`
+- Process map: `../ux-knowledge-base/process-map.md`
+- Opt-in agent UX review section: `../ux-knowledge-base/07-agent-review/index.md`
+- Caveat: that section links into `lugos/` and `.agents/` by relative path, so its links resolve only inside the MyDocs workspace.
+
 ## Historical naming sources
 
 These remain solely to preserve the earlier naming discussion. The working name is `ux-recast`.
