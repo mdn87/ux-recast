@@ -96,7 +96,42 @@ Disposition vocabulary: **planned** (in a numbered phase), **deferred** (kept vi
 | K-09 | KICKOFF item 7 | Dias pilot covers the complete interaction, not a screenshot. | Phase 5 scenarios. |
 | K-10 | KICKOFF item 8 | A second small project proving independence from Lugos and Dias. | Phase 1 fixture; Phase 8. |
 | K-11 | KICKOFF | License selection belongs in the plan. | Decision log D-01: Apache-2.0, confirmed by the user 2026-11-02. |
+| K-12 | Concept Part III (C-65) | Documentation work never repeats a real submission, approval, deletion or message; side-effect processes use demonstration records or a test environment. | Constraint on Phase 9 and on any agent demonstration. |
+| K-13 | Concept Part III (C-67) | Capturing or documenting a process grants no authority to change the application, business rules or publication. | Constraint on every capture path; matches the read-only review request (K-03). |
+| K-14 | Concept Part III (C-67) | Screenshots, typed text, page content and links are sanitized before a capture is shared or sent to an external service. | Constraint; the corpus sanitization used in S1.4 is the pattern. |
+
+## Part III: Improvement Loop and Guide Builder concept, 2026-11-02
+
+Source: [the additive concept record](../concepts/improvement-loop-and-guide-builder.md), filed 2026-11-02. Section names below are its headings. Disposition vocabulary as above. The Guide Builder rows are deferred to a gated Phase 9 by decision D-17; nothing there is authorized to start.
+
+| Id | Source | Origin | Proposal or constraint | Disposition |
+| --- | --- | --- | --- | --- |
+| C-54 | Feature boundaries | User concept | Two independent features that share evidence and optional style guidance: the Improvement Loop and the Guide Builder. The existing UX-review capability is the loop's starting point. | Planned: the Improvement Loop is Phases 1, 2, 5 and 8 as already written; the Guide Builder is Phase 9, gated (D-17). |
+| C-55 | Improvement Loop, two kinds of improvement | User concept | Product improvement and method improvement need separate comparisons; a method needs evidence from additional cases, and the criteria stay stable during a comparison. | Planned: the Phase 2 comparison record carries `kind: product` or `method` (S2.6); Phase 8 evaluates the promoted method on a held-out case (S8.4). |
+| C-56 | Improvement Loop, intended experience | User concept | Six steps from choosing the focus to retaining the lesson; the default stays bounded to one flow, five findings, one review, repair and verification pass. | Planned, no change: this is the Phase 1 cycle budget and the Phase 2 records. |
+| C-57 | Improvement Loop, evidence and judgment | User concept | Functional outcomes and design judgment need different evidence; an internal helper's success does not prove the user journey; findings split observed failure, principle-based concern and unresolved question; a higher self-score is opinion. | Planned, existing: findings contract (S1.4), D-09, Phase 5 required device observation (roundtable T-11, T-12). |
+| C-58 | Improvement Loop, evidence and judgment | User concept | Record effort as well as benefit: review time, retries, false findings, user intervention. Keeping the baseline is a valid result. | Planned, Phase 2: the comparison record gains `effort` fields and `keep_baseline` as a decision value (S2.6). |
+| C-59 | Improvement Loop, retained knowledge | User concept | Lessons can be candidates, project guidance, shared guidance, or rejected or superseded with the reason; generalization is deliberate and keeps its conditions and the project's visual identity. | Planned, Phase 2: `status` on the lesson record with those four values (S2.4 amended, S2.6); the two-identity promotion rule is unchanged. |
+| C-60 | Improvement Loop, outputs and success | User concept | A completed comparison states baseline, candidate, evidence, limitations and adoption decision; more findings, longer reports or more iterations are not success. | Planned, S2.6 comparison record; Phase 8 acceptance unchanged. |
+| C-61 | Improvement Loop, example and first outcome | User concept | First outcome: one bounded comparison on a Dias mobile flow, with the lesson tried on a second relevant flow before promotion. | Planned, Phases 5 and 8 as written. |
+| C-62 | Guide Builder, purpose and starting information | User concept | Tutorials, SOPs, onboarding guides and checklists from a real process; capture from a user demonstration, an agent demonstration, or existing material; gaps stay visible. | Deferred, Phase 9 gated (D-17; blockers B-13, B-14). |
+| C-63 | Guide Builder, intended experience | User concept | Seven steps from defining the guide to retaining an editable source; editorial cleanup is separated from process change, which is recorded as a proposal. | Deferred, Phase 9. |
+| C-64 | Guide Builder, contents and outputs | User concept | Listed guide contents; Word as the editable output, PDF for distribution, HTML for a portal; steps and illustrations reusable across a tutorial and a checklist. | Deferred, Phase 9; output toolchain is an open question (Q-09). |
+| C-65 | Guide Builder, verification and freshness | User concept | Four verification states: captured, checked against evidence, followed in a separate trial, needs review. Processes with side effects use records or a test environment; documentation never repeats a real submission, approval, deletion or message. | Deferred, Phase 9, except the side-effect rule, which is adopted now as constraint K-12 for any agent demonstration. |
+| C-66 | Shared foundation, process goals and evidence | User concept | Both features share the task description, audience, starting state and expected outcome, and reuse screenshots, action history, feedback and verification results; evidence stays connected to its claim. | Planned: the Phase 1 evidence contract already carries observations as action steps with screenshots; any action-history fields are added to the outer ux-recast evidence contract, never to the inner Lugos packet (roundtable I-4). |
+| C-67 | Shared foundation, history and user control | User concept | Capturing or documenting a process grants no authority to change the application, redefine business rules or publish; captures are sanitized before sharing or sending to an external service. | Planned as constraints K-13 and K-14 on every capture path. |
+| C-68 | Shared foundation, independence | User concept | Both capabilities belong in ux-recast and stay useful without Lugos. | Planned, existing: C-28, Phase 1 independence fixture. |
+| C-69 | Using the features together | User concept | Handoffs between the two features are optional in both directions; improving the Guide Builder's own writing method is a method experiment judged by criteria, reader results and effort. | Deferred with Phase 9; the method-experiment rule is C-55. |
+| C-70 | Design references | User concept | DarwinX and Beagle, MetaHarness Darwin, aSPARK, Mimik, OpenSteps, Playwright codegen inform the concepts; adopting a dependency is a later decision. | Deferred: entered in the reuse map only when Phase 9 is scheduled; no dependency adopted (K-06). |
+
+### Open questions raised by Part III
+
+| Id | Question | Disposition |
+| --- | --- | --- |
+| Q-08 | Which real process is the first Guide Builder subject, and who is its intended reader? | Open, user decision (B-13). Gates Phase 9. |
+| Q-09 | First capture mode (user demonstration or agent demonstration) and the editable-output toolchain for Word, PDF and HTML. | Open, user decision (B-14). Gates Phase 9. |
+| Q-10 | What authority does an agent demonstration need beyond the read-only explorer role used for reviews, and how is it granted and bounded? | Open (B-15). Must be answered before any agent-driven capture; a user demonstration needs none. |
 
 ## Review
 
-The plan set was reviewed by a three-amigos roundtable on 2026-11-02 (plan section 7; [evidence record](../evidence/plan-roundtable-2026-11-02.md)). Rows C-01, C-03, C-06 and Q-01 above were amended as a result; no concept proposal was dropped.
+The plan set was reviewed by a three-amigos roundtable on 2026-11-02 (plan section 7; [evidence record](../evidence/plan-roundtable-2026-11-02.md)). Rows C-01, C-03, C-06 and Q-01 above were amended as a result; no concept proposal was dropped. Part III was added on 2026-11-02 for the Improvement Loop and Guide Builder concept; its Guide Builder rows are deferred to a gated Phase 9 (D-17) and its Improvement Loop rows are folded into Phases 2 and 8.

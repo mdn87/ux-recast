@@ -45,13 +45,14 @@ ux_recast/
   contracts/     task, request, evidence, finding, revision, decision, outcome, lesson (dataclasses + JSON schema)
   rubric/        rubric.md, autowork-reviewer.md, VERSION (bytes frozen through the migration; see D-15)
   records/       project context (PRODUCT.md, DESIGN.md read as text, written only when absent), decisions.jsonl,
-                 lessons (project tier, shared tier), evidence archive
+                 lessons (candidate, project, shared, rejected or superseded), comparisons, evidence archive
   cycle/         review -> repair -> verify state machine, budget, checkpoint coalescing (ported from control.py)
   providers/     Provider protocol for review-packet fulfilment only: lugos_autowork (ported prepare/claim/submit/
                  record/consume), local_agent
   evidence/      capture manifest, screenshot limits, staleness, tap-to-target capture, optional Impeccable detect
                  pre-pass, optional Playwright measurement helper
-  docs/          style guide, component sheets, variable tables, validators; documentation packet; motion (deferred)
+  docs/          style guide, component sheets, variable tables, validators; documentation packet; motion (deferred);
+                 procedure guides (Phase 9, gated by D-17)
   cli.py         ux-recast <command>, mirroring control.py and autowork_review.py verbs
 fixtures/
   contact-request/   the existing seven-test demo, copied from SKILL/tests/demo with provenance
@@ -118,8 +119,10 @@ Outcome: decisions, outcomes and lessons are durable, tiered, and keep their evi
 - `records/decisions.py`: `decisions.jsonl` append-only, reusing the `cycle/` lock; tested with many iterations on Windows and POSIX, lines above 4 KiB, and a stale-lock recovery case.
 - Evidence archive: when a Decision or Lesson is recorded, copy the packet, receipt and before/after screenshots it cites from `.ux-review/packets/` into `.ux-recast/evidence/<run>/` so links survive a clean checkout (roundtable I-8).
 - Lessons in two tiers; project identity is the git remote plus root hash; promotion refuses without a second identity's `supported_by` and logs the refusal; the explicit-user-instruction bypass is tested.
+- Lesson `status`: `candidate`, `project`, `shared`, `rejected`, `superseded`, with a `reason` required for the last two; a rejected or superseded lesson is kept, never deleted (concept C-59).
+- `records/comparisons.py`: an append-only comparison record alongside decisions, with `kind` (`product` or `method`), baseline, candidate, the criteria frozen at the start, cited evidence, limitations, `effort` (review passes, retries, false findings, user interventions, wall time) and a decision from `accept`, `revise`, `keep_local`, `reject`, `insufficient_evidence`, `keep_baseline` (concept C-55, C-58, C-60). A Decision or Outcome may cite a comparison; the comparison never replaces them.
 
-Acceptance: the Phase 1 fixture run yields one project-tier lesson whose record links the finding, the diff, the archived before and after screenshots and the passing test; promotion to shared is refused and logged until a second project identity's outcome exists.
+Acceptance: the Phase 1 fixture run yields one project-tier lesson whose record links the finding, the diff, the archived before and after screenshots and the passing test; promotion to shared is refused and logged until a second project identity's outcome exists. The same run records one `product` comparison with its effort fields filled from the cycle log, and a lesson moved to `rejected` keeps its reason.
 
 ### Phase 3: Lugos entry point and staged migration (KICKOFF items 1, 6)
 
@@ -223,8 +226,26 @@ Outcome: proof that the core and the lessons transfer without Lugos or Dias, and
 - Run the full cycle on a second small project (user's choice, B-08) through `local_agent`, with its own project identity.
 - Promote one lesson from project tier to shared tier with two supporting outcomes from two identities.
 - Rerun the review on a frozen input before and after promotion; the finding set must differ in the direction the lesson predicts (roundtable P-9, T-29).
+- Method comparison on a held-out case: a change to the review method (rubric wording, reference selection, a cheaper route) is recorded as a `method` comparison and judged on a case not used to develop it, with effort recorded (concept C-55, C-58). The fixture is not a valid held-out case for a method developed on it.
 
-Acceptance: the second project's run records a Decision and an Outcome; the promoted lesson appears in the next packet with its `supported_by` links; the before/after rerun shows the predicted difference.
+Acceptance: the second project's run records a Decision and an Outcome; the promoted lesson appears in the next packet with its `supported_by` links; the before/after rerun shows the predicted difference; one `method` comparison names its held-out case and its effort.
+
+### Phase 9: Guide Builder (gated; not scheduled)
+
+Outcome: a demonstrated process becomes an editable illustrated guide with a stated verification status, per [the additive concept](../concepts/improvement-loop-and-guide-builder.md) (traceability C-62 to C-65, C-69, C-70).
+
+Held by decision D-17. Entry conditions, all required: Phase 3 shims landed with the rollback drill recorded; the Dias pre-pilot checkpoint (5a) done; blockers B-13 (first process and reader), B-14 (capture mode and output toolchain) and B-15 (authority for an agent demonstration) resolved by the user. Until then the only Phase 9 work permitted is answering those blockers in writing.
+
+Shape when it opens, to be sliced then, not now:
+
+- Capture: a user demonstration first (concept C-62 names it the practical initial mode); action history with control labels and screenshots recorded into the same evidence contract the review cycle uses, outer envelope only.
+- Organize and write: steps grouped, detours removed as editorial cleanup, process changes recorded as proposals, never applied (C-63, K-13).
+- Outputs: an editable source plus Word, PDF and HTML renderings (C-64); toolchain per B-14; no new runtime dependency in the core.
+- Verification states on the guide: captured, checked against evidence, followed in a separate trial, needs review (C-65). A separate trial never repeats a real side effect (K-12).
+- First outcome: one real process converted, checked against its evidence and followed independently where practical.
+
+Acceptance is written when the phase is scheduled. Nothing in Phases 0 to 8 depends on it.
+
 
 ## 4. Decision log
 
@@ -236,7 +257,7 @@ Acceptance: the second project's run records a Decision and an Outcome; the prom
 | D-04 | The rubric moves into ux-recast; the Lugos copies become distributed artifacts checked by `test_distribution.py` and a cross-package byte test. | One source of truth; the mirror discipline already exists. | Easy. |
 | D-05 | Review dispatch is provider-pluggable for packet fulfilment only (`lugos_autowork`, `local_agent`); the Lugos provider is a port, byte-compatible on the inner request. | Standalone use (concept C-28) without breaking Lugos; linters are not providers (roundtable I-7). | Moderate. |
 | D-06 | Reclassified as user decision B-09. The plan's recommendation: pilot runs on `mobile_browser_fixture.py`; repairs land on a host-ops branch gated by the Decision, not directly on the deployed service. | The phone client lives in host-ops and production sits behind Cloudflare Access, but committing an experimental toolset's repairs to a live operator service is the user's call (roundtable P-10). | n/a |
-| D-07 | Documentation outputs are a separate `request_kind`, prepared as a documentation packet and validated on return. | Keeps review mode semantics untouched (concept C-35); gives Phase 6 an execution model (roundtable I-9). | Easy. |
+| D-07 | Documentation outputs are a separate `request_kind`, prepared as a documentation packet and validated on return. Amended 2026-11-02: the kind covers style guides and component sheets (Phase 6) and, only when Phase 9 opens, procedure guides; review mode semantics are untouched by all three. | Keeps review mode semantics untouched (concept C-35); gives Phase 6 an execution model (roundtable I-9); one documentation path rather than a second one for the Guide Builder (concept C-54, C-66). | Easy. |
 | D-08 | Motion deferred behind a verified export, with the defect fix allowed early in parallel if the user asks. | Both renderer defects still present at `5c457437c8c8`; no export has run anywhere. | n/a |
 | D-09 | A reviewer score is a signal field; acceptance is a user Decision or an observed Outcome. | Concept C-22, C-53. | n/a |
 | D-10 | ux-recast CI on GitHub-hosted Linux; Windows manual and recorded; macOS excluded pending B-11. | Public repository, free; the self-hosted rule covers private repositories. | Easy. |
@@ -246,6 +267,7 @@ Acceptance: the second project's run records a Decision and an Outcome; the prom
 | D-14 | Shims keep the Python module surface, check `UX_REVIEW_IMPL` before importing `ux_recast`, and fail closed with a message when `ux_recast` is absent and legacy was not selected. | Importing callers exist (`coordination_trials.py`, the MyDocs forwarder); a silent fallback would hide a broken install (roundtable I-2, T-6). | Easy. |
 | D-15 | Rubric and reviewer-prompt bytes are frozen through Phase 3; vocabulary changes and the version bump land in Phase 4 after parity. | `rubric_sha256` and `task_sha256` must match between legacy and shim for the rollback drill to mean anything (roundtable I-6). | Easy. |
 | D-16 | An accepted design direction (`DESIGN.md`, `basis: accepted`, approved by the user) precedes any Dias visual repair. | "Look sharper" was the founding goal and a repair needs a standard to repair against (roundtable P-1, P-5). | n/a |
+| D-17 | **Guide Builder held.** The 2026-11-02 additive concept is accepted as a record; its Improvement Loop content is folded into Phases 2 and 8 now; the Guide Builder becomes Phase 9, gated on Phase 3 shims landing, the Dias pre-pilot checkpoint, and user decisions B-13, B-14, B-15. No Guide Builder code, dependency or slice before then. Decided by the user 2026-11-02. | Phase 2's record shapes are about to be built and are where the loop content changes shapes, so folding it now is cheap; the Guide Builder is a new capture-and-document workstream that cannot be scoped without a first process, a capture mode and an authority model, and starting it would pull effort off the Lugos critical path. | None: nothing is built. Lifting the gate is a plan edit. |
 
 ## 5. Unresolved decisions and blockers
 
@@ -263,6 +285,9 @@ Acceptance: the second project's run records a Decision and an Outcome; the prom
 | B-10 | Whether to install the Impeccable skill in the host-ops repository for the pilot, so `critique`, `adapt`, `harden` and `polish` run as commands rather than as prompt vocabulary. | User | Changes how 5a and 5c are executed, not whether. |
 | B-11 | macOS coverage for the Lugos shim and the ux-recast package: cover in Phase 3, or exclude explicitly. Two of the four hosts are Macs. | User | Blocks the platform claim in Phase 3 acceptance. |
 | B-12 | Approval of the accepted design direction for the phone client (5b). | User | Blocks Phase 5c. |
+| B-13 | First Guide Builder subject: which real process, and who its intended reader is (Q-08). | User | Gates Phase 9. |
+| B-14 | First capture mode (user demonstration or agent demonstration) and the editable-output toolchain for Word, PDF and HTML (Q-09). | User | Gates Phase 9. |
+| B-15 | Authority model for an agent demonstration beyond the read-only explorer role: what it may interact with, how it is granted and bounded (Q-10). | User and Lugos Autowork policy | Gates any agent-driven capture; a user demonstration needs none. |
 
 ## 6. Reading list before implementation
 
@@ -285,3 +310,11 @@ A three-amigos roundtable reviewed the plan set at `db78c53` the day it was writ
 - Legacy cleanup is gated on an accepted Decision, not on a cycle completing (T-17).
 
 Rejected or narrowed: the content-behavior section is required by concept C-45 when slots are used, so it stays as a conditional rule (P-4); motion stays gated but may be worked early (P-12); the plan does not reorder Phase 6 wholesale ahead of Phase 5 but inserts the design-direction step the product seat was asking for (P-5).
+
+## 8. Concept addition, 2026-11-02: Improvement Loop and Guide Builder
+
+A second concept record, [docs/concepts/improvement-loop-and-guide-builder.md](../concepts/improvement-loop-and-guide-builder.md), arrived after the first implementation batch landed. It was reconciled the same day without editing it (traceability Part III, rows C-54 to C-70, Q-08 to Q-10, K-12 to K-14):
+
+- The Improvement Loop restates the existing learning loop (C-13, C-14, C-17, C-22, C-53) and adds three things the plan lacked: lesson states including candidate and rejected or superseded, a comparison record with effort accounting and `keep_baseline` as a valid outcome, and method improvement as a distinct comparison judged on held-out cases. All three are folded into Phase 2 and Phase 8 above and slices S2.6 and S8.4, before those phases start.
+- The Guide Builder is a new workstream (procedural guides from demonstrations, with Word, PDF and HTML outputs and four verification states), distinct from the Part II style guide. It is held as Phase 9 behind D-17 and blockers B-13 to B-15. Its side-effect and authority rules are adopted now as constraints K-12 to K-14 so no capture path drifts before the phase opens.
+- D-07 is widened so procedure guides, when they come, use the same documentation request kind as style guides and component sheets.

@@ -37,6 +37,7 @@ A slice is done when its proof exists and is recorded. Slices inside a phase run
 | S2.3 | Evidence archive | `records/evidence_archive.py` | Recording a Decision copies the cited packet, receipt and screenshots into `.ux-recast/evidence/<run>/`; links resolve on a clean checkout | S |
 | S2.4 | Lessons in two tiers with project identity | `records/lessons.py`, `cli.py` verb `lessons promote` | Identity is git remote plus root hash; promotion refused and logged with "no supporting outcome from a second project identity"; the explicit-user-instruction bypass is logged; a copy of the same project at a new path does not count | M |
 | S2.5 | Fixture run yields a linked lesson | `docs/evidence/fixture-cycle-002/` | The project-tier lesson links finding, diff, archived before and after screenshots and the passing test | S |
+| S2.6 | Comparison record and lesson states | `records/comparisons.py`, `records/lessons.py`, `contracts/`, `schemas/comparison.schema.json`, `schemas/lesson.schema.json` | A `product` comparison for fixture-cycle-002 records frozen criteria, cited evidence, limitations, effort fields filled from the cycle log and a decision from the six allowed values; a lesson moved to `rejected` without a reason is refused; the lesson `status` enum is exactly candidate, project, shared, rejected, superseded (concept C-55, C-58, C-59, C-60) | S |
 
 ## Phase 3: Lugos entry point and staged migration
 
@@ -112,6 +113,14 @@ Pre-pilot slice S5.0 can start right after Phase 0. The rest needs B-03, B-09 an
 | S8.1 | Second project chosen and context recorded | that project's `PRODUCT.md`, `DESIGN.md` | `basis: observed`; its project identity differs from the fixture's and Dias's (B-08) | S |
 | S8.2 | Full cycle through the local agent | that project's `.ux-review/` and `.ux-recast/` | Decision and Outcome recorded; no Lugos path accessed | M |
 | S8.3 | One lesson promoted and shown to change a result | `src/ux_recast/lessons/shared/*.md`, rubric `VERSION` | Promotion accepted with two `supported_by` from two identities; a frozen input reviewed before and after promotion yields the predicted difference | M |
+| S8.4 | Method comparison on a held-out case | `records/comparisons.py`, `docs/evidence/method-comparison-001/` | One `method` comparison names a case not used to develop the method, records effort, and reaches a decision; the fixture is refused as the held-out case for a method developed on it (concept C-55) | S |
+
+## Phase 9: Guide Builder (gated by D-17; not scheduled)
+
+| Slice | Outcome | Touches | Proof | Size |
+| --- | --- | --- | --- | --- |
+| S9.0 | Entry gate | none | Phase 3 rollback drill recorded (S3.7); Dias pre-pilot checkpoint done (5a); B-13, B-14 and B-15 resolved in the plan's blocker table | n/a |
+| S9.1 onward | Written when S9.0 passes | to be decided | Slices are cut from the Phase 9 shape in the plan at that time, not before | n/a |
 
 ## Suggested first batch
 
