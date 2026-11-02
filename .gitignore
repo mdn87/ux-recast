@@ -15,3 +15,5 @@ build/
 
 # Keep deliberately curated documentation and evidence under docs/.
 .lugos-audit/
+.claude/handoff.md
+.claude/handoff-history/
