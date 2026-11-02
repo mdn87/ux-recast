@@ -1,6 +1,6 @@
 # Plan review roundtable, 2026-11-02
 
-Times are UTC. Technique: three-amigos, driven by the Lugos roundtable CLI over the session document `lugos/.roundtable/sessions/ux-recast-plan-review-20261102.md`. Subject: the four planning documents under `docs/plans/` at commit `db78c53`, captured verbatim into the facilitator's framing. The participant regions are reproduced in full in that session document; this record holds the routes, the dispositions, and what changed.
+Times are UTC. Technique: three-amigos, driven by the Lugos roundtable CLI over the session document `lugos/.roundtable/sessions/ux-recast-plan-review-20261102.md`. Subject: the four planning documents under `docs/plans/` at commit `db78c53`, captured verbatim into the facilitator's framing. Lugos does not track that session file, so the three participant regions are copied verbatim into [plan-roundtable-2026-11-02-regions.md](plan-roundtable-2026-11-02-regions.md); this record holds the routes, the dispositions, and what changed.
 
 ## Participants and routes
 
