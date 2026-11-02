@@ -1,2 +1,0 @@
-[console_scripts]
-ux-recast = ux_recast.cli:main

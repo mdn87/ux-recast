@@ -20,3 +20,4 @@ build/
 
 # Scratch project directories for local fixture cycles (scripts/fixture_cycle.py)
 .work/
+*.egg-info/
