@@ -1,0 +1,93 @@
+{
+  "version": 1,
+  "mode": "off",
+  "scope": [
+    "contact-request"
+  ],
+  "shared": {},
+  "runs": [
+    {
+      "run_id": "9c8ab442b15b",
+      "checkpoint": [
+        "autowork-portable-smoke",
+        "implementation",
+        "contact-request"
+      ],
+      "task": {
+        "flow": "contact-request",
+        "goal": "Send a support request and know it was received",
+        "starting_conditions": "A signed-out visitor has their name, email and a description; the local demonstration service can accept, reject or delay a request",
+        "expected_outcome": "One request is accepted and confirmation is visible; input mistakes and temporary failures can be corrected without re-entering valid work",
+        "device_input": "Desktop keyboard and pointer, plus a 375px-wide mobile viewport",
+        "source": "User's requested UX review demonstration, especially validation recovery and preservation of completed form entries",
+        "assumptions": [
+          "This is an isolated demonstration, not a real support service",
+          "Name, email and request are required",
+          "The local service is simulated; no messages or personal information leave the browser",
+          "Cancel during saving preserves the draft and prevents a later success message"
+        ],
+        "acceptance": [
+          "The primary action describes sending a request",
+          "Missing or invalid information is identified with a useful correction",
+          "A rejected email preserves the entered name and request",
+          "Keyboard users can discover the error and correct it",
+          "Correcting only the email permits completion without re-entering other fields",
+          "While saving, progress is visible and repeat submission is prevented",
+          "Cancellation and temporary failure preserve entries and permit retry",
+          "The form remains usable at 375px without horizontal scrolling"
+        ]
+      },
+      "status": "unavailable",
+      "phase": "review",
+      "budget": {
+        "review_passes": 1,
+        "repair_batches": 1,
+        "verification_passes": 1,
+        "max_actionable_findings": 5
+      },
+      "report": "docs/evidence/ux-review-autowork/visual-precondition.json"
+    },
+    {
+      "run_id": "d7541d2ed15c",
+      "checkpoint": [
+        "autowork-portable-smoke",
+        "plan",
+        "contact-request"
+      ],
+      "task": {
+        "flow": "contact-request",
+        "goal": "Send a support request and know it was received",
+        "starting_conditions": "A signed-out visitor has their name, email and a description; the local demonstration service can accept, reject or delay a request",
+        "expected_outcome": "One request is accepted and confirmation is visible; input mistakes and temporary failures can be corrected without re-entering valid work",
+        "device_input": "Desktop keyboard and pointer, plus a 375px-wide mobile viewport",
+        "source": "User's requested UX review demonstration, especially validation recovery and preservation of completed form entries",
+        "assumptions": [
+          "This is an isolated demonstration, not a real support service",
+          "Name, email and request are required",
+          "The local service is simulated; no messages or personal information leave the browser",
+          "Cancel during saving preserves the draft and prevents a later success message"
+        ],
+        "acceptance": [
+          "The primary action describes sending a request",
+          "Missing or invalid information is identified with a useful correction",
+          "A rejected email preserves the entered name and request",
+          "Keyboard users can discover the error and correct it",
+          "Correcting only the email permits completion without re-entering other fields",
+          "While saving, progress is visible and repeat submission is prevented",
+          "Cancellation and temporary failure preserve entries and permit retry",
+          "The form remains usable at 375px without horizontal scrolling"
+        ]
+      },
+      "status": "verified",
+      "phase": "verify",
+      "budget": {
+        "review_passes": 1,
+        "repair_batches": 1,
+        "verification_passes": 1,
+        "max_actionable_findings": 5
+      },
+      "report": "docs/evidence/ux-review-autowork/README.md"
+    }
+  ],
+  "updated_at": "2026-10-24T17:28:14.010246+00:00"
+}

@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/mdn87/ux-recast/schemas/task.schema.json",
+  "title": "ux-recast task contract",
+  "description": "The independent statement of what a flow must achieve. Written before implementation and kept apart from the plan so the review has a yardstick other than the code. Shape identical to the Lugos ux-review task.json.",
+  "type": "object",
+  "required": ["flow", "goal", "starting_conditions", "expected_outcome", "acceptance", "assumptions", "device_input", "source"],
+  "properties": {
+    "flow": {"type": "string", "minLength": 1, "description": "Short name of the user flow."},
+    "goal": {"type": "string", "minLength": 1, "description": "What the person is trying to do, in their terms."},
+    "starting_conditions": {"type": "string", "minLength": 1},
+    "expected_outcome": {"type": "string", "minLength": 1},
+    "acceptance": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}, "description": "Observable checks; each should be verifiable from evidence."},
+    "assumptions": {"type": "array", "items": {"type": "string"}},
+    "device_input": {"type": "string", "minLength": 1, "description": "Device class and input mode the flow is judged on, e.g. phone, touch."},
+    "source": {"type": "string", "minLength": 1, "description": "Where the task came from: ticket, conversation, document."}
+  },
+  "additionalProperties": true
+}

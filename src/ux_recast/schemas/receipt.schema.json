@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/mdn87/ux-recast/schemas/receipt.schema.json",
+  "title": "ux-recast review receipt (receipt.json)",
+  "description": "What came back for a packet. A receipt records delivery and acceptance of a result; it never records the findings themselves except the word `stale` when the task hash no longer matches.",
+  "type": "object",
+  "required": ["accepted", "status", "task_sha256", "meaning"],
+  "properties": {
+    "accepted": {"type": "boolean"},
+    "status": {"type": "string", "description": "Provider status, e.g. completed, failed, timeout."},
+    "autowork_run_id": {"type": "string"},
+    "selected_route": {"type": "string"},
+    "model": {"type": ["string", "null"]},
+    "artifact_dir": {"type": ["string", "null"]},
+    "task_sha256": {"type": "string"},
+    "meaning": {"type": "string", "description": "One sentence a human can act on."},
+    "findings": {"const": "stale"}
+  },
+  "allOf": [
+    {"if": {"properties": {"accepted": {"const": true}}}, "then": {"properties": {"status": {"const": "completed"}}}}
+  ],
+  "additionalProperties": true
+}

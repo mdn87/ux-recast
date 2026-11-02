@@ -1,0 +1,10 @@
+{
+  "accepted": false,
+  "status": "failed_precondition",
+  "autowork_run_id": "20261024-172446-70ab9eb59691",
+  "selected_route": "",
+  "model": "",
+  "artifact_dir": "/autowork-runs/20261024-172446-70ab9eb59691",
+  "task_sha256": "de9c707c3bc68f5c853696fb415dc542238a8d8b6a580d5e848e61dceaa76d09",
+  "meaning": "Completed advisory delivery only; parent evaluates findings and verifies repairs"
+}

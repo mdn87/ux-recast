@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ux-recast"
+version = "0.1.0.dev1"
+description = "Design review, refinement, and reusable design knowledge for coding agents."
+readme = "README.md"
+license = "Apache-2.0"
+license-files = ["LICENSE", "NOTICE"]
+requires-python = ">=3.11"
+authors = [{ name = "Matthew Newman" }]
+dependencies = []
+
+[project.optional-dependencies]
+mcp = ["mcp>=1.27,<2"]
+playwright = ["playwright>=1.50"]
+dev = ["pytest>=8", "build>=1"]
+
+[project.scripts]
+ux-recast = "ux_recast.cli:main"
+
+[project.urls]
+Repository = "https://github.com/mdn87/ux-recast"
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+"ux_recast.rubric" = ["*.md", "VERSION"]
+"ux_recast.schemas" = ["*.json"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q -p no:cacheprovider"

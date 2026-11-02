@@ -1,0 +1,15 @@
+{
+  "accepted": true,
+  "status": "completed",
+  "autowork_run_id": "local-20261102-032624",
+  "selected_route": "local-agent",
+  "model": "Claude Fable 5.1 (claude-fable-5-1) driving scripts/fixture_cycle.py; evidence read from evidence.json and the five screenshots only",
+  "artifact_dir": "<repo>/.work/fixture-cycle-001/.ux-review/packets/9cb76bb2fc61956b2908ff7d-aeca78da6838",
+  "task_sha256": "73ef6833ca3fa7f29629c6c9ff4681ee1ae1c276041873568f35e417c87255fa",
+  "meaning": "accepted describes matching completed advisory delivery only; parent evaluates findings and verifies repairs",
+  "findings": "stale",
+  "stale_at": "2026-11-02T03:27:21.694715+00:00",
+  "stale_inputs": [
+    "index.html"
+  ]
+}

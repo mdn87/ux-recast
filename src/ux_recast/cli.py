@@ -1,0 +1,105 @@
+"""``ux-recast`` command line.
+
+Verbs mirror the Lugos scripts so a shim can forward argv unchanged:
+
+    ux-recast control  --project P --session S <status|mode|checkpoint|phase|finish> ...
+    ux-recast packet   --project P --session S --run R <prepare|claim|submit|record|consume> ...
+    ux-recast review   --project P --session S --run R --evidence E.json [--config NAME=ID]
+    ux-recast findings --project P --session S --run R --file findings.json
+    ux-recast rubric   --version | --print <rubric.md|autowork-reviewer.md>
+    ux-recast validate <task|state|packet|receipt|findings> FILE
+"""
+import argparse
+import json
+from pathlib import Path
+import sys
+
+
+def _control(argv):
+    from ux_recast.cycle import control
+    sys.argv = ["control.py", *argv]
+    return control.main()
+
+
+def _packet(argv):
+    from ux_recast.providers import lugos_autowork
+    sys.argv = ["autowork_review.py", *argv]
+    return lugos_autowork.main()
+
+
+def _review(argv):
+    from ux_recast.cycle.control import config_values
+    from ux_recast.providers import local_agent
+    p = argparse.ArgumentParser(prog="ux-recast review")
+    p.add_argument("--project", type=Path, required=True)
+    p.add_argument("--session", required=True)
+    p.add_argument("--run", required=True)
+    p.add_argument("--evidence", type=Path, required=True)
+    p.add_argument("--config", action="append", default=None)
+    a = p.parse_args(argv)
+    config = config_values(a.config) if a.config is not None else None
+    return _emit(lambda: local_agent.prepare(a.project, a.session, a.run, a.evidence, config=config))
+
+
+def _findings(argv):
+    from ux_recast.providers import local_agent
+    p = argparse.ArgumentParser(prog="ux-recast findings")
+    p.add_argument("--project", type=Path, required=True)
+    p.add_argument("--session", required=True)
+    p.add_argument("--run", required=True)
+    p.add_argument("--file", type=Path, required=True)
+    a = p.parse_args(argv)
+    return _emit(lambda: local_agent.record(a.project, a.session, a.run, a.file))
+
+
+def _rubric(argv):
+    from ux_recast import rubric
+    p = argparse.ArgumentParser(prog="ux-recast rubric")
+    p.add_argument("--version", action="store_true")
+    p.add_argument("--print", choices=["rubric.md", "autowork-reviewer.md"])
+    a = p.parse_args(argv)
+    if a.print:
+        sys.stdout.write(rubric.read_text(a.print))
+        return 0
+    print(json.dumps({"rubric_version": rubric.version(), "VERSION": rubric.read_text("VERSION")}))
+    return 0
+
+
+def _validate(argv):
+    from ux_recast.contracts import ContractError, validate
+    p = argparse.ArgumentParser(prog="ux-recast validate")
+    p.add_argument("kind", choices=["task", "state", "packet", "receipt", "findings"])
+    p.add_argument("file", type=Path)
+    a = p.parse_args(argv)
+    try:
+        validate(a.kind, json.loads(a.file.read_text(encoding="utf-8")))
+    except ContractError as error:
+        print(json.dumps({"valid": False, "field": error.field, "error": str(error)}))
+        return 2
+    print(json.dumps({"valid": True, "kind": a.kind, "file": str(a.file)}))
+    return 0
+
+
+def _emit(call):
+    try:
+        print(json.dumps(call(), indent=2, ensure_ascii=True))
+        return 0
+    except (ValueError, OSError) as error:
+        print(json.dumps({"invoke": False, "error": str(error)}))
+        return 2
+
+
+COMMANDS = {"control": _control, "packet": _packet, "review": _review, "findings": _findings,
+            "rubric": _rubric, "validate": _validate}
+
+
+def main(argv=None):
+    argv = list(sys.argv[1:] if argv is None else argv)
+    if not argv or argv[0] in {"-h", "--help"} or argv[0] not in COMMANDS:
+        sys.stderr.write(__doc__)
+        return 0 if argv and argv[0] in {"-h", "--help"} else 2
+    return COMMANDS[argv[0]](argv[1:])
+
+
+if __name__ == "__main__":
+    sys.exit(main())

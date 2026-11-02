@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/mdn87/ux-recast/schemas/packet.schema.json",
+  "title": "ux-recast review packet (packet.json, schema_version 1)",
+  "description": "A prepared review request plus its provenance. The inner `request` is the Lugos Autowork delegate envelope and is byte-compatible with what the Lugos ux-review autowork_review.py writes; new ux-recast metadata lives only in the outer envelope.",
+  "type": "object",
+  "required": ["schema_version", "activation", "request", "task_sha256", "sources", "rubric_sha256", "dispatch_status"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "activation": {
+      "type": "object",
+      "required": ["mode", "scope", "checkpoint", "controller_run_id", "budget"],
+      "properties": {
+        "mode": {"enum": ["off", "once", "session"]},
+        "scope": {"type": "array", "items": {"type": "string"}},
+        "checkpoint": {"type": "array", "items": {"type": "string"}},
+        "controller_run_id": {"type": "string"},
+        "budget": {"type": "object"}
+      }
+    },
+    "request": {
+      "type": "object",
+      "required": ["action", "role", "workspace", "task", "task_class_hint", "required_capabilities", "input_modalities", "timeout_seconds"],
+      "properties": {
+        "action": {"const": "delegate"},
+        "role": {"const": "explorer"},
+        "workspace": {"type": "string"},
+        "task": {"type": "string", "description": "Rubric, reviewer prompt, task contract and evidence rendered as one prompt."},
+        "task_class_hint": {"const": "review"},
+        "required_capabilities": {"type": "array", "items": {"enum": ["repository_read", "image_input"]}},
+        "input_modalities": {"type": "array", "items": {"enum": ["text", "image"]}},
+        "timeout_seconds": {"type": "integer", "minimum": 1},
+        "visual_inputs": {"type": "array", "items": {"type": "string"}, "maxItems": 5}
+      },
+      "not": {"anyOf": [{"required": ["allowed_paths"]}, {"required": ["verification"]}]},
+      "additionalProperties": true
+    },
+    "task_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "sources": {"type": "object", "additionalProperties": {"type": "string", "pattern": "^[0-9a-f]{64}$"}},
+    "rubric_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "dispatch_status": {"enum": ["prepared", "claimed", "submitted", "recorded"]},
+    "claimed_at": {"type": "string"},
+    "submitted_at": {"type": "string"},
+    "submit_outcome": {"enum": ["delivered", "rejected", "unknown"]},
+    "submit_error": {"type": "string"}
+  },
+  "additionalProperties": true
+}

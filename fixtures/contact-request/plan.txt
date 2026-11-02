@@ -1,0 +1,22 @@
+Contact-request interaction after independent planning review
+
+Contract: task.json, unchanged. This is a staged local demonstration, not evidence
+from production users. Reviewer received the proposed plan and task, not source.
+
+P1 / discoverability: primary action reads Send request; no ambiguous Continue.
+P2 / error recovery and accessibility: adjacent field messages describe corrections;
+invalid fields expose aria-invalid and aria-describedby; failed submission focuses
+the first invalid input. An announced summary says the request has not been sent.
+P3 / recognition over recall: rejected input and temporary service failure leave
+all entries intact. Fixing only the rejected field must permit completion.
+P4 / status and control: Sending... feedback and disabled submit prevent duplicate
+attempts. Cancel sending preserves entries and suppresses any delayed completion.
+P5 / input parity: single-column responsive layout and wrapping feedback at 375px.
+
+Successful completion explicitly says Request received and receives focus.
+Implementation verification must exercise the task through the rendered interface;
+this plan review alone cannot establish behavior.
+
+Plan verification: each of task.json's eight acceptance statements has a specified
+interaction above. All five planning concerns have concrete choices. Human
+comprehension and assistive-technology experience remain unmeasured.

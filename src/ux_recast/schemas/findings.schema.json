@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/mdn87/ux-recast/schemas/findings.schema.json",
+  "title": "ux-recast findings (ux-recast/findings@1)",
+  "description": "A reviewer's findings for one packet, in the shape the rubric asks for. A finding cites evidence and a principle, separates observation from inference, and proposes a correction with its verification. A score, when present, is a signal; acceptance is a user decision or an observed outcome (plan decision D-09).",
+  "type": "object",
+  "required": ["schema", "provider", "task_sha256", "reviewer", "findings"],
+  "properties": {
+    "schema": {"const": "ux-recast/findings@1"},
+    "provider": {"type": "string", "description": "Which provider produced this: lugos-autowork, local-agent."},
+    "task_sha256": {"type": "string", "description": "Must equal the claimed packet's task_sha256."},
+    "reviewer": {"type": "string"},
+    "remaining_uncertainty": {"type": "string"},
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "category", "task_step", "observed", "evidence", "principle", "likely_consequence", "severity", "confidence", "confidence_reason", "proposed_correction", "verification"],
+        "properties": {
+          "id": {"type": "string"},
+          "category": {"enum": ["observed failure", "heuristic concern", "unresolved question"]},
+          "task_step": {"type": "string", "minLength": 1},
+          "observed": {"type": "string", "minLength": 1, "description": "What the evidence shows. No inference here."},
+          "evidence": {"type": "string", "minLength": 1, "description": "Observation step or screenshot the claim rests on."},
+          "principle": {"type": "string", "minLength": 1},
+          "likely_consequence": {"type": "string", "minLength": 1, "description": "Inference, labelled as such."},
+          "severity": {"enum": ["Critical", "High", "Medium", "Low"]},
+          "confidence": {"enum": ["high", "medium", "low"]},
+          "confidence_reason": {"type": "string", "minLength": 1},
+          "proposed_correction": {"type": "string", "minLength": 1},
+          "verification": {"type": "string", "minLength": 1},
+          "element": {"type": "string"},
+          "kind": {"enum": ["design", "implementation"]},
+          "score": {"type": "number"}
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": true
+}

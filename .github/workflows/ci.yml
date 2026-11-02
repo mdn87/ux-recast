@@ -1,0 +1,27 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python: ["3.11", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Install from a built wheel
+        run: |
+          python -m pip install --upgrade pip build
+          python -m build --wheel --outdir dist
+          python -m pip install "$(ls dist/*.whl)[mcp,dev]"
+      - name: Package data is importable from the wheel
+        run: python -c "from ux_recast import rubric, contracts; print(rubric.version()); contracts.schema('packet')"
+      - name: Tests
+        run: python -m pytest tests -q -p no:cacheprovider

@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Send a support request — UX review demonstration</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; color: #192e37; background: #eef3f4; font: 17px/1.5 system-ui,sans-serif; }
+  main { max-width: 640px; margin: 40px auto; padding: 28px; background: white; border: 1px solid #c0cdd0; border-radius: 12px; }
+  h1 { font-size: 1.7rem; line-height: 1.2; margin: 8px 0 16px; }
+  .eyebrow { font-size: .8rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #46606a; }
+  label { display: block; font-weight: 650; margin-top: 18px; }
+  input,textarea { display: block; width: 100%; padding: 12px; border: 1px solid #6c838b; border-radius: 5px; font: inherit; }
+  textarea { min-height: 120px; resize: vertical; }
+  button { padding: 12px 18px; min-height: 48px; border-radius: 6px; border: 1px solid #14576a; background: #14576a; color: white; font: inherit; font-weight: 650; cursor: pointer; }
+  button.secondary { color: #14576a; background: white; }
+  button:disabled { opacity: .65; cursor: wait; }
+  :focus-visible { outline: 3px solid #bd5800; outline-offset: 3px; }
+  .actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 22px; }
+  .error { color: #a61d2b; margin: 7px 0; }
+  .message { border-left: 4px solid #14576a; padding-left: 14px; }
+  [aria-invalid=true] { border: 2px solid #a61d2b; }
+  [hidden] { display: none !important; }
+  @media (max-width: 680px) { main { margin: 12px; padding: 20px; } }
+</style>
+<main>
+  <div class="eyebrow">Local demonstration</div>
+  <h1>Send a support request</h1>
+  <p>Tell us what you need help with. All fields are required.</p>
+  <form novalidate>
+    <label for="name">Your name</label>
+    <input id="name" name="name" autocomplete="name" aria-describedby="name-error" required>
+    <p id="name-error" class="error" hidden></p>
+    <label for="email">Email address</label>
+    <input id="email" name="email" type="email" autocomplete="email" aria-describedby="email-error" required>
+    <p id="email-error" class="error" hidden></p>
+    <label for="request">What do you need help with?</label>
+    <textarea id="request" name="request" aria-describedby="request-error" required></textarea>
+    <p id="request-error" class="error" hidden></p>
+    <div class="actions">
+      <button id="send" type="submit">Send request</button>
+      <button id="cancel" class="secondary" type="button" hidden>Cancel sending</button>
+    </div>
+    <p id="feedback" role="status" aria-live="polite"></p>
+  </form>
+  <section id="confirmation" hidden tabindex="-1">
+    <h2>Request received</h2>
+    <p>Your request has been received. This demonstration sends no real message.</p>
+  </section>
+</main>
+<script>
+  const form = document.querySelector('form');
+  const nameField = document.querySelector('#name');
+  const email = document.querySelector('#email');
+  const request = document.querySelector('#request');
+  const send = document.querySelector('#send');
+  const cancel = document.querySelector('#cancel');
+  const feedback = document.querySelector('#feedback');
+  const confirmation = document.querySelector('#confirmation');
+  const scenario = new URLSearchParams(location.search).get('scenario');
+  let timer, attempts = 0;
+  function idle() {
+    send.disabled = false;
+    send.textContent = 'Send request';
+    cancel.hidden = true;
+  }
+  cancel.addEventListener('click', () => {
+    clearTimeout(timer); idle();
+    feedback.textContent = 'Sending cancelled. Your entries are still here.';
+    send.focus();
+  });
+  form.addEventListener('submit', event => {
+    event.preventDefault();
+    if (send.disabled) return;
+    if (!nameField.value.trim() || !email.validity.valid || !request.value.trim()) {
+      form.reset();
+      feedback.textContent = 'Please check your details and try again.';
+      return;
+    }
+    attempts += 1;
+    send.disabled = true; send.textContent = 'Sending…'; cancel.hidden = false;
+    feedback.textContent = 'Sending your request…';
+    timer = setTimeout(() => {
+      idle();
+      if (scenario === 'fail-once' && attempts === 1) {
+        feedback.textContent = 'Could not send your request. Your entries are saved here. Please try again.';
+        return;
+      }
+      form.hidden = true; confirmation.hidden = false; confirmation.focus();
+    }, scenario === 'slow' ? 2500 : 350);
+  });
+</script>
+</html>

@@ -17,3 +17,6 @@ build/
 .lugos-audit/
 .claude/handoff.md
 .claude/handoff-history/
+
+# Scratch project directories for local fixture cycles (scripts/fixture_cycle.py)
+.work/

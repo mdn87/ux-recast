@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/mdn87/ux-recast/schemas/state.schema.json",
+  "title": "ux-recast cycle state (.ux-review/<session>.json, version 1)",
+  "description": "Per-session controller state written by ux_recast.cycle.control. Byte-compatible with the Lugos ux-review control.py state file; ux-recast adds nothing inside it during the migration.",
+  "type": "object",
+  "required": ["version", "mode", "scope", "shared", "runs"],
+  "properties": {
+    "version": {"const": 1},
+    "mode": {"enum": ["off", "once", "session"]},
+    "scope": {"type": "array", "items": {"type": "string"}},
+    "shared": {"type": "object", "additionalProperties": {"type": "array", "items": {"type": "string"}}},
+    "updated_at": {"type": "string"},
+    "runs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["run_id", "checkpoint", "task", "status", "phase", "budget"],
+        "properties": {
+          "run_id": {"type": "string"},
+          "checkpoint": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+          "task": {"$ref": "task.schema.json"},
+          "status": {"enum": ["active", "cancelled", "verified", "remaining", "unavailable"]},
+          "phase": {"enum": ["review", "repair", "verify"]},
+          "budget": {
+            "type": "object",
+            "required": ["review_passes", "repair_batches", "verification_passes", "max_actionable_findings"],
+            "properties": {
+              "review_passes": {"type": "integer", "minimum": 0},
+              "repair_batches": {"type": "integer", "minimum": 0},
+              "verification_passes": {"type": "integer", "minimum": 0},
+              "max_actionable_findings": {"type": "integer", "minimum": 0}
+            }
+          },
+          "manifest": {
+            "type": "object",
+            "required": ["flow", "stage", "task_sha256", "task_path", "inputs", "config"],
+            "properties": {
+              "flow": {"type": "string"},
+              "stage": {"type": "string"},
+              "task_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+              "task_path": {"type": "string"},
+              "inputs": {"type": "object", "additionalProperties": {"type": "string"}},
+              "config": {"type": "object", "additionalProperties": {"type": "string"}}
+            }
+          },
+          "report": {"type": "string"},
+          "finished_at": {"type": "string"}
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": true
+}

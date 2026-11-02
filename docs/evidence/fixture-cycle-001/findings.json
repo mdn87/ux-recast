@@ -1,0 +1,73 @@
+{
+  "schema": "ux-recast/findings@1",
+  "provider": "local-agent",
+  "task_sha256": "73ef6833ca3fa7f29629c6c9ff4681ee1ae1c276041873568f35e417c87255fa",
+  "reviewer": "Claude Fable 5.1 (claude-fable-5-1) driving scripts/fixture_cycle.py; evidence read from evidence.json and the five screenshots only",
+  "findings": [
+    {
+      "id": "F1",
+      "category": "observed failure",
+      "task_step": "Submit with an invalid email after entering a valid name and request",
+      "observed": "Step 'entered' of test_invalid_email_preserves_work_and_can_complete shows name='Alex Morgan', email='alex@', request='Please help me change my delivery date.'. Step 'rejected', captured after one submit, shows name='', email='', request='' and the status text 'Please check your details and try again.' The same wipe appears in step 'mobile-error' of test_small_touch_viewport_recovery at the 375px viewport.",
+      "evidence": "evidence/before/test_invalid_email_preserves_work_and_can_complete-entered.png, evidence/before/test_invalid_email_preserves_work_and_can_complete-rejected.png, evidence/before/test_small_touch_viewport_recovery-mobile-error.png; observations 2, 3 and 8",
+      "principle": "Preserve completed work; error recovery must not cost the user their valid entries (task acceptance: 'A rejected email preserves the entered name and request')",
+      "likely_consequence": "Inference: a visitor who mistypes only the email has to retype every field, and on a phone that is the whole form; some will abandon the request rather than re-enter it.",
+      "severity": "Critical",
+      "confidence": "high",
+      "confidence_reason": "Two independent captures (desktop and 375px) show all three values empty immediately after the rejected submit; nothing else happened between the captures.",
+      "proposed_correction": "On a failed validation, leave every field's value untouched. Validate the fields individually and only annotate the ones that failed; never call a whole-form reset on the error path.",
+      "verification": "Enter a valid name and request with email 'alex@', submit, and confirm name and request still hold their values; then correct only the email, submit, and confirm the confirmation section appears (acceptance: 'Correcting only the email permits completion without re-entering other fields').",
+      "element": "form submit handler; #name, #email, #request",
+      "kind": "implementation"
+    },
+    {
+      "id": "F2",
+      "category": "observed failure",
+      "task_step": "Submit the empty form, or submit with one invalid field",
+      "observed": "In steps 'required', 'rejected' and 'mobile-error' the only new visible text is 'Please check your details and try again.' The per-field slots name-error, email-error and request-error that the markup declares (each referenced by aria-describedby) stay hidden, and no field is marked invalid: the visible text names no field and no correction.",
+      "evidence": "evidence/before/test_empty_form_identifies_required_fields-required.png and observations 1, 3, 8 (visible_text)",
+      "principle": "Help people recognise, diagnose and recover from errors: say which field and what would make it acceptable (task acceptance: 'Missing or invalid information is identified with a useful correction')",
+      "likely_consequence": "Inference: with three fields and one generic sentence the visitor must guess which entry was rejected; an email that merely lacks a domain looks complete to many people, so the guess often fails.",
+      "severity": "High",
+      "confidence": "high",
+      "confidence_reason": "The captured visible text for all three failing submits contains only the generic sentence; the hidden slots are visible in the page source referenced by the task.",
+      "proposed_correction": "For each failed field write a specific message into its existing *-error slot ('Enter your name', 'Enter an email address like name@example.com', 'Describe what you need help with'), unhide the slot, set aria-invalid=\"true\" on the field, and make the status line summarise ('Your request has not been sent. Correct the marked fields; your entries are still here.'). Clear the marks for fields that now pass.",
+      "verification": "Submit the empty form and confirm three field-level messages are visible and each field is aria-invalid; submit with only a bad email and confirm only the email message shows.",
+      "element": "#name-error, #email-error, #request-error, #feedback",
+      "kind": "implementation"
+    },
+    {
+      "id": "F3",
+      "category": "observed failure",
+      "task_step": "Keyboard user submits with an error and looks for what to fix",
+      "observed": "After each rejected submit the focused element is BUTTON#send (observations 1, 3 and 8: focused_element tag BUTTON, id send). Focus never moves to a field, and because no field is annotated there is nothing for a screen reader to announce beyond the polite status line.",
+      "evidence": "observations 1, 3, 8 (focused_element); evidence/before/test_keyboard_can_finish-keyboard-focus.png shows the happy path reaches the button by keyboard, so focus management is the only missing piece",
+      "principle": "Keyboard operability and error identification: after a failed submit, focus goes to the first problem (task acceptance: 'Keyboard users can discover the error and correct it')",
+      "likely_consequence": "Inference: a keyboard or screen-reader user hears 'Please check your details' while sitting on the Send button and must tab backwards through every field hunting for the fault.",
+      "severity": "High",
+      "confidence": "high",
+      "confidence_reason": "Three captures agree on the focused element; the keyboard happy path passing rules out a general focus problem.",
+      "proposed_correction": "After annotating the failed fields, call focus() on the first invalid field so its label, value and error description are announced together.",
+      "verification": "Fill name and request, leave email as 'alex@', press Enter, and confirm document focus is on #email; type the rest of the address, press Enter, and confirm completion.",
+      "element": "first invalid field after submit",
+      "kind": "implementation"
+    },
+    {
+      "id": "F4",
+      "category": "unresolved question",
+      "task_step": "375px viewport error recovery",
+      "observed": "At 375px the generic status line is rendered below the Send button (observation 8 visible_text order: fields, 'Send request', then the message). Whether that line is inside the viewport without scrolling cannot be read from the truncated text or the single full-page screenshot.",
+      "evidence": "evidence/before/test_small_touch_viewport_recovery-mobile-error.png (full-page capture, not viewport-cropped)",
+      "principle": "Visibility of system status on small screens (task acceptance: 'The form remains usable at 375px')",
+      "likely_consequence": "Inference: if the status line sits below the fold the visitor sees the form wiped with no explanation at all; the field-level messages proposed in F2 sit next to each field and would remove the dependency on that line.",
+      "severity": "Medium",
+      "confidence": "low",
+      "confidence_reason": "Only a full-page screenshot is available; no viewport-cropped capture or scroll position was recorded.",
+      "proposed_correction": "Adopt F2 so the correction appears beside the field; separately record a viewport-cropped capture at 375px after a rejected submit to settle whether the status line is on screen.",
+      "verification": "Capture the 375px viewport (not full page) immediately after a rejected submit and check that at least one error message is visible without scrolling.",
+      "element": "#feedback at max-width 680px",
+      "kind": "design"
+    }
+  ],
+  "remaining_uncertainty": "The sending, cancel and temporary-failure paths passed in the evidence (test_keyboard_can_finish, test_slow_send_can_cancel_without_losing_work, test_temporary_failure_allows_retry) and were not reviewed beyond those captures. Touch target sizes at 375px, colour contrast of the error style, and behaviour with assistive technology were not observable from this evidence set."
+}
