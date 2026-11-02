@@ -14,3 +14,4 @@ dist/
 build/
 
 # Keep deliberately curated documentation and evidence under docs/.
+.lugos-audit/
