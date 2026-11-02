@@ -1,0 +1,122 @@
+{
+  "name": "04-double-claim",
+  "steps": [
+    {
+      "tool": "control",
+      "args": [
+        "mode",
+        "once",
+        "--scope",
+        "contact-request"
+      ]
+    },
+    {
+      "tool": "control",
+      "args": [
+        "checkpoint",
+        "--id",
+        "batch-1",
+        "--stage",
+        "implementation",
+        "--affected",
+        "contact-request",
+        "--task",
+        "task.json",
+        "--input",
+        "page.html",
+        "--origin",
+        "checkpoint"
+      ]
+    },
+    {
+      "tool": "packet",
+      "args": [
+        "--run",
+        "{run}",
+        "prepare",
+        "--evidence",
+        "evidence.json"
+      ]
+    },
+    {
+      "tool": "packet",
+      "args": [
+        "--run",
+        "{run}",
+        "claim"
+      ]
+    },
+    {
+      "tool": "packet",
+      "args": [
+        "--run",
+        "{run}",
+        "claim"
+      ]
+    },
+    {
+      "tool": "packet",
+      "args": [
+        "--run",
+        "{run}",
+        "prepare",
+        "--evidence",
+        "evidence.json"
+      ]
+    },
+    {
+      "tool": "packet",
+      "args": [
+        "--run",
+        "{run}",
+        "consume"
+      ]
+    },
+    {
+      "tool": "control",
+      "args": [
+        "mode",
+        "off"
+      ]
+    },
+    {
+      "tool": "packet",
+      "args": [
+        "--run",
+        "{run}",
+        "claim"
+      ]
+    },
+    {
+      "result_from_packet": {
+        "path": "out/result.json"
+      }
+    },
+    {
+      "tool": "packet",
+      "args": [
+        "--run",
+        "{run}",
+        "record",
+        "--result",
+        "out/result.json"
+      ]
+    },
+    {
+      "tool": "packet",
+      "args": [
+        "--run",
+        "{run}",
+        "record",
+        "--result",
+        "out/result.json"
+      ]
+    },
+    {
+      "tool": "control",
+      "args": [
+        "status"
+      ]
+    }
+  ]
+}

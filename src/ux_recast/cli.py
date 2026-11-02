@@ -36,6 +36,8 @@ def _review(argv):
     p.add_argument("--run", required=True)
     p.add_argument("--evidence", type=Path, required=True)
     p.add_argument("--config", action="append", default=None)
+    p.add_argument("--provider", choices=["local"], default="local",
+                   help="who fulfils the packet; the Lugos Autowork lane is driven through 'packet submit' instead")
     a = p.parse_args(argv)
     config = config_values(a.config) if a.config is not None else None
     return _emit(lambda: local_agent.prepare(a.project, a.session, a.run, a.evidence, config=config))

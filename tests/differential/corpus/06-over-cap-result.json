@@ -1,0 +1,80 @@
+{
+  "name": "06-over-cap-result",
+  "steps": [
+    {
+      "tool": "control",
+      "args": [
+        "mode",
+        "once",
+        "--scope",
+        "contact-request"
+      ]
+    },
+    {
+      "tool": "control",
+      "args": [
+        "checkpoint",
+        "--id",
+        "batch-1",
+        "--stage",
+        "implementation",
+        "--affected",
+        "contact-request",
+        "--task",
+        "task.json",
+        "--input",
+        "page.html",
+        "--origin",
+        "checkpoint"
+      ]
+    },
+    {
+      "tool": "packet",
+      "args": [
+        "--run",
+        "{run}",
+        "prepare",
+        "--evidence",
+        "evidence.json"
+      ]
+    },
+    {
+      "tool": "packet",
+      "args": [
+        "--run",
+        "{run}",
+        "claim"
+      ]
+    },
+    {
+      "result_from_packet": {
+        "path": "out/seven.json",
+        "answer": "F1. Finding number 1 with severity High.\nF2. Finding number 2 with severity High.\nF3. Finding number 3 with severity High.\nF4. Finding number 4 with severity High.\nF5. Finding number 5 with severity High.\nF6. Finding number 6 with severity High.\nF7. Finding number 7 with severity High."
+      }
+    },
+    {
+      "tool": "packet",
+      "args": [
+        "--run",
+        "{run}",
+        "record",
+        "--result",
+        "out/seven.json"
+      ]
+    },
+    {
+      "tool": "packet",
+      "args": [
+        "--run",
+        "{run}",
+        "consume"
+      ]
+    },
+    {
+      "tool": "control",
+      "args": [
+        "status"
+      ]
+    }
+  ]
+}

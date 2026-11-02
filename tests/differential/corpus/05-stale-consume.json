@@ -1,0 +1,122 @@
+{
+  "name": "05-stale-consume",
+  "steps": [
+    {
+      "tool": "control",
+      "args": [
+        "mode",
+        "session",
+        "--scope",
+        "contact-request",
+        "--shared",
+        "form=contact-request"
+      ]
+    },
+    {
+      "tool": "control",
+      "args": [
+        "checkpoint",
+        "--id",
+        "batch-1",
+        "--stage",
+        "implementation",
+        "--affected",
+        "contact-request",
+        "--task",
+        "task.json",
+        "--input",
+        "page.html",
+        "--origin",
+        "checkpoint"
+      ]
+    },
+    {
+      "tool": "packet",
+      "args": [
+        "--run",
+        "{run}",
+        "prepare",
+        "--evidence",
+        "evidence.json"
+      ]
+    },
+    {
+      "tool": "packet",
+      "args": [
+        "--run",
+        "{run}",
+        "claim"
+      ]
+    },
+    {
+      "result_from_packet": {
+        "path": "out/result.json"
+      }
+    },
+    {
+      "tool": "packet",
+      "args": [
+        "--run",
+        "{run}",
+        "record",
+        "--result",
+        "out/result.json"
+      ]
+    },
+    {
+      "tool": "packet",
+      "args": [
+        "--run",
+        "{run}",
+        "consume"
+      ]
+    },
+    {
+      "append": "evidence.json",
+      "text": " "
+    },
+    {
+      "tool": "packet",
+      "args": [
+        "--run",
+        "{run}",
+        "consume"
+      ]
+    },
+    {
+      "append": "page.html",
+      "text": "<!-- edit -->"
+    },
+    {
+      "tool": "control",
+      "args": [
+        "phase",
+        "{run}",
+        "repair"
+      ]
+    },
+    {
+      "tool": "packet",
+      "args": [
+        "--run",
+        "{run}",
+        "consume"
+      ]
+    },
+    {
+      "tool": "control",
+      "args": [
+        "finish",
+        "{run}",
+        "--result",
+        "remaining"
+      ]
+    },
+    {
+      "tool": "control",
+      "args": [
+        "status"
+      ]
+    }
+  ]
+}
