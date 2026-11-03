@@ -23,3 +23,4 @@ One file per entry of the decision log in `docs/plans/initial-implementation-pla
 - [D-19](0019-dias-repairs-land-on-the-deployed-service.md): Dias pilot repairs land on the deployed service (B-09)
 - [D-20](0020-dias-pilot-repair-accepted.md): Dias pilot repair accepted (S5.11)
 - [D-21](0021-redesign-first-method-adopted.md): Redesign-first method adopted, with walkthrough mode, prompt hand-off and comparison record
+- [D-22](0022-dias-session-needs-me-direction-accepted.md): Dias phone client redesign direction accepted (session-needs-me), with the Mimo look
