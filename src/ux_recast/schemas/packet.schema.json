@@ -42,7 +42,10 @@
     "claimed_at": {"type": "string"},
     "submitted_at": {"type": "string"},
     "submit_outcome": {"enum": ["delivered", "rejected", "unknown"]},
-    "submit_error": {"type": "string"}
+    "submit_error": {"type": "string"},
+    "review_mode": {"enum": ["review", "walkthrough"], "description": "Present only when the packet was prepared in a mode other than review; absent means review, so a review-mode packet stays byte-identical to the Lugos one."},
+    "rubric_version": {"type": "string", "description": "The packaged rubric VERSION; recorded with review_mode."}
   },
+  "dependentRequired": {"review_mode": ["rubric_version"]},
   "additionalProperties": true
 }

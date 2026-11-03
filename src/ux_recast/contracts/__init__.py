@@ -5,12 +5,14 @@ This module is a small standard-library validator that enforces the parts of
 those schemas the code relies on (required keys, types, enumerations) and names
 the offending field. The Lugos artifacts (``.ux-review`` state, ``packet.json``,
 ``receipt.json``) keep ``schema_version: 1`` exactly as the Lugos scripts write
-them; nothing here changes the inner Autowork request.
+them; nothing here changes the inner Autowork request. A walkthrough-mode
+packet adds ``review_mode`` and ``rubric_version`` to the outer packet only.
+``comparison`` is the before-and-after record that closes a redesign (D-21).
 """
 from importlib import resources
 import json
 
-KINDS = ("task", "state", "packet", "receipt", "findings")
+KINDS = ("task", "state", "packet", "receipt", "findings", "comparison")
 
 TASK_STRINGS = ("flow", "goal", "starting_conditions", "expected_outcome", "device_input", "source")
 STATE_MODES = {"off", "once", "session"}
@@ -22,6 +24,11 @@ FINDING_CATEGORIES = {"observed failure", "heuristic concern", "unresolved quest
 SEVERITIES = {"Critical", "High", "Medium", "Low"}
 CONFIDENCES = {"high", "medium", "low"}
 FINDING_KINDS = {"design", "implementation"}
+REVIEW_MODES = {"review", "walkthrough"}
+COMPARISON_SCHEMA = "ux-recast/comparison@1"
+IMPROVEMENT_KINDS = {"observed", "judgement"}
+DISPOSITIONS = {"addressed", "deferred", "rejected"}
+COMPARISON_DECISIONS = {"pending", "accepted", "revise", "rejected"}
 
 
 class ContractError(ValueError):
@@ -130,6 +137,9 @@ def validate_packet(packet, where="packet"):
     _enum(_require(packet, "dispatch_status", str, where), DISPATCH_STATUSES, f"{where}.dispatch_status")
     if "submit_outcome" in packet:
         _enum(packet["submit_outcome"], SUBMIT_OUTCOMES, f"{where}.submit_outcome")
+    if "review_mode" in packet:
+        _enum(packet["review_mode"], REVIEW_MODES, f"{where}.review_mode")
+        _require(packet, "rubric_version", str, where)
     return packet
 
 
@@ -179,8 +189,63 @@ def validate_findings(findings, where="findings"):
     return findings
 
 
+def _list_of_objects(obj, field, required, where, *, allow_empty=True):
+    items = _require(obj, field, list, where)
+    if not items and not allow_empty:
+        raise ContractError(f"{where}.{field}", "must not be empty")
+    for index, item in enumerate(items):
+        w = f"{where}.{field}[{index}]"
+        if not isinstance(item, dict):
+            raise ContractError(w, "expected object")
+        for key in required:
+            if not _require(item, key, str, w).strip():
+                raise ContractError(f"{w}.{key}", "empty")
+    return items
+
+
+def validate_comparison(comparison, where="comparison"):
+    """The before-and-after record that closes a redesign: same content, same conditions, claims separated by kind."""
+    if not isinstance(comparison, dict):
+        raise ContractError(where, "expected object")
+    if _require(comparison, "schema", str, where) != COMPARISON_SCHEMA:
+        raise ContractError(f"{where}.schema", f"must be {COMPARISON_SCHEMA}")
+    if not _require(comparison, "task", str, where).strip():
+        raise ContractError(f"{where}.task", "empty")
+    conditions = _require(comparison, "conditions", dict, where)
+    for key in ("content", "viewports", "revision_before", "revision_after"):
+        if key not in conditions:
+            raise ContractError(f"{where}.conditions.{key}", "missing")
+    if not isinstance(conditions["viewports"], list) or not conditions["viewports"]:
+        raise ContractError(f"{where}.conditions.viewports", "expected a non-empty list")
+    for side in ("before", "after"):
+        view = _require(comparison, side, dict, where)
+        if not _require(view, "flow", str, f"{where}.{side}").strip():
+            raise ContractError(f"{where}.{side}.flow", "empty")
+        _require(view, "evidence", list, f"{where}.{side}")
+    _list_of_objects(comparison, "structural_changes", ("change", "reason"), where)
+    for index, item in enumerate(_list_of_objects(comparison, "improvements",
+                                                  ("claim", "evidence_before", "evidence_after"), where, allow_empty=False)):
+        _enum(_require(item, "kind", str, f"{where}.improvements[{index}]"), IMPROVEMENT_KINDS,
+              f"{where}.improvements[{index}].kind")
+    for index, item in enumerate(_list_of_objects(comparison, "findings_disposition", ("id",), where)):
+        _enum(_require(item, "disposition", str, f"{where}.findings_disposition[{index}]"), DISPOSITIONS,
+              f"{where}.findings_disposition[{index}].disposition")
+    verification = _require(comparison, "verification", dict, where)
+    _require(verification, "checks", list, f"{where}.verification")
+    _require(verification, "failure_paths", list, f"{where}.verification")
+    _require(comparison, "assumptions", list, where)
+    if "score" in comparison:
+        raise ContractError(f"{where}.score", "a comparison records evidence and a decision, never a score")
+    _enum(_require(comparison, "decision", str, where), COMPARISON_DECISIONS, f"{where}.decision")
+    if comparison["decision"] != "pending":
+        for key in ("decided_by", "decided_at"):
+            if not _require(comparison, key, str, where).strip():
+                raise ContractError(f"{where}.{key}", "a decision names who made it and when")
+    return comparison
+
+
 _VALIDATORS = {"task": validate_task, "state": validate_state, "packet": validate_packet,
-               "receipt": validate_receipt, "findings": validate_findings}
+               "receipt": validate_receipt, "findings": validate_findings, "comparison": validate_comparison}
 
 
 def validate(kind, data):

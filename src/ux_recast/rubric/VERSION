@@ -4,4 +4,6 @@ source_path: plugins/lugos-toolset/skills/ux-review/references
 source_commit: see tests/test_rubric_bytes.py for the pinned sha256 of each file
 rubric.md_sha256: caeb6d842db6baf74f84f82d189ba5942064d591201399904af7610e231dfecf
 autowork-reviewer.md_sha256: 31329ddaab5f28d79d178278c7eaeaf59a4c07f9706887f4a4b423afc6c4e6f5
+walkthrough.md_sha256: 939abcc15e9128e984c81f30236c88e66e1361a771165b74e03be2ae811b97a6
+walkthrough.md_source: ux-recast (decision D-21); additive, not a Lugos copy, outside the D-15 freeze
 frozen_through: Phase 3 of docs/plans/initial-implementation-plan.md (decision D-15)

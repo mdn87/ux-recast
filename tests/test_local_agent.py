@@ -112,6 +112,32 @@ class LocalAgentProvider(unittest.TestCase):
                               capture_output=True, text=True, encoding="utf-8")
         self.assertEqual(proc.returncode, 2, "a second record against a recorded dispatch must be refused")
 
+    def test_cli_walkthrough_mode_and_prompt_hand_off(self):
+        base = [sys.executable, "-m", "ux_recast.cli"]
+        common = ["--project", str(self.root), "--session", SESSION, "--run", self.run_id]
+        proc = subprocess.run([*base, "review", *common, "--evidence", str(self.evidence), "--mode", "walkthrough"],
+                              capture_output=True, text=True, encoding="utf-8")
+        self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+        out = json.loads(proc.stdout)
+        self.assertEqual(out["review_mode"], "walkthrough")
+        self.assertIn("packet prompt", out["hand_off"])
+        self.assertEqual(json.loads((self.folder() / "provider.json").read_text(encoding="utf-8"))["mode"], "walkthrough")
+        proc = subprocess.run([*base, "packet", *common, "prompt"], capture_output=True)
+        self.assertEqual(proc.returncode, 0, proc.stderr)
+        packet = json.loads((self.folder() / "packet.json").read_text(encoding="utf-8"))
+        self.assertEqual(proc.stdout.decode("utf-8"), packet["request"]["task"])
+        self.assertTrue(proc.stdout.decode("utf-8").startswith("# Fresh-evaluator walkthrough assignment"))
+        target = self.root / "handoff.txt"
+        proc = subprocess.run([*base, "packet", *common, "prompt", "--out", str(target)],
+                              capture_output=True, text=True, encoding="utf-8")
+        self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+        self.assertEqual(target.read_bytes().decode("utf-8"), packet["request"]["task"])
+        self.assertEqual(json.loads(proc.stdout)["task_chars"], len(packet["request"]["task"]))
+        proc = subprocess.run([*base, "findings", *common, "--file", str(self._findings(reviewer="fresh subagent"))],
+                              capture_output=True, text=True, encoding="utf-8")
+        self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+        self.assertTrue(json.loads(proc.stdout)["accepted"])
+
 
 if __name__ == "__main__":
     unittest.main()

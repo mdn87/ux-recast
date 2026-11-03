@@ -9,6 +9,7 @@ from ux_recast.contracts import KINDS, ContractError, schema, validate
 CORPUS = Path(__file__).parent / "corpus" / "lugos-2026-10-24"
 LIVE = Path(__file__).parent / "corpus" / "lugos-2026-11-02"
 FIXTURE_TASK = Path(__file__).parents[1] / "fixtures" / "contact-request" / "task.json"
+COMPARISON_EXAMPLE = Path(__file__).parents[1] / "templates" / "comparison.example.json"
 
 
 def load(name):
@@ -40,6 +41,11 @@ class Corpus(unittest.TestCase):
 
     def test_fixture_task(self):
         validate("task", json.loads(FIXTURE_TASK.read_text(encoding="utf-8")))
+
+    def test_comparison_example(self):
+        comparison = validate("comparison", json.loads(COMPARISON_EXAMPLE.read_text(encoding="utf-8")))
+        self.assertEqual(comparison["decision"], "pending")
+        self.assertEqual({i["kind"] for i in comparison["improvements"]}, {"observed", "judgement"})
 
     def test_corpus_has_no_local_paths(self):
         for path in CORPUS.glob("*.json"):
@@ -117,6 +123,37 @@ class Refusals(unittest.TestCase):
         packet = load("packet-plan.json")
         packet["schema_version"] = 2
         self.assertField("packet", packet, "packet.schema_version")
+
+    def test_packet_review_mode(self):
+        packet = load("packet-plan.json")
+        packet.update(review_mode="walkthrough", rubric_version="1")
+        validate("packet", packet)
+        packet["review_mode"] = "scored"
+        self.assertField("packet", packet, "packet.review_mode")
+        unversioned = load("packet-plan.json")
+        unversioned["review_mode"] = "walkthrough"
+        self.assertField("packet", unversioned, "packet.rubric_version")
+
+    def test_comparison_refusals(self):
+        base = json.loads(COMPARISON_EXAMPLE.read_text(encoding="utf-8"))
+        scored = copy.deepcopy(base)
+        scored["score"] = 31
+        self.assertField("comparison", scored, "comparison.score")
+        unlabelled = copy.deepcopy(base)
+        unlabelled["improvements"][0]["kind"] = "measured"
+        self.assertField("comparison", unlabelled, "comparison.improvements[0].kind")
+        empty = copy.deepcopy(base)
+        empty["improvements"] = []
+        self.assertField("comparison", empty, "comparison.improvements")
+        anonymous = copy.deepcopy(base)
+        anonymous["decision"] = "accepted"
+        self.assertField("comparison", anonymous, "comparison.decided_by")
+        no_viewport = copy.deepcopy(base)
+        no_viewport["conditions"]["viewports"] = []
+        self.assertField("comparison", no_viewport, "comparison.conditions.viewports")
+        foreign = copy.deepcopy(base)
+        foreign["schema"] = "bwa-ux-recast/comparison@1"
+        self.assertField("comparison", foreign, "comparison.schema")
 
     def test_receipt_accepted_requires_completed(self):
         receipt = load("receipt-plan.json")

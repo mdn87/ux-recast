@@ -6,6 +6,11 @@ it, and writes ``findings.template.json`` next to it. The agent fills the
 template, then ``record`` validates the findings and records them through the
 ordinary packet lifecycle as a normalized result whose ``answer`` is the
 findings JSON. No model provider and no network are involved.
+
+Who fills the template is the caller's choice. For a fresh evaluation (the
+``walkthrough`` mode especially) hand a separate agent context exactly the text
+``lugos_autowork.prompt`` returns plus the listed visual inputs, nothing else,
+and record what it returns. The ``reviewer`` field of the findings names it.
 """
 import json
 from datetime import datetime, timezone
@@ -17,8 +22,8 @@ from ux_recast.providers import lugos_autowork as packets
 PROVIDER = "local-agent"
 
 
-def prepare(project, session, run_id, evidence_path, *, config=None):
-    packet = packets.prepare(project, session, run_id, evidence_path)
+def prepare(project, session, run_id, evidence_path, *, config=None, mode="review"):
+    packet = packets.prepare(project, session, run_id, evidence_path, mode=mode)
     request = packets.claim(project, session, run_id, config=config)
     folder = packets.folder_for(project, session, run_id)
     template = {
@@ -45,9 +50,11 @@ def prepare(project, session, run_id, evidence_path, *, config=None):
         "remaining_uncertainty": "<what the reviewer could not assess>",
     }
     packets.write_json(folder / "findings.template.json", template)
-    packets.write_json(folder / "provider.json", {"provider": PROVIDER, "prepared_at": packets.now()})
-    return {"packet": packet, "request_chars": len(request["task"]),
-            "findings_template": str(folder / "findings.template.json")}
+    packets.write_json(folder / "provider.json", {"provider": PROVIDER, "mode": mode, "prepared_at": packets.now()})
+    return {"packet": packet, "request_chars": len(request["task"]), "review_mode": mode,
+            "findings_template": str(folder / "findings.template.json"),
+            "hand_off": "For a fresh-context evaluator: give it only the output of 'packet prompt' "
+                        "and the visual_inputs files, then record its findings with 'findings'."}
 
 
 def record(project, session, run_id, findings_path):

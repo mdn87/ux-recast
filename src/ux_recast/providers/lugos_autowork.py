@@ -21,6 +21,10 @@ from ux_recast.cycle.control import bound_changes, config_values, execute, locke
 # name Claude Code shows for it, kept as a fallback.
 TOOL_NAMES = ("lugos.models", "lugos_models")
 SUBMIT_MARGIN_SECONDS = 120
+# Review modes: which assignment precedes the rubric in the packet's task. A
+# review-mode packet is byte-identical to the Lugos legacy packet (D-15 parity);
+# any other mode also records review_mode and rubric_version in the outer packet.
+REVIEWERS = {"review": "autowork-reviewer.md", "walkthrough": "walkthrough.md"}
 REQUIREMENTS = "the ux-recast 'mcp' extra (pip install ux-recast[mcp])"
 
 
@@ -97,7 +101,9 @@ def result_problems(result, packet):
     return problems
 
 
-def prepare(project, session, run_id, evidence_path):
+def prepare(project, session, run_id, evidence_path, *, mode="review"):
+    if mode not in REVIEWERS:
+        raise ValueError(f"Unknown review mode {mode!r}; modes are {sorted(REVIEWERS)}")
     root = Path(project).resolve(strict=True)
     state, run = active(root, session, run_id)
     evidence_path = local_file(root, evidence_path)
@@ -116,9 +122,10 @@ def prepare(project, session, run_id, evidence_path):
         raise ValueError("Include a proposed plan or observed interaction evidence")
     activation = {"mode": state["mode"], "scope": state["scope"], "checkpoint": run["checkpoint"],
                   "controller_run_id": run_id, "budget": run["budget"]}
-    references = {name: _rubric.read_text(name) for name in ("rubric.md", "autowork-reviewer.md")}
+    reviewer = REVIEWERS[mode]
+    references = {name: _rubric.read_text(name) for name in ("rubric.md", reviewer)}
     task = "\n\n".join([
-        references["autowork-reviewer.md"],
+        references[reviewer],
         "UX review activation (explicit parent scope, not extra tool authority):\n" + json.dumps(activation),
         "Original task requirements:\n" + json.dumps(run["task"], ensure_ascii=False),
         "Interaction-design rubric:\n" + references["rubric.md"],
@@ -136,6 +143,8 @@ def prepare(project, session, run_id, evidence_path):
     packet = {"schema_version": 1, "activation": activation, "request": request,
               "task_sha256": digest(task.encode()), "sources": sources,
               "rubric_sha256": digest(references["rubric.md"].encode()), "dispatch_status": "prepared"}
+    if mode != "review":
+        packet.update(review_mode=mode, rubric_version=_rubric.version())
     folder = folder_for(root, session, run_id)
     with locked(folder / "dispatch.lock"):
         active(root, session, run_id)
@@ -160,6 +169,27 @@ def claim(project, session, run_id, *, config=None):
         packet.update(dispatch_status="claimed", claimed_at=now())
         write_json(folder / "packet.json", packet)
         return packet["request"]
+
+
+def prompt(project, session, run_id):
+    """The claimed packet's exact task text, for handing to a fresh-context evaluator.
+
+    Returns the text and the paths of any visual inputs. The caller gives an
+    evaluator exactly these and nothing else; the evaluator's findings come back
+    through the local-agent ``findings`` step. Nothing is dispatched here."""
+    root = Path(project).resolve(strict=True)
+    state = execute(root, session, ["status"])
+    if not any(r["run_id"] == run_id for r in state["runs"]):
+        raise ValueError("Unknown controller run")
+    folder = folder_for(root, session, run_id)
+    with locked(folder / "dispatch.lock"):
+        packet = load_packet(folder)
+        if packet["dispatch_status"] not in ("claimed", "submitted"):
+            raise ValueError("Prompt requires one claimed, unrecorded dispatch; prepare and claim first")
+        verify_inputs(packet)
+    return {"task": packet["request"]["task"], "task_sha256": packet["task_sha256"],
+            "visual_inputs": list(packet["request"].get("visual_inputs", [])),
+            "review_mode": packet.get("review_mode", "review")}
 
 
 def server_parameters(server_command):
@@ -347,8 +377,13 @@ def main():
     p.add_argument("--session", required=True)
     p.add_argument("--run", required=True)
     sub = p.add_subparsers(dest="command", required=True)
-    sub.add_parser("prepare").add_argument("--evidence", type=Path, required=True)
+    prepare_parser = sub.add_parser("prepare")
+    prepare_parser.add_argument("--evidence", type=Path, required=True)
+    prepare_parser.add_argument("--mode", choices=sorted(REVIEWERS), default="review",
+                                help="review: bounded reviewer; walkthrough: fresh-evaluator cognitive walkthrough")
     sub.add_parser("claim").add_argument("--config", action="append", default=None)
+    prompt_parser = sub.add_parser("prompt", help="print the claimed packet's exact task text for a fresh evaluator")
+    prompt_parser.add_argument("--out", type=Path, default=None, help="write the task text here instead of stdout")
     submit_parser = sub.add_parser("submit")
     submit_parser.add_argument("--result", type=Path, required=True)
     submit_parser.add_argument("--request-file", type=Path, default=None)
@@ -361,7 +396,17 @@ def main():
     a = p.parse_args()
     try:
         if a.command == "prepare":
-            output = prepare(a.project, a.session, a.run, a.evidence)
+            output = prepare(a.project, a.session, a.run, a.evidence, mode=a.mode)
+        elif a.command == "prompt":
+            result = prompt(a.project, a.session, a.run)
+            if a.out:
+                a.out.parent.mkdir(parents=True, exist_ok=True)
+                a.out.write_bytes(result["task"].encode("utf-8"))
+                output = {**result, "task": str(a.out), "task_chars": len(result["task"])}
+            else:
+                sys.stdout.buffer.write(result["task"].encode("utf-8"))
+                sys.stdout.flush()
+                return 0
         elif a.command == "claim":
             output = claim(a.project, a.session, a.run,
                            config=config_values(a.config) if a.config is not None else None)

@@ -1,5 +1,9 @@
 """S1.3 / decision D-15: the packaged rubric bytes are frozen to the Lugos copies through the migration.
 
+``walkthrough.md`` (D-21) is a ux-recast addition, not a Lugos copy: its digest
+is recorded in ``VERSION`` so a change to it is deliberate, and adding it leaves
+the frozen files and the rubric version untouched.
+
 The pinned digests are the sha256 of the Lugos files at copy time. When a Lugos
 checkout is present next to this repository (../lugos) the test also compares
 against it byte for byte; otherwise that half is skipped and the pins stand.
@@ -30,6 +34,17 @@ class RubricBytes(unittest.TestCase):
         self.assertEqual(rubric.version(), "1")
         for name, digest in PINNED.items():
             self.assertIn(f"{name}_sha256: {digest}", text)
+
+    def test_walkthrough_digest_is_recorded(self):
+        digest = hashlib.sha256(rubric.read_bytes("walkthrough.md")).hexdigest()
+        self.assertIn(f"walkthrough.md_sha256: {digest}", rubric.read_text("VERSION"))
+        self.assertNotIn(b"\r", rubric.read_bytes("walkthrough.md"))
+
+    def test_walkthrough_asks_the_four_questions_and_forbids_inference(self):
+        text = rubric.read_text("walkthrough.md")
+        for needle in ("know what to try next", "notice", "recognise", "understand what happened",
+                       "must not fill a gap", "No aggregate score"):
+            self.assertIn(needle, text)
 
     @unittest.skipUnless(LUGOS_REFERENCES.is_dir(), "no Lugos checkout beside this repository")
     def test_matches_lugos_checkout(self):

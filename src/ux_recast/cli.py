@@ -3,11 +3,15 @@
 Verbs mirror the Lugos scripts so a shim can forward argv unchanged:
 
     ux-recast control  --project P --session S <status|mode|checkpoint|phase|finish> ...
-    ux-recast packet   --project P --session S --run R <prepare|claim|submit|record|consume> ...
-    ux-recast review   --project P --session S --run R --evidence E.json [--config NAME=ID]
+    ux-recast packet   --project P --session S --run R <prepare|claim|prompt|submit|record|consume> ...
+    ux-recast review   --project P --session S --run R --evidence E.json [--mode review|walkthrough] [--config NAME=ID]
     ux-recast findings --project P --session S --run R --file findings.json
-    ux-recast rubric   --version | --print <rubric.md|autowork-reviewer.md>
-    ux-recast validate <task|state|packet|receipt|findings> FILE
+    ux-recast rubric   --version | --print <rubric.md|autowork-reviewer.md|walkthrough.md>
+    ux-recast validate <task|state|packet|receipt|findings|comparison> FILE
+
+``review`` prepares and claims a packet and writes a findings template; whoever
+fills it is the reviewer. For a fresh-context evaluator, hand it exactly the
+output of ``packet prompt`` and record its findings with ``findings``.
 """
 import argparse
 import json
@@ -36,11 +40,13 @@ def _review(argv):
     p.add_argument("--run", required=True)
     p.add_argument("--evidence", type=Path, required=True)
     p.add_argument("--config", action="append", default=None)
+    p.add_argument("--mode", choices=["review", "walkthrough"], default="review",
+                   help="review: bounded reviewer assignment; walkthrough: fresh-evaluator cognitive walkthrough")
     p.add_argument("--provider", choices=["local"], default="local",
                    help="who fulfils the packet; the Lugos Autowork lane is driven through 'packet submit' instead")
     a = p.parse_args(argv)
     config = config_values(a.config) if a.config is not None else None
-    return _emit(lambda: local_agent.prepare(a.project, a.session, a.run, a.evidence, config=config))
+    return _emit(lambda: local_agent.prepare(a.project, a.session, a.run, a.evidence, config=config, mode=a.mode))
 
 
 def _findings(argv):
@@ -58,7 +64,7 @@ def _rubric(argv):
     from ux_recast import rubric
     p = argparse.ArgumentParser(prog="ux-recast rubric")
     p.add_argument("--version", action="store_true")
-    p.add_argument("--print", choices=["rubric.md", "autowork-reviewer.md"])
+    p.add_argument("--print", choices=["rubric.md", "autowork-reviewer.md", "walkthrough.md"])
     a = p.parse_args(argv)
     if a.print:
         sys.stdout.write(rubric.read_text(a.print))
@@ -70,7 +76,7 @@ def _rubric(argv):
 def _validate(argv):
     from ux_recast.contracts import ContractError, validate
     p = argparse.ArgumentParser(prog="ux-recast validate")
-    p.add_argument("kind", choices=["task", "state", "packet", "receipt", "findings"])
+    p.add_argument("kind", choices=["task", "state", "packet", "receipt", "findings", "comparison"])
     p.add_argument("file", type=Path)
     a = p.parse_args(argv)
     try:

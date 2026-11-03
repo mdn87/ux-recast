@@ -15,10 +15,11 @@ import zipfile
 
 ROOT = Path(__file__).parents[1]
 EXPECTED = {
-    "ux_recast/rubric/rubric.md", "ux_recast/rubric/autowork-reviewer.md", "ux_recast/rubric/VERSION",
+    "ux_recast/rubric/rubric.md", "ux_recast/rubric/autowork-reviewer.md", "ux_recast/rubric/walkthrough.md",
+    "ux_recast/rubric/VERSION",
     "ux_recast/schemas/task.schema.json", "ux_recast/schemas/state.schema.json",
     "ux_recast/schemas/packet.schema.json", "ux_recast/schemas/receipt.schema.json",
-    "ux_recast/schemas/findings.schema.json",
+    "ux_recast/schemas/findings.schema.json", "ux_recast/schemas/comparison.schema.json",
 }
 
 PROBE = r"""
@@ -76,7 +77,7 @@ class WheelPackageData(unittest.TestCase):
         self.assertTrue(payload["file"].replace("\\", "/").startswith(str(self.target).replace("\\", "/")), payload["file"])
         self.assertEqual(payload["rubric_version"], "1")
         self.assertGreater(payload["rubric_bytes"], 1000)
-        self.assertEqual(payload["schemas"], ["findings", "packet", "receipt", "state", "task"])
+        self.assertEqual(payload["schemas"], ["comparison", "findings", "packet", "receipt", "state", "task"])
 
 
 if __name__ == "__main__":

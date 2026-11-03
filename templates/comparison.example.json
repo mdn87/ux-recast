@@ -1,0 +1,45 @@
+{
+  "schema": "ux-recast/comparison@1",
+  "task": "prepare-document-package",
+  "conditions": {
+    "content": "Project P-EXAMPLE with three stored templates, one missing recipient address, and a 14-item attachment list",
+    "viewports": ["375x812", "1440x900"],
+    "revision_before": "git abc1234",
+    "revision_after": "git def5678",
+    "notes": "Same seeded database both sides; same operator account; fonts installed."
+  },
+  "before": {
+    "flow": "ux/prepare-document-package/flows.md#current",
+    "evidence": ["ux/prepare-document-package/before/01-projects.png", "ux/prepare-document-package/before/observations.json"]
+  },
+  "after": {
+    "flow": "ux/prepare-document-package/flows.md#proposed",
+    "evidence": ["ux/prepare-document-package/after/01-prepare.png", "ux/prepare-document-package/after/observations.json"]
+  },
+  "structural_changes": [
+    {"change": "Projects, Templates, Jobs and Outputs collapsed into one 'Prepare document package' action inside the project", "reason": "The person's task starts from a project; the four destinations mirrored storage, not work."},
+    {"change": "Configuration forms replaced by a review of populated values with only missing or variable choices editable", "reason": "Eleven of fourteen values were already stored on the project record."}
+  ],
+  "improvements": [
+    {"claim": "Repeated entry of the recipient block removed", "evidence_before": "before/observations.json step 4: recipient typed although present on the project", "evidence_after": "after/observations.json step 2: recipient shown populated, editable", "kind": "observed"},
+    {"claim": "Readiness visible before generation instead of after a failed job", "evidence_before": "before/05-job-error.png", "evidence_after": "after/03-readiness.png", "kind": "observed"},
+    {"claim": "The result screen makes the next action obvious", "evidence_before": "before/07-completed.png", "evidence_after": "after/05-result.png", "kind": "judgement"}
+  ],
+  "findings_disposition": [
+    {"id": "W1", "disposition": "addressed", "note": "Label 'Jobs' no longer appears."},
+    {"id": "W4", "disposition": "deferred", "note": "Batch path for expert operators designed, not built in this cycle."}
+  ],
+  "verification": {
+    "checks": [
+      {"name": "test_prepare_package_happy_path", "before": "ok", "after": "ok"},
+      {"name": "test_missing_recipient_blocks_generation_with_reason", "before": "FAIL", "after": "ok"}
+    ],
+    "failure_paths": ["template missing on disk", "generation service unavailable then retried", "cancel during generation"],
+    "walkthrough": ".ux-review/packets/<key>-<run>/findings.json"
+  },
+  "assumptions": [
+    "Operators prepare packages a few times a week; the guided sequence is the default and the batch path is secondary.",
+    "The automated walkthrough is an inspection, not a test with people."
+  ],
+  "decision": "pending"
+}

@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/mdn87/ux-recast/schemas/comparison.schema.json",
+  "title": "ux-recast comparison record (ux-recast/comparison@1)",
+  "description": "The before-and-after record that closes a redesign of one task: the same content under the same conditions, the structural changes explained, each improvement claimed with its evidence and labelled observed or judgement, what became of the findings, the verification run, the assumptions that remain, and a person's decision. A numerical score is not permitted; evidence and a decision are the record.",
+  "type": "object",
+  "required": ["schema", "task", "conditions", "before", "after", "structural_changes", "improvements", "findings_disposition", "verification", "assumptions", "decision"],
+  "properties": {
+    "schema": {"const": "ux-recast/comparison@1"},
+    "task": {"type": "string", "minLength": 1, "description": "The flow id of the task compared."},
+    "conditions": {
+      "type": "object",
+      "required": ["content", "viewports", "revision_before", "revision_after"],
+      "properties": {
+        "content": {"type": "string", "description": "The realistic content and data set both sides were exercised with."},
+        "viewports": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+        "revision_before": {"type": "string"},
+        "revision_after": {"type": "string"},
+        "notes": {"type": "string"}
+      }
+    },
+    "before": {"$ref": "#/$defs/side"},
+    "after": {"$ref": "#/$defs/side"},
+    "structural_changes": {
+      "type": "array",
+      "items": {"type": "object", "required": ["change", "reason"], "properties": {"change": {"type": "string"}, "reason": {"type": "string"}}}
+    },
+    "improvements": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["claim", "evidence_before", "evidence_after", "kind"],
+        "properties": {
+          "claim": {"type": "string", "description": "Specific: repeated entry removed, a decision possible with what is on screen, completion unambiguous."},
+          "evidence_before": {"type": "string"},
+          "evidence_after": {"type": "string"},
+          "kind": {"enum": ["observed", "judgement"], "description": "observed: shown by the evidence; judgement: a design judgement, labelled as such."}
+        }
+      }
+    },
+    "findings_disposition": {
+      "type": "array",
+      "items": {"type": "object", "required": ["id", "disposition"], "properties": {"id": {"type": "string"}, "disposition": {"enum": ["addressed", "deferred", "rejected"]}, "note": {"type": "string"}}}
+    },
+    "verification": {
+      "type": "object",
+      "required": ["checks", "failure_paths"],
+      "properties": {
+        "checks": {"type": "array", "items": {"type": "object", "properties": {"name": {"type": "string"}, "before": {"type": "string"}, "after": {"type": "string"}}}},
+        "failure_paths": {"type": "array", "items": {"type": "string"}, "description": "Failure and recovery paths exercised on the after side."},
+        "walkthrough": {"type": "string", "description": "Reference to the fresh-evaluator findings for the after side."}
+      }
+    },
+    "assumptions": {"type": "array", "items": {"type": "string"}},
+    "decision": {"enum": ["pending", "accepted", "revise", "rejected"]},
+    "decided_by": {"type": "string"},
+    "decided_at": {"type": "string"},
+    "decision_note": {"type": "string"}
+  },
+  "not": {"required": ["score"]},
+  "additionalProperties": true,
+  "$defs": {
+    "side": {
+      "type": "object",
+      "required": ["flow", "evidence"],
+      "properties": {
+        "flow": {"type": "string", "description": "The flow as steps, or a reference to flows.md."},
+        "evidence": {"type": "array", "items": {"type": "string"}, "description": "Screenshot and observation references."}
+      }
+    }
+  }
+}
