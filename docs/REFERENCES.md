@@ -43,6 +43,21 @@ Role preserved from the concept: optional visual selection linked to source cont
 - Demo: <https://www.react-grab.com/>
 - License: <https://github.com/aidenybai/react-grab/blob/main/LICENSE>
 
+## Redesign method references
+
+Added 2026-11-02 with the redesign-first method ([plan](plans/redesign-first.md), decision D-21), carried over from the firm copy's resource register. Each is read as text and adapted in this project's own words with the source named; nothing is vendored or invoked as a command, plugin, hook or MCP server by the method. The revisions are those the firm copy checked on 2026-11-02 with the GitHub API, not rechecked here; inspect the revision you use before adapting anything, and keep its notice if you do.
+
+| Reference | Licence, revision | Contribution | Not imported |
+| --- | --- | --- | --- |
+| Task analysis (Nielsen Norman Group, <https://www.nngroup.com/articles/task-analysis/>) | article | The sequence, complexity and decisions involved in accomplishing a goal; the basis for changing the interaction rather than the surface. Stages 1 and 2. | |
+| Cognitive walkthrough (Nielsen Norman Group, <https://www.nngroup.com/articles/cognitive-walkthroughs/>) | article | Step by step: is the next action recognizable, is its meaning clear, does the result communicate progress. `rubric/walkthrough.md` is this method written for a fresh-context agent. Stage 4. | |
+| Impeccable `shape` (`skill/reference/shape.md`) | Apache-2.0; `c3c94b960276`, release `cli-v4.8.0` | The brief structure `templates/brief.md` adapts. | Its interview cadence and its stop at a confirmed brief. |
+| Impeccable `distill` (`skill/reference/distill.md`) | same | Reorganize a surface around its one primary goal; document what was removed and why. Stage 3. | Its "ask if unclear from the codebase" interruption. |
+| Impeccable `critique` reference material (`skill/reference/critique.md`: cognitive load, heuristics, persona testing) | same | Background reading for the evaluator. | Its mandatory detector run, 0 to 40 health score and closing question (D-09). |
+| UI UX Pro Max | MIT; `713eef51b04e`, release `v2.15.0` | UX guidelines on forms, feedback, progressive disclosure, navigation and back behaviour in stage 3; its pre-delivery checklist (contrast 4.5:1, visible focus, reduced motion, reflow at 375/768/1024/1440) in stage 4. | Its design-system generator as a substitute for the brief. |
+
+The roles above for Impeccable (including D-11's agent commands), UI UX Pro Max and React Grab stand. Happy keeps its Dias role and contributes nothing to the redesign method.
+
 ## Newly supplied component-documentation reference
 
 ### Dimensional Drawing
