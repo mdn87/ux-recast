@@ -4,7 +4,9 @@ The baseline (`tests/differential/baseline-ux-recast.json`) was recorded on
 2026-11-02 and verified byte-identical, after normalization, to the Lugos legacy
 scripts at e868aec4 and to the Phase 3 shims. This test keeps the package's own
 behaviour from drifting; the cross-implementation comparison is run from Lugos
-(slice S3.4) with the same harness.
+(slice S3.4) with the same harness. The recorded strings were re-normalized in
+place on 2026-11-02 (project-path separators to ``/``, the tree's CRLF to LF) so
+the Windows recording compares on Linux; no scenario was re-run to make it.
 """
 from pathlib import Path
 import subprocess

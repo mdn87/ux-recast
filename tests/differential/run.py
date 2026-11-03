@@ -8,7 +8,10 @@ Each corpus scenario (``corpus/*.json``) is a list of steps run in a fresh proje
 directory. For every step the harness keeps the exit code and the normalized
 stdout; at the end it keeps the normalized ``.ux-review/`` tree. Normalization
 replaces the project path, run ids and timestamps with placeholders so two runs
-of the same implementation are byte-identical. Everything else must match.
+of the same implementation are byte-identical. Paths under the project are
+written with ``/``, and the tree's files are read with the platform's newline
+translated, as Python's text mode reads them, so a baseline recorded on one
+operating system compares on the other. Everything else must match.
 
     python tests/differential/run.py --impl a=... --impl b=...        # diff a against b
     python tests/differential/run.py --impl a=... --record out.json   # freeze a as a baseline
@@ -75,6 +78,9 @@ class Normalizer:
         for form in self.forms:
             value = value.replace(form, "<project>")
         value = self.project_pattern.sub("<project>", value)
+        # The separators inside a project path are the platform's (repr() doubles a backslash, JSON doubles it again).
+        value = re.sub(r"<project>((?:(?:\\+|/)[\w.-]+)+)",
+                       lambda m: "<project>" + re.sub(r"\\+", "/", m.group(1)), value)
         value = re.sub(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})", "<time>", value)
         value = re.sub(r"local-\d{8}-\d{6}", "local-<stamp>", value)
 
@@ -161,7 +167,8 @@ def run_scenario(impl, scenario, python):
                 rel = norm.text(str(path.relative_to(project)).replace("\\", "/"))
                 raw = path.read_bytes()
                 try:
-                    tree[rel] = norm.text(raw.decode("utf-8"))
+                    # Both implementations write state in text mode, so the newline on disk is the platform's.
+                    tree[rel] = norm.text(raw.decode("utf-8").replace(os.linesep, "\n"))
                 except UnicodeDecodeError:
                     tree[rel] = f"<binary {len(raw)} bytes>"
         return {"steps": steps_out, "tree": tree}
