@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/mdn87/ux-recast/schemas/lesson.schema.json",
+  "title": "ux-recast lesson front matter",
+  "description": "The front matter of a lesson file: a Markdown file whose first block holds one `key: <JSON value>` line per field. A project lesson lives in .ux-recast/lessons/project/; promotion copies it to the shared tier. A rejected or superseded lesson is kept, never deleted, and records why (concept C-59).",
+  "type": "object",
+  "required": ["id", "title", "status", "identity", "created_at", "supported_by"],
+  "properties": {
+    "id": {"type": "string", "pattern": "^L-[0-9a-f]{8}$"},
+    "title": {"type": "string", "minLength": 1},
+    "status": {"enum": ["candidate", "project", "shared", "rejected", "superseded"]},
+    "identity": {"type": "string", "description": "The originating project: normalized origin remote, '#', root commit hash."},
+    "created_at": {"type": "string"},
+    "links": {
+      "type": "object",
+      "description": "What the lesson rests on, by name (finding, diff, before, after, test, outcome): project-relative paths, optionally with a #fragment.",
+      "additionalProperties": {"type": "array", "items": {"type": "string"}}
+    },
+    "supported_by": {
+      "type": "array",
+      "description": "Outcomes that support the lesson, each from a project identity computed when the support was added.",
+      "items": {"type": "object", "required": ["identity", "outcome"], "properties": {"identity": {"type": "string"}, "outcome": {"type": "string"}}}
+    },
+    "reason": {"type": "string", "description": "Why the lesson was rejected or superseded."},
+    "superseded_by": {"type": "string", "description": "The lesson that replaces a superseded one, when there is one."},
+    "promoted_at": {"type": "string"},
+    "promoted_by_instruction": {"type": "string", "description": "The user's explicit instruction, when a lesson was promoted without a second project's support."}
+  },
+  "allOf": [
+    {"if": {"properties": {"status": {"enum": ["rejected", "superseded"]}}},
+     "then": {"required": ["reason"], "properties": {"reason": {"minLength": 1}}}}
+  ],
+  "additionalProperties": true
+}

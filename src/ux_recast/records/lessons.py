@@ -13,6 +13,10 @@ Support is added through ``add_support``, which computes the supporting
 project's identity itself and checks the cited Outcome exists in its
 ``decisions.jsonl``; ``supported_by`` is never taken on trust.
 
+A lesson moves candidate to project, then shared through promotion; a lesson
+that stops holding becomes rejected or superseded with a recorded reason and is
+kept, never deleted (C-59). ``set_status`` enforces those moves.
+
 A lesson file is Markdown with a front matter block of ``key: <JSON value>``
 lines (valid YAML), then the lesson text. Events (refusals, bypasses and
 promotions) are appended to ``.ux-recast/lessons/log.jsonl`` and logged.
@@ -26,9 +30,12 @@ import re
 import subprocess
 import uuid
 
+from ux_recast.contracts import LESSON_STATUSES as STATUSES, ContractError, validate
 from ux_recast.records import decisions
 
-STATUSES = ("candidate", "project", "shared", "rejected", "superseded")
+# Moves set_status allows; candidate or project to shared happens only through promote().
+TRANSITIONS = {"candidate": {"project", "rejected"}, "project": {"rejected", "superseded"},
+               "shared": {"superseded"}, "rejected": set(), "superseded": set()}
 LESSON_ID = re.compile(r"^L-[0-9a-f]{8}$")
 REFUSAL = "no supporting outcome from a second project identity"
 SHARED_DIR = Path(__file__).parents[1] / "lessons" / "shared"
@@ -63,7 +70,11 @@ def _now():
 
 
 def _dump(meta, body):
-    head = "".join(f"{key}: {json.dumps(meta[key], ensure_ascii=False, sort_keys=True)}\n" for key in meta)
+    try:
+        validate("lesson", meta)
+    except ContractError as error:
+        raise ValueError(str(error)) from error
+    head ="".join(f"{key}: {json.dumps(meta[key], ensure_ascii=False, sort_keys=True)}\n" for key in meta)
     return f"---\n{head}---\n\n{body.strip()}\n"
 
 
@@ -174,3 +185,30 @@ def promote(project, lesson_id, shared_dir=SHARED_DIR, *, instruction=None):
     _event(project, "promoted", lesson_id, shared=str(target), supported_by=others)
     return {"lesson": lesson_id, "shared": str(target), "supported_by": others,
             "by_instruction": "promoted_by_instruction" in meta}
+
+
+def set_status(project, lesson_id, status, *, reason=None, superseded_by=None, shared_dir=SHARED_DIR):
+    """Move a lesson along its lifecycle. Rejected and superseded need a reason; the lesson is kept either way."""
+    path = _path(project, lesson_id)
+    meta, body = _load(path)
+    if status not in STATUSES:
+        raise ValueError(f"status: {status!r} not in {', '.join(STATUSES)}")
+    if status not in TRANSITIONS[meta["status"]]:
+        raise ValueError(f"lesson {lesson_id}: cannot move from {meta['status']} to {status}")
+    if status in {"rejected", "superseded"}:
+        if not (reason or "").strip():
+            raise ValueError(f"reason: a {status} lesson records why")
+        meta["reason"] = reason.strip()
+    if superseded_by is not None:
+        if status != "superseded":
+            raise ValueError("superseded_by: only a superseded lesson names its replacement")
+        meta["superseded_by"] = superseded_by
+    previous = meta["status"]
+    meta.update(status=status, status_at=_now())
+    text = _dump(meta, body)
+    path.write_text(text, encoding="utf-8", newline="\n")
+    shared = Path(shared_dir) / f"{lesson_id}.md"
+    if previous == "shared" and shared.is_file():
+        shared.write_text(text, encoding="utf-8", newline="\n")
+    _event(project, "status", lesson_id, previous=previous, status=status, **({"reason": meta["reason"]} if "reason" in meta else {}))
+    return {"lesson": lesson_id, "previous": previous, "status": status}

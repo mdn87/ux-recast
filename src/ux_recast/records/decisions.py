@@ -25,14 +25,15 @@ KINDS = {"decision", "outcome"}
 log = logging.getLogger("ux_recast.records")
 
 
-def _paths(project):
+def _paths(project, name="decisions"):
     project = Path(project)
     records, cycle = project / ".ux-recast", project / ".ux-review"
     return {
-        "log": records / "decisions.jsonl",
-        "torn": records / "decisions.torn",
-        "lock": cycle / "decisions.lock",
-        "inflight": cycle / "decisions.inflight",
+        "name": name,
+        "log": records / f"{name}.jsonl",
+        "torn": records / f"{name}.torn",
+        "lock": cycle / f"{name}.lock",
+        "inflight": cycle / f"{name}.inflight",
     }
 
 
@@ -51,7 +52,7 @@ def _check(record):
 def _recover(paths):
     """Repair what a writer killed while holding the lock left behind."""
     holder = paths["inflight"].read_text(encoding="utf-8", errors="replace").strip() or "unknown"
-    log.warning("recovered stale decisions lock left by %s", holder)
+    log.warning("recovered stale %s lock left by %s", paths["name"], holder)
     target = paths["log"]
     if target.exists():
         data = target.read_bytes()
@@ -61,7 +62,7 @@ def _recover(paths):
                 torn.write(data[keep:] + b"\n")
             with open(target, "r+b") as handle:
                 handle.truncate(keep)
-            log.warning("moved a %d-byte torn decisions line to %s", len(data) - keep, paths["torn"].name)
+            log.warning("moved a %d-byte torn %s line to %s", len(data) - keep, paths["name"], paths["torn"].name)
     paths["inflight"].unlink()
 
 
@@ -74,9 +75,14 @@ def _write_all(fd, data):
 def append(project, record):
     """Append one record and return it with its assigned ``id`` and ``recorded_at``."""
     _check(record)
+    return _append(project, "decisions", record)
+
+
+def _append(project, name, record):
+    """Stamp ``record`` and append it to ``.ux-recast/<name>.jsonl`` under that log's own lock."""
     stored = {"id": uuid.uuid4().hex[:12], "recorded_at": datetime.now(timezone.utc).isoformat(), **record}
     line = (json.dumps(stored, ensure_ascii=False, sort_keys=True) + "\n").encode("utf-8")
-    paths = _paths(project)
+    paths = _paths(project, name)
     paths["log"].parent.mkdir(exist_ok=True)
     paths["lock"].parent.mkdir(exist_ok=True)
     with locked(paths["lock"]):
@@ -93,9 +99,9 @@ def append(project, record):
     return stored
 
 
-def read(project):
-    """Return every complete record in order; an empty list when there is no log yet."""
-    target = _paths(project)["log"]
+def read(project, name="decisions"):
+    """Return every complete record of ``.ux-recast/<name>.jsonl`` in order; an empty list when there is none yet."""
+    target = _paths(project, name)["log"]
     if not target.exists():
         return []
     with open(target, encoding="utf-8") as handle:

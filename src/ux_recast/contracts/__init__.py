@@ -7,12 +7,15 @@ the offending field. The Lugos artifacts (``.ux-review`` state, ``packet.json``,
 ``receipt.json``) keep ``schema_version: 1`` exactly as the Lugos scripts write
 them; nothing here changes the inner Autowork request. A walkthrough-mode
 packet adds ``review_mode`` and ``rubric_version`` to the outer packet only.
-``comparison`` is the before-and-after record that closes a redesign (D-21).
+``comparison`` is the before-and-after record that closes a redesign (D-21);
+version 2 adds the Improvement Loop fields (kind, baseline and candidate, frozen
+criteria, cited evidence, limitations, effort, and the six-value decision).
+``lesson`` is the front matter of a project or shared lesson.
 """
 from importlib import resources
 import json
 
-KINDS = ("task", "state", "packet", "receipt", "findings", "comparison")
+KINDS = ("task", "state", "packet", "receipt", "findings", "comparison", "lesson")
 
 TASK_STRINGS = ("flow", "goal", "starting_conditions", "expected_outcome", "device_input", "source")
 STATE_MODES = {"off", "once", "session"}
@@ -29,6 +32,11 @@ COMPARISON_SCHEMA = "ux-recast/comparison@1"
 IMPROVEMENT_KINDS = {"observed", "judgement"}
 DISPOSITIONS = {"addressed", "deferred", "rejected"}
 COMPARISON_DECISIONS = {"pending", "accepted", "revise", "rejected"}
+COMPARISON_SCHEMA_V2 = "ux-recast/comparison@2"
+COMPARISON_KINDS = {"product", "method"}
+COMPARISON_DECISIONS_V2 = {"accept", "revise", "keep_local", "reject", "insufficient_evidence", "keep_baseline"}
+EFFORT_FIELDS = ("review_passes", "retries", "false_findings", "user_interventions", "wall_time_seconds")
+LESSON_STATUSES = ("candidate", "project", "shared", "rejected", "superseded")
 
 
 class ContractError(ValueError):
@@ -207,8 +215,10 @@ def validate_comparison(comparison, where="comparison"):
     """The before-and-after record that closes a redesign: same content, same conditions, claims separated by kind."""
     if not isinstance(comparison, dict):
         raise ContractError(where, "expected object")
-    if _require(comparison, "schema", str, where) != COMPARISON_SCHEMA:
-        raise ContractError(f"{where}.schema", f"must be {COMPARISON_SCHEMA}")
+    version = _require(comparison, "schema", str, where)
+    if version not in (COMPARISON_SCHEMA, COMPARISON_SCHEMA_V2):
+        raise ContractError(f"{where}.schema", f"must be {COMPARISON_SCHEMA} or {COMPARISON_SCHEMA_V2}")
+    v2 = version == COMPARISON_SCHEMA_V2
     if not _require(comparison, "task", str, where).strip():
         raise ContractError(f"{where}.task", "empty")
     conditions = _require(comparison, "conditions", dict, where)
@@ -223,8 +233,11 @@ def validate_comparison(comparison, where="comparison"):
             raise ContractError(f"{where}.{side}.flow", "empty")
         _require(view, "evidence", list, f"{where}.{side}")
     _list_of_objects(comparison, "structural_changes", ("change", "reason"), where)
+    # Keeping the baseline is a valid result (C-58), so a v2 record that does not adopt the candidate may claim nothing.
+    claims_optional = v2 and comparison.get("decision") in {"pending", "keep_baseline", "reject", "insufficient_evidence"}
     for index, item in enumerate(_list_of_objects(comparison, "improvements",
-                                                  ("claim", "evidence_before", "evidence_after"), where, allow_empty=False)):
+                                                  ("claim", "evidence_before", "evidence_after"), where,
+                                                  allow_empty=claims_optional)):
         _enum(_require(item, "kind", str, f"{where}.improvements[{index}]"), IMPROVEMENT_KINDS,
               f"{where}.improvements[{index}].kind")
     for index, item in enumerate(_list_of_objects(comparison, "findings_disposition", ("id",), where)):
@@ -236,7 +249,10 @@ def validate_comparison(comparison, where="comparison"):
     _require(comparison, "assumptions", list, where)
     if "score" in comparison:
         raise ContractError(f"{where}.score", "a comparison records evidence and a decision, never a score")
-    _enum(_require(comparison, "decision", str, where), COMPARISON_DECISIONS, f"{where}.decision")
+    if v2:
+        _validate_comparison_v2(comparison, where)
+    _enum(_require(comparison, "decision", str, where),
+          (COMPARISON_DECISIONS_V2 | {"pending"}) if v2 else COMPARISON_DECISIONS, f"{where}.decision")
     if comparison["decision"] != "pending":
         for key in ("decided_by", "decided_at"):
             if not _require(comparison, key, str, where).strip():
@@ -244,8 +260,51 @@ def validate_comparison(comparison, where="comparison"):
     return comparison
 
 
+def _validate_comparison_v2(comparison, where):
+    _enum(_require(comparison, "kind", str, where), COMPARISON_KINDS, f"{where}.kind")
+    for key in ("baseline", "candidate"):
+        if not _require(comparison, key, str, where).strip():
+            raise ContractError(f"{where}.{key}", "empty")
+    criteria = _require(comparison, "criteria", dict, where)
+    if not _require(criteria, "frozen_at", str, f"{where}.criteria").strip():
+        raise ContractError(f"{where}.criteria.frozen_at", "criteria are frozen before the comparison starts; say when")
+    items = _require(criteria, "items", list, f"{where}.criteria")
+    if not items or not all(isinstance(i, str) and i.strip() for i in items):
+        raise ContractError(f"{where}.criteria.items", "expected a non-empty list of criteria")
+    evidence = _require(comparison, "evidence", list, where)
+    if not evidence or not all(isinstance(e, str) and e.strip() for e in evidence):
+        raise ContractError(f"{where}.evidence", "cite at least one piece of evidence")
+    limitations = _require(comparison, "limitations", list, where)
+    if not all(isinstance(item, str) and item.strip() for item in limitations):
+        raise ContractError(f"{where}.limitations", "expected a list of statements")
+    effort = _require(comparison, "effort", dict, where)
+    for key in EFFORT_FIELDS:
+        value = _require(effort, key, (int, float), f"{where}.effort")
+        if isinstance(value, bool) or value < 0 or (key != "wall_time_seconds" and not isinstance(value, int)):
+            raise ContractError(f"{where}.effort.{key}", "expected a non-negative count" if key != "wall_time_seconds"
+                                else "expected non-negative seconds")
+
+
+def validate_lesson(lesson, where="lesson"):
+    """A lesson's front matter: its tier status, identity, links and support; rejected and superseded need a reason."""
+    if not isinstance(lesson, dict):
+        raise ContractError(where, "expected object")
+    for key in ("id", "title", "identity", "created_at"):
+        _require(lesson, key, str, where)
+    status = _require(lesson, "status", str, where)
+    _enum(status, set(LESSON_STATUSES), f"{where}.status")
+    if status in {"rejected", "superseded"} and not str(lesson.get("reason", "")).strip():
+        raise ContractError(f"{where}.reason", f"a {status} lesson records why")
+    links = lesson.get("links", {})
+    if not isinstance(links, dict) or not all(isinstance(v, list) and all(isinstance(s, str) for s in v) for v in links.values()):
+        raise ContractError(f"{where}.links", "expected {name: [path, ...]}")
+    _list_of_objects(lesson, "supported_by", ("identity", "outcome"), where)
+    return lesson
+
+
 _VALIDATORS = {"task": validate_task, "state": validate_state, "packet": validate_packet,
-               "receipt": validate_receipt, "findings": validate_findings, "comparison": validate_comparison}
+               "receipt": validate_receipt, "findings": validate_findings, "comparison": validate_comparison,
+               "lesson": validate_lesson}
 
 
 def validate(kind, data):

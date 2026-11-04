@@ -124,6 +124,41 @@ class Lessons(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "^links\\."):
                 lessons.create(self.home, "t", "b", links=links)
 
+    def test_the_status_enum_is_exactly_the_five_states(self):
+        from ux_recast import contracts
+        self.assertEqual(lessons.STATUSES, ("candidate", "project", "shared", "rejected", "superseded"))
+        self.assertEqual(contracts.schema("lesson")["properties"]["status"]["enum"], list(lessons.STATUSES))
+
+    def test_rejecting_without_a_reason_is_refused_and_the_lesson_is_kept(self):
+        for reason in (None, "  "):
+            with self.assertRaisesRegex(ValueError, "^reason: a rejected lesson records why"):
+                lessons.set_status(self.home, self.lesson, "rejected", reason=reason)
+        self.assertEqual(lessons.read(self.home, self.lesson)["status"], "candidate")
+        lessons.set_status(self.home, self.lesson, "rejected", reason="did not hold on the second form")
+        kept = lessons.read(self.home, self.lesson)
+        self.assertEqual((kept["status"], kept["reason"]), ("rejected", "did not hold on the second form"))
+        self.assertEqual(_events(self.home)[-1], {**_events(self.home)[-1], "event": "status", "previous": "candidate",
+                                                   "status": "rejected", "reason": "did not hold on the second form"})
+        with self.assertRaisesRegex(ValueError, "cannot move from rejected to project"):
+            lessons.set_status(self.home, self.lesson, "project")
+
+    def test_lifecycle_moves(self):
+        self.assertEqual(lessons.set_status(self.home, self.lesson, "project")["status"], "project")
+        with self.assertRaisesRegex(ValueError, "cannot move from project to shared"):
+            lessons.set_status(self.home, self.lesson, "shared")
+        with self.assertRaisesRegex(ValueError, "^reason: a superseded lesson records why"):
+            lessons.set_status(self.home, self.lesson, "superseded")
+        newer = lessons.create(self.home, "Keep entries and focus the field", "Supersedes the first wording.")
+        lessons.set_status(self.home, self.lesson, "superseded", reason="reworded", superseded_by=newer)
+        self.assertEqual(lessons.read(self.home, self.lesson)["superseded_by"], newer)
+        with self.assertRaisesRegex(ValueError, "^superseded_by:"):
+            lessons.set_status(self.home, newer, "rejected", reason="x", superseded_by=self.lesson)
+
+    def test_superseding_a_shared_lesson_updates_its_shared_copy(self):
+        lessons.promote(self.home, self.lesson, self.shared, instruction="Matt: share it")
+        lessons.set_status(self.home, self.lesson, "superseded", reason="replaced", shared_dir=self.shared)
+        self.assertIn('status: "superseded"', (self.shared / f"{self.lesson}.md").read_text(encoding="utf-8"))
+
     def test_cli_promote_reports_the_refusal(self):
         out = io.StringIO()
         with redirect_stdout(out), self.assertLogs("ux_recast.records", "WARNING"):

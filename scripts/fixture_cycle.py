@@ -22,8 +22,11 @@ Phases, in order:
               Outcome with the after screenshots, diff, findings and passing
               test output archived, write the agent-authored project lesson
               linking them, commit, and check every link from a clean clone.
+    compare   (S2.6) record the product comparison: criteria, conditions,
+              verification, evidence and effort from the log; claims,
+              dispositions, limitations and the decision from --comparison.
 
-Usage: python scripts/fixture_cycle.py <phase> [--cycle fixture-cycle-001] [--findings F] [--page P] [--lesson L.json]
+Usage: python scripts/fixture_cycle.py <phase> [--cycle fixture-cycle-001] [--findings F] [--page P] [--lesson L.json] [--comparison C.json]
 """
 import argparse
 import hashlib
@@ -347,6 +350,61 @@ def lesson(a):
     print(json.dumps(log["lesson"], indent=2))
 
 
+def compare(a):
+    """Record the product comparison for this cycle (S2.6): the agent supplies the judgement, the log the rest."""
+    p = paths(a.cycle)
+    log = json.loads(p["log"].read_text(encoding="utf-8"))
+    if "lesson" not in log:
+        raise SystemExit("compare runs after the lesson phase")
+    if "comparison" in log:
+        raise SystemExit("this cycle already has its comparison; rerun from baseline for a new one")
+    install_audit_hook(p["access"])
+    spec = json.loads(Path(a.comparison).read_text(encoding="utf-8"))
+    from ux_recast.records import comparisons
+    run = log["final_state"]["runs"][-1]
+    before, after = log["before"]["outcomes"], log["after"]["outcomes"]
+    failure_paths = ["test_invalid_email_preserves_work_and_can_complete", "test_keyboard_validation_recovery",
+                     "test_slow_send_can_cancel_without_losing_work", "test_temporary_failure_allows_retry",
+                     "test_small_touch_viewport_recovery"]
+    record = {
+        "schema": "ux-recast/comparison@2", "kind": "product", "task": run["task"]["flow"],
+        "baseline": "index.before.html, the fixture's defective page",
+        "candidate": "index.repaired.html, the agent-authored repair applied in this cycle",
+        "criteria": {"frozen_at": f"checkpoint of run {log['run_id']}: task.json sha256 {run['manifest']['task_sha256']}, "
+                                  "bound by the controller before the review",
+                     "items": run["task"]["acceptance"]},
+        "conditions": {"content": run["task"]["starting_conditions"], "viewports": ["1100x900", "375x812 mobile with touch"],
+                       "revision_before": f"index.html sha256 {run['manifest']['inputs']['index.html']}",
+                       "revision_after": f"repair manifest {run['repair_manifests'][-1]}",
+                       "notes": "Both sides ran the fixture's seven Playwright flow tests in one session, Chromium."},
+        "before": {"flow": "the seven flow tests on the defective page", "evidence": ["before-tests.txt", "evidence.json"]},
+        "after": {"flow": "the same seven flow tests on the repaired page", "evidence": ["after-tests.txt", "oracle-tests.txt"]},
+        "structural_changes": spec["structural_changes"], "improvements": spec["improvements"],
+        "findings_disposition": spec["findings_disposition"],
+        "verification": {"checks": [{"name": name, "before": before.get(name, "absent"), "after": after[name]} for name in sorted(after)],
+                         "failure_paths": [name for name in failure_paths if after.get(name) == "ok"]},
+        "assumptions": run["task"].get("assumptions", []),
+        "evidence": ["before-tests.txt", "after-tests.txt", "oracle-tests.txt", "findings.json", "repair.diff",
+                     "screenshots/test_invalid_email_preserves_work_and_can_complete-rejected.png",
+                     f"ux-recast/evidence/{log['run_id']}/manifest.json", f"ux-recast/lessons/project/{log['lesson']['id']}.md"],
+        "limitations": spec["limitations"],
+        "effort": comparisons.effort_from_cycle(log, spec["findings_disposition"]),
+        "decision": spec["decision"], "decided_by": spec["decided_by"], "decided_at": spec["decided_at"],
+        "decision_note": spec["decision_note"],
+    }
+    stored = comparisons.append(p["work"], record)
+    log["comparison"] = {"id": stored["id"], "decision": stored["decision"], "effort": stored["effort"]}
+    log["phases"].append("compare")
+    export(p, log)
+    out = p["out"]
+    (out / "comparison.json").write_text(scrub(json.dumps(stored, indent=2, ensure_ascii=False)) + "\n", encoding="utf-8", newline="\n")
+    target = out / "ux-recast" / "comparisons.jsonl"
+    target.write_text(scrub((p["work"] / ".ux-recast" / "comparisons.jsonl").read_text(encoding="utf-8")), encoding="utf-8", newline="\n")
+    p["log"].write_text(json.dumps(log, indent=2), encoding="utf-8")
+    (out / "cycle.json").write_text(scrub(json.dumps(log, indent=2)), encoding="utf-8", newline="\n")
+    print(json.dumps(log["comparison"], indent=2))
+
+
 def export(p, log):
     """Copy the committed evidence set with local paths removed."""
     out = p["out"]
@@ -389,11 +447,13 @@ def scrub(text):
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("phase", choices=["baseline", "record", "repair", "finish", "lesson"])
+    ap.add_argument("phase", choices=["baseline", "record", "repair", "finish", "lesson", "compare"])
     ap.add_argument("--cycle", default="fixture-cycle-001")
     ap.add_argument("--findings", type=Path)
     ap.add_argument("--page", type=Path)
     ap.add_argument("--lesson", type=Path, help="agent-authored {title, body, finding, test}")
+    ap.add_argument("--comparison", type=Path, help="agent-authored {structural_changes, improvements, findings_disposition, "
+                                                     "limitations, decision, decided_by, decided_at, decision_note}")
     a = ap.parse_args()
     if a.phase == "record" and not a.findings:
         ap.error("record needs --findings")
@@ -401,7 +461,10 @@ def main():
         ap.error("repair needs --page")
     if a.phase == "lesson" and not a.lesson:
         ap.error("lesson needs --lesson")
-    {"baseline": baseline, "record": record, "repair": repair, "finish": finish, "lesson": lesson}[a.phase](a)
+    if a.phase == "compare" and not a.comparison:
+        ap.error("compare needs --comparison")
+    {"baseline": baseline, "record": record, "repair": repair, "finish": finish, "lesson": lesson,
+     "compare": compare}[a.phase](a)
 
 
 if __name__ == "__main__":

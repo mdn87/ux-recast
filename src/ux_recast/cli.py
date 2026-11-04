@@ -11,6 +11,7 @@ Verbs mirror the Lugos scripts so a shim can forward argv unchanged:
     ux-recast lessons  new     --project P --title T --body-file F
     ux-recast lessons  support --project P --lesson ID --from Q --outcome OUTCOME_ID
     ux-recast lessons  promote --project P --lesson ID [--shared-dir D] [--user-instruction TEXT]
+    ux-recast lessons  status  --project P --lesson ID --to STATUS [--reason R] [--superseded-by ID]
 
 ``review`` prepares and claims a packet and writes a findings template; whoever
 fills it is the reviewer. For a fresh-context evaluator, hand it exactly the
@@ -109,7 +110,15 @@ def _lessons(argv):
     promote.add_argument("--lesson", required=True)
     promote.add_argument("--shared-dir", type=Path, default=lessons.SHARED_DIR)
     promote.add_argument("--user-instruction", help="the user's explicit instruction to promote without a second project")
+    status = verbs.add_parser("status")
+    status.add_argument("--project", type=Path, required=True)
+    status.add_argument("--lesson", required=True)
+    status.add_argument("--to", required=True, choices=lessons.STATUSES)
+    status.add_argument("--reason")
+    status.add_argument("--superseded-by")
     a = p.parse_args(argv)
+    if a.verb == "status":
+        return _emit(lambda: lessons.set_status(a.project, a.lesson, a.to, reason=a.reason, superseded_by=a.superseded_by))
     if a.verb == "new":
         return _emit(lambda: {"lesson": lessons.create(a.project, a.title, a.body_file.read_text(encoding="utf-8"))})
     if a.verb == "support":

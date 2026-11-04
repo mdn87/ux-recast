@@ -143,7 +143,9 @@ C:\Python314\Lib\zipfile\__pycache__\__init__.cpython-314.pyc
 C:\Python314\Lib\zipfile\_path\__pycache__\__init__.cpython-314.pyc
 C:\Python314\Lib\zipfile\_path\__pycache__\glob.cpython-314.pyc
 <tmp>/11aq1i09
+<tmp>/1xqp9wrm
 <tmp>/20dasqhz
+<tmp>/comparison-002.json
 <tmp>/findings-002.json
 <tmp>/lesson-002.json
 <tmp>/gyrv7ysi
@@ -238,6 +240,7 @@ C:\Python314\Lib\zipfile\_path\__pycache__\glob.cpython-314.pyc
 <repo>/.work/fixture-cycle-002-clone/.ux-recast/evidence/9da027be4b4b/sources/test_invalid_email_preserves_work_and_can_complete-rejected.png
 <repo>/.work/fixture-cycle-002-clone/.ux-recast/lessons/project/L-d8a44a04.md
 <repo>/.work/fixture-cycle-002/.gitignore
+<repo>/.work/fixture-cycle-002/.ux-recast/comparisons.jsonl
 <repo>/.work/fixture-cycle-002/.ux-recast/decisions.jsonl
 <repo>/.work/fixture-cycle-002/.ux-recast/evidence/9da027be4b4b/cited/evidence/after-tests.txt
 <repo>/.work/fixture-cycle-002/.ux-recast/evidence/9da027be4b4b/cited/evidence/after/test_invalid_email_preserves_work_and_can_complete-completed.png
@@ -258,6 +261,8 @@ C:\Python314\Lib\zipfile\_path\__pycache__\glob.cpython-314.pyc
 <repo>/.work/fixture-cycle-002/.ux-review/9cb76bb2fc61956b2908ff7d.json
 <repo>/.work/fixture-cycle-002/.ux-review/9cb76bb2fc61956b2908ff7d.lock
 <repo>/.work/fixture-cycle-002/.ux-review/9cb76bb2fc61956b2908ff7d.tmp
+<repo>/.work/fixture-cycle-002/.ux-review/comparisons.inflight
+<repo>/.work/fixture-cycle-002/.ux-review/comparisons.lock
 <repo>/.work/fixture-cycle-002/.ux-review/decisions.inflight
 <repo>/.work/fixture-cycle-002/.ux-review/decisions.lock
 <repo>/.work/fixture-cycle-002/.ux-review/packets/9cb76bb2fc61956b2908ff7d-9da027be4b4b/autowork-result.tmp
@@ -352,6 +357,15 @@ C:\Python314\Lib\zipfile\_path\__pycache__\glob.cpython-314.pyc
 <repo>/docs/evidence/fixture-cycle-002/packet.json
 <repo>/docs/evidence/fixture-cycle-002/receipt.json
 <repo>/docs/evidence/fixture-cycle-002/repair.diff
+<repo>/docs/evidence/fixture-cycle-002/ux-recast/decisions.jsonl
+<repo>/docs/evidence/fixture-cycle-002/ux-recast/evidence/9da027be4b4b/cited/evidence/after-tests.txt
+<repo>/docs/evidence/fixture-cycle-002/ux-recast/evidence/9da027be4b4b/cited/evidence/findings.json
+<repo>/docs/evidence/fixture-cycle-002/ux-recast/evidence/9da027be4b4b/cited/evidence/repair.diff
+<repo>/docs/evidence/fixture-cycle-002/ux-recast/evidence/9da027be4b4b/manifest.json
+<repo>/docs/evidence/fixture-cycle-002/ux-recast/evidence/9da027be4b4b/packet.json
+<repo>/docs/evidence/fixture-cycle-002/ux-recast/evidence/9da027be4b4b/receipt.json
+<repo>/docs/evidence/fixture-cycle-002/ux-recast/evidence/9da027be4b4b/sources/evidence.json
+<repo>/docs/evidence/fixture-cycle-002/ux-recast/lessons/project/L-d8a44a04.md
 <repo>/fixtures/contact-request/index.html
 <repo>/fixtures/contact-request/test_flow.py
 <repo>/scripts/fixture_cycle.py
@@ -364,6 +378,7 @@ C:\Python314\Lib\zipfile\_path\__pycache__\glob.cpython-314.pyc
 <repo>/src/ux_recast/providers/__pycache__/lugos_autowork.cpython-314.pyc
 <repo>/src/ux_recast/providers/local_agent.py
 <repo>/src/ux_recast/records/__pycache__/__init__.cpython-314.pyc
+<repo>/src/ux_recast/records/__pycache__/comparisons.cpython-314.pyc
 <repo>/src/ux_recast/records/__pycache__/decisions.cpython-314.pyc
 <repo>/src/ux_recast/records/__pycache__/evidence_archive.cpython-314.pyc
 <repo>/src/ux_recast/records/__pycache__/lessons.cpython-314.pyc

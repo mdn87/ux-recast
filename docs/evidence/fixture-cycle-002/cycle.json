@@ -42,7 +42,8 @@
     "record",
     "repair",
     "finish",
-    "lesson"
+    "lesson",
+    "compare"
   ],
   "receipt": {
     "accepted": true,
@@ -262,6 +263,18 @@
         ".ux-recast/evidence/9da027be4b4b/sources/test_keyboard_can_finish-keyboard-focus.png": true,
         ".ux-recast/evidence/9da027be4b4b/sources/test_small_touch_viewport_recovery-mobile-error.png": true
       }
+    }
+  },
+  "comparison": {
+    "id": "3a558aa1c2bf",
+    "decision": "accept",
+    "effort": {
+      "review_passes": 1,
+      "retries": 0,
+      "false_findings": 0,
+      "user_interventions": 0,
+      "wall_time_seconds": 66.6,
+      "basis": "From the cycle log: review passes are recorded findings sets, retries are repeated phases, false findings are findings this comparison marks rejected, and wall time is the measured before, after and oracle test runs only. The log records no user step, so interventions are 0; reviewing, authoring and reruns outside the logged run are not counted."
     }
   }
 }

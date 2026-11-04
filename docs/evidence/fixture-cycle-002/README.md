@@ -1,6 +1,6 @@
 # fixture-cycle-002: a fixture run that ends in a linked project lesson
 
-Plan slice S2.5. The same contact-request fixture and the same `scripts/fixture_cycle.py` as [fixture-cycle-001](../fixture-cycle-001/README.md), run on 2026-11-04 with a new last phase, `lesson`, that exercises the Phase 2 records: the Outcome goes to `decisions.jsonl` (S2.2), the evidence it rests on is archived into `.ux-recast/evidence/<run>/` (S2.3), and a project-tier lesson links all of it (S2.4).
+Plan slices S2.5 and S2.6. The same contact-request fixture and the same `scripts/fixture_cycle.py` as [fixture-cycle-001](../fixture-cycle-001/README.md), run on 2026-11-04 with two new last phases that exercise the Phase 2 records. `lesson`: the Outcome goes to `decisions.jsonl` (S2.2), the evidence it rests on is archived into `.ux-recast/evidence/<run>/` (S2.3), and a project-tier lesson links all of it (S2.4). `compare` records the product comparison (S2.6).
 
 ## What happened
 
@@ -13,6 +13,12 @@ Plan slice S2.5. The same contact-request fixture and the same `scripts/fixture_
    - Lesson `L-d8a44a04`, "A rejected submit keeps every entry and points at the field to fix", was written as a `candidate` with links to finding F1, the diff, the before and after screenshots of `test_invalid_email_preserves_work_and_can_complete` (failed before, passes after), that test's passing output, and the Outcome.
    - Both were committed and the project was cloned. In the clone, where `.ux-review/` does not exist, all 18 links from the lesson and the Outcome resolve, and every archived file matches its manifest digest (`cycle.json`, `lesson.clean_clone`).
 
+6. `compare`: comparison `3a558aa1c2bf` ([`comparison.json`](comparison.json), `ux-recast/comparison@2`, kind `product`) was appended to the project's `.ux-recast/comparisons.jsonl`.
+   - The criteria are the task's eight acceptance statements, frozen when the controller bound `task.json` at the checkpoint.
+   - It cites the test outputs, findings, diff, a before screenshot, the archive manifest and the lesson.
+   - Its effort comes from the cycle log: 1 review pass, 0 retries, 0 false findings, 0 user interventions, and 66.6 s of measured test runs. `effort.basis` says what that leaves out.
+   - It states four limitations. The decision is `accept`, recorded by the fixture-cycle driver, because the fixture has no human owner. It is not a product owner's decision.
+
 The project's `.ux-recast/` tree is exported here as [`ux-recast/`](ux-recast/); the lesson is [`ux-recast/lessons/project/L-d8a44a04.md`](ux-recast/lessons/project/L-d8a44a04.md).
 
 ## Caveats
@@ -21,4 +27,4 @@ The project's `.ux-recast/` tree is exported here as [`ux-recast/`](ux-recast/);
 - The reviewer, the lesson author and the cycle driver are the same agent in one session, and the repair is reused from cycle 001. This proves the record mechanics, not the quality of an independent review.
 - `supported_by` is empty: the lesson has support only from its own project and cannot be promoted until a second project identity records an Outcome for it (Phase 8).
 
-Rerun: `python scripts/fixture_cycle.py baseline --cycle fixture-cycle-002`, author findings with the new run's `task_sha256`, then `record --findings`, `repair --page`, `finish`, and `lesson --lesson L.json` with `{title, body, finding, test}`. Requires `playwright` with Chromium and `git`.
+Rerun: `python scripts/fixture_cycle.py baseline --cycle fixture-cycle-002`, author findings with the new run's `task_sha256`, then `record --findings`, `repair --page`, `finish`, `lesson --lesson L.json` with `{title, body, finding, test}`, and `compare --comparison C.json` with the claims, dispositions, limitations and decision. Requires `playwright` with Chromium and `git`.

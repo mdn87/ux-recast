@@ -21,6 +21,7 @@ EXPECTED = {
     "ux_recast/schemas/packet.schema.json", "ux_recast/schemas/receipt.schema.json",
     "ux_recast/schemas/findings.schema.json", "ux_recast/schemas/comparison.schema.json",
     "ux_recast/records/templates/PRODUCT.md", "ux_recast/records/templates/DESIGN.md",
+    "ux_recast/schemas/lesson.schema.json",
 }
 
 PROBE = r"""
@@ -80,7 +81,7 @@ class WheelPackageData(unittest.TestCase):
         self.assertTrue(payload["file"].replace("\\", "/").startswith(str(self.target).replace("\\", "/")), payload["file"])
         self.assertEqual(payload["rubric_version"], "1")
         self.assertGreater(payload["rubric_bytes"], 1000)
-        self.assertEqual(payload["schemas"], ["comparison", "findings", "packet", "receipt", "state", "task"])
+        self.assertEqual(payload["schemas"], ["comparison", "findings", "lesson", "packet", "receipt", "state", "task"])
         self.assertEqual(payload["starters"], [True, True])
 
 
