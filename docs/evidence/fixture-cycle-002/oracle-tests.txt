@@ -1,0 +1,12 @@
+test_empty_form_identifies_required_fields (__main__.FlowTests.test_empty_form_identifies_required_fields) ... ok
+test_invalid_email_preserves_work_and_can_complete (__main__.FlowTests.test_invalid_email_preserves_work_and_can_complete) ... ok
+test_keyboard_can_finish (__main__.FlowTests.test_keyboard_can_finish) ... ok
+test_keyboard_validation_recovery (__main__.FlowTests.test_keyboard_validation_recovery) ... ok
+test_slow_send_can_cancel_without_losing_work (__main__.FlowTests.test_slow_send_can_cancel_without_losing_work) ... ok
+test_small_touch_viewport_recovery (__main__.FlowTests.test_small_touch_viewport_recovery) ... ok
+test_temporary_failure_allows_retry (__main__.FlowTests.test_temporary_failure_allows_retry) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 16.344s
+
+OK

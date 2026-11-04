@@ -93,6 +93,29 @@ class EvidenceArchive(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "receipt.json: already archived with different content"):
             evidence_archive.archive(self.project, SESSION, RUN)
 
+    def test_cited_after_files_are_archived_at_their_path_and_may_only_be_added(self):
+        after = self.project / ".ux-review" / "after-tests.txt"
+        after.write_text("Ran 7 tests\nOK\n", encoding="utf-8")
+        first = evidence_archive.record(self.project, SESSION, RUN, {"kind": "decision", "summary": "accept"},
+                                        cited=[".ux-review/work/after/form.png"])
+        self.assertIn(f".ux-recast/evidence/{RUN}/cited/.ux-review/work/after/form.png", first["evidence"])
+        second = evidence_archive.record(self.project, SESSION, RUN, {"kind": "outcome", "summary": "held"},
+                                         cited=[".ux-review/after-tests.txt"])
+        self.assertIn(f".ux-recast/evidence/{RUN}/cited/.ux-review/after-tests.txt", second["evidence"])
+        self.assertNotIn(f".ux-recast/evidence/{RUN}/cited/.ux-review/work/after/form.png", second["evidence"])
+        manifest = json.loads((self.project / ".ux-recast" / "evidence" / RUN / "manifest.json").read_text(encoding="utf-8"))
+        self.assertIn("cited/.ux-review/work/after/form.png", manifest["files"])
+        self.assertEqual(manifest["files"]["cited/.ux-review/after-tests.txt"]["sha256"], _sha(after.read_bytes()))
+        after.write_text("Ran 7 tests\nFAILED\n", encoding="utf-8")
+        with self.assertRaisesRegex(ValueError, "after-tests.txt: already archived with different content"):
+            evidence_archive.archive(self.project, SESSION, RUN, [".ux-review/after-tests.txt"])
+
+    def test_cited_files_outside_the_project_or_inside_the_archive_are_refused(self):
+        evidence_archive.archive(self.project, SESSION, RUN)
+        for name in ("../outside.txt", f".ux-recast/evidence/{RUN}/packet.json"):
+            with self.assertRaisesRegex(ValueError, "not a file inside the project and outside the archive"):
+                evidence_archive.archive(self.project, SESSION, RUN, [name])
+
     def test_missing_packet_bad_run_and_assigned_keys_are_refused(self):
         with self.assertRaisesRegex(ValueError, "no packet to archive"):
             evidence_archive.archive(self.project, SESSION, "run-0002")

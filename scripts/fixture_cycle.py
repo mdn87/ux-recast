@@ -18,17 +18,24 @@ Phases, in order:
               input, move to the verification phase, rerun the flow tests.
     finish    record the controller result, consume the receipt, copy the
               sanitized evidence into docs/evidence/<cycle>/.
+    lesson    (S2.5) give the scratch project its own git identity, record the
+              Outcome with the after screenshots, diff, findings and passing
+              test output archived, write the agent-authored project lesson
+              linking them, commit, and check every link from a clean clone.
 
-Usage: python scripts/fixture_cycle.py <phase> [--cycle fixture-cycle-001] [--findings F] [--page P]
+Usage: python scripts/fixture_cycle.py <phase> [--cycle fixture-cycle-001] [--findings F] [--page P] [--lesson L.json]
 """
 import argparse
+import hashlib
 import json
 import os
 from pathlib import Path
 import re
 import shutil
+import stat
 import subprocess
 import sys
+import tempfile
 import time
 
 REPO = Path(__file__).resolve().parents[1]
@@ -145,7 +152,7 @@ def bundle_evidence(work, run_dir, outcomes):
 def baseline(a):
     p = paths(a.cycle)
     if p["work"].exists():
-        shutil.rmtree(p["work"])
+        rmtree(p["work"])
     p["evidence"].mkdir(parents=True)
     install_audit_hook(p["access"])
     for name in ("task.json", "plan.txt", "test_flow.py", "index.before.html"):
@@ -241,6 +248,105 @@ def finish(a):
     print(json.dumps({"finish": finished, "consume_after_repair": stale, "files_opened": len(seen), "lugos_reads": inside}, indent=2))
 
 
+def rmtree(path):
+    """Remove a tree, including git's read-only object files on Windows."""
+    def retry(func, target, _):
+        os.chmod(target, stat.S_IWRITE)
+        func(target)
+    shutil.rmtree(path, **({"onexc": retry} if sys.version_info >= (3, 12) else {"onerror": retry}))
+
+
+GIT = ["git", "-c", "user.name=fixture-cycle", "-c", "user.email=fixture-cycle@example.invalid",
+       "-c", "core.autocrlf=false", "-c", "init.defaultBranch=main"]
+
+
+def lesson(a):
+    """Record the Outcome, archive what it rests on, write the linked lesson, and prove it on a clean clone."""
+    p = paths(a.cycle)
+    log = json.loads(p["log"].read_text(encoding="utf-8"))
+    if "finish" not in log or log["after"]["returncode"] != 0:
+        raise SystemExit("lesson needs a finished cycle whose after-run passed")
+    if "lesson" in log:
+        raise SystemExit("this cycle already has its lesson; rerun from baseline for a new one")
+    install_audit_hook(p["access"])
+    spec = json.loads(Path(a.lesson).read_text(encoding="utf-8"))
+    work, run = p["work"], log["run_id"]
+    from ux_recast.records import decisions, evidence_archive, lessons
+    if not (work / ".git").exists():
+        (work / ".gitignore").write_text(".ux-review/\n", encoding="utf-8", newline="\n")
+        subprocess.run(GIT + ["init", "-q"], cwd=work, check=True)
+        subprocess.run(GIT + ["add", "-A"], cwd=work, check=True)
+        subprocess.run(GIT + ["commit", "-q", "-m", "fixture project before the lesson"], cwd=work, check=True)
+
+    test = spec["test"]
+    if log["after"]["outcomes"].get(test) != "ok" or log["before"]["outcomes"].get(test) == "ok":
+        raise SystemExit(f"{test}: the lesson's test must fail before and pass after")
+    findings = json.loads((p["evidence"] / "findings.json").read_text(encoding="utf-8"))
+    if spec["finding"] not in {f["id"] for f in findings["findings"]}:
+        raise SystemExit(f"{spec['finding']}: not a recorded finding")
+    before_shots = [s for s in log["evidence"]["screenshots"] if Path(s).name.startswith(test)]
+    after_shots = sorted(f"evidence/after/{f.name}" for f in (p["evidence"] / "after").glob(f"{test}-*.png"))
+    if not before_shots or not after_shots:
+        raise SystemExit(f"{test}: needs before and after screenshots")
+    cited = ["evidence/findings.json", "evidence/repair.diff", "evidence/after-tests.txt", *after_shots]
+    outcome = evidence_archive.record(work, SESSION, run, {
+        "kind": "outcome", "summary": f"After the repair the seven flow tests pass; {test} failed before it.",
+        "result": log["finish"].get("result", "verified"), "tests": log["after"]["outcomes"]}, cited=cited)
+    archived = f".ux-recast/evidence/{run}"
+    links = {
+        "finding": [f"{archived}/cited/evidence/findings.json#{spec['finding']}"],
+        "diff": [f"{archived}/cited/evidence/repair.diff"],
+        "before": [f"{archived}/sources/{Path(s).name}" for s in before_shots],
+        "after": [f"{archived}/cited/{s}" for s in after_shots],
+        "test": [f"{archived}/cited/evidence/after-tests.txt#{test}"],
+        "outcome": [f".ux-recast/decisions.jsonl#{outcome['id']}"],
+    }
+    lesson_id = lessons.create(work, spec["title"], spec["body"], links)
+    subprocess.run(GIT + ["add", "-A"], cwd=work, check=True)
+    subprocess.run(GIT + ["commit", "-q", "-m", f"record outcome {outcome['id']} and lesson {lesson_id}"], cwd=work, check=True)
+
+    clone = work.parent / f"{a.cycle}-clone"
+    if clone.exists():
+        rmtree(clone)
+    subprocess.run(GIT + ["clone", "-q", str(work), str(clone)], check=True)
+    cloned = lessons.read(clone, lesson_id)
+    manifest = json.loads((clone / archived / "manifest.json").read_text(encoding="utf-8"))["files"]
+    checks = {}
+    for rel, targets in cloned["links"].items():
+        for target in targets:
+            name = target.split("#", 1)[0]
+            path = clone / name
+            ok = path.is_file()
+            if ok and name.startswith(archived + "/"):
+                ok = hashlib.sha256(path.read_bytes()).hexdigest() == manifest[name[len(archived) + 1:]]["sha256"]
+            checks[target] = ok
+    [cloned_outcome] = [r for r in decisions.read(clone) if r["id"] == outcome["id"]]
+    for link in cloned_outcome["evidence"]:
+        checks.setdefault(link, (clone / link).is_file())
+    log["lesson"] = {"id": lesson_id, "outcome": outcome["id"], "identity": cloned["identity"], "links": cloned["links"],
+                     "clean_clone": {"ux_review_present": (clone / ".ux-review").exists(), "checks": checks}}
+    log["phases"].append("lesson")
+    rmtree(clone)
+    export(p, log)
+    out = p["out"] / "ux-recast"
+    if out.exists():
+        rmtree(out)
+    for src in (work / ".ux-recast").rglob("*"):
+        if src.is_file():
+            dst = out / src.relative_to(work / ".ux-recast")
+            dst.parent.mkdir(parents=True, exist_ok=True)
+            if src.suffix in {".json", ".jsonl", ".md", ".txt", ".diff", ".html"}:
+                dst.write_text(scrub(src.read_text(encoding="utf-8")), encoding="utf-8", newline="\n")
+            else:
+                shutil.copy2(src, dst)
+    leftovers = [str(n) for n in out.rglob("*") if n.is_file() and n.suffix != ".png" and re.search(r"Users|Matt", n.read_text(encoding="utf-8"))]
+    failed = [k for k, ok in checks.items() if not ok]
+    if leftovers or failed or log["lesson"]["clean_clone"]["ux_review_present"]:
+        raise SystemExit(f"lesson evidence incomplete: leftovers={leftovers} failed_links={failed}")
+    p["log"].write_text(json.dumps(log, indent=2), encoding="utf-8")
+    print(json.dumps(log["lesson"], indent=2))
+
+
 def export(p, log):
     """Copy the committed evidence set with local paths removed."""
     out = p["out"]
@@ -268,6 +374,11 @@ def export(p, log):
 
 
 def scrub(text):
+    # A file passed in from the temp directory (an agent's scratchpad) keeps only its name: the
+    # folder names there can embed the user's profile path.
+    temp = tempfile.gettempdir()
+    for form in (temp, temp.replace("\\", "\\\\"), temp.replace("\\", "/")):
+        text = re.sub(re.escape(form) + r"[^\"\s]*", lambda m: "<tmp>/" + re.split(r"[\\/]+", m.group(0))[-1], text)
     home = str(Path.home())
     for root, token in ((str(REPO), "<repo>"), (str(LUGOS), "<lugos>"), (home, "~")):
         for form in (root, root.replace("\\", "\\\\"), root.replace("\\", "/")):
@@ -278,16 +389,19 @@ def scrub(text):
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("phase", choices=["baseline", "record", "repair", "finish"])
+    ap.add_argument("phase", choices=["baseline", "record", "repair", "finish", "lesson"])
     ap.add_argument("--cycle", default="fixture-cycle-001")
     ap.add_argument("--findings", type=Path)
     ap.add_argument("--page", type=Path)
+    ap.add_argument("--lesson", type=Path, help="agent-authored {title, body, finding, test}")
     a = ap.parse_args()
     if a.phase == "record" and not a.findings:
         ap.error("record needs --findings")
     if a.phase == "repair" and not a.page:
         ap.error("repair needs --page")
-    {"baseline": baseline, "record": record, "repair": repair, "finish": finish}[a.phase](a)
+    if a.phase == "lesson" and not a.lesson:
+        ap.error("lesson needs --lesson")
+    {"baseline": baseline, "record": record, "repair": repair, "finish": finish, "lesson": lesson}[a.phase](a)
 
 
 if __name__ == "__main__":

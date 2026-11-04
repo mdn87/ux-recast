@@ -1,0 +1,60 @@
+{
+  "files": {
+    "cited/evidence/after-tests.txt": {
+      "origin": "evidence/after-tests.txt",
+      "sha256": "6d028abdc5c95df6abb0793cc24910308c608a8b4723f40ed5a9d100c476bfac"
+    },
+    "cited/evidence/after/test_invalid_email_preserves_work_and_can_complete-completed.png": {
+      "origin": "evidence/after/test_invalid_email_preserves_work_and_can_complete-completed.png",
+      "sha256": "f4df4847aded4d07ee0adf7e2c3908ebe9da1927097681bd73639f14b6e1d68d"
+    },
+    "cited/evidence/after/test_invalid_email_preserves_work_and_can_complete-entered.png": {
+      "origin": "evidence/after/test_invalid_email_preserves_work_and_can_complete-entered.png",
+      "sha256": "8738ceacd9cfde97dab4bccf8d47ff4b8052232e240a5070aac04179880d465e"
+    },
+    "cited/evidence/after/test_invalid_email_preserves_work_and_can_complete-rejected.png": {
+      "origin": "evidence/after/test_invalid_email_preserves_work_and_can_complete-rejected.png",
+      "sha256": "b0b2c5af93ce1cdac993c3c7aca2b82a04ace5108a7661b68762d17f800fa8be"
+    },
+    "cited/evidence/findings.json": {
+      "origin": "evidence/findings.json",
+      "sha256": "ce0d55dba2ab54009a1e033d38c88934e9f9d699815ec3e87f584a1d037b6d3f"
+    },
+    "cited/evidence/repair.diff": {
+      "origin": "evidence/repair.diff",
+      "sha256": "4279811c985fcbf896161ad89cc32518f321404de4c4668a06fc1bd5614d2990"
+    },
+    "packet.json": {
+      "sha256": "9cb181b55a2f160a8fe346dd500c96fb629028cc77c5fb986ae4447ad8d8327a"
+    },
+    "receipt.json": {
+      "sha256": "ced6fcdd945ba0ea8f592408f992e859bacd8f2ba15cae041273a35636f39576"
+    },
+    "sources/evidence.json": {
+      "origin": "evidence.json",
+      "sha256": "3d0b76142ec7c59554035ce410ba960fd7fbdc8b40432aa17ceed55f4741a24d"
+    },
+    "sources/test_empty_form_identifies_required_fields-required.png": {
+      "origin": "evidence/before/test_empty_form_identifies_required_fields-required.png",
+      "sha256": "a6d114999d3536a807997c81ae8e971b5a2a88ad039957449f721e0c37f8150c"
+    },
+    "sources/test_invalid_email_preserves_work_and_can_complete-entered.png": {
+      "origin": "evidence/before/test_invalid_email_preserves_work_and_can_complete-entered.png",
+      "sha256": "8738ceacd9cfde97dab4bccf8d47ff4b8052232e240a5070aac04179880d465e"
+    },
+    "sources/test_invalid_email_preserves_work_and_can_complete-rejected.png": {
+      "origin": "evidence/before/test_invalid_email_preserves_work_and_can_complete-rejected.png",
+      "sha256": "8c17fd71cda515e49989ec883e65be2f80dfc650ce36909061a78be4c36bd4c0"
+    },
+    "sources/test_keyboard_can_finish-keyboard-focus.png": {
+      "origin": "evidence/before/test_keyboard_can_finish-keyboard-focus.png",
+      "sha256": "05e0483aeabcbbc934c7cd4eb0bce6c4c11cc8ce75b0acd8f4ca69f4088f36b4"
+    },
+    "sources/test_small_touch_viewport_recovery-mobile-error.png": {
+      "origin": "evidence/before/test_small_touch_viewport_recovery-mobile-error.png",
+      "sha256": "9a874e25204f6d7eb49a60317af0f09a26b5bced60aad4b033ad333a1de2e15f"
+    }
+  },
+  "run": "9da027be4b4b",
+  "schema": "ux-recast/evidence-archive@1"
+}

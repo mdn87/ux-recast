@@ -1,0 +1,57 @@
+{
+  "schema": "ux-recast/findings@1",
+  "provider": "local-agent",
+  "task_sha256": "79f8eca000bb4f2ecffbe0e27436cdabee73885295fac9afad09a7914a2d65e2",
+  "reviewer": "Claude Opus 5.5 (claude-opus-5-5) as the local agent, the same session that drives the cycle",
+  "findings": [
+    {
+      "id": "F1",
+      "category": "observed failure",
+      "task_step": "Submit with an invalid email after filling the other fields",
+      "observed": "Before the rejected submit the form held name 'Alex Morgan', email 'alex@' and a request; after it all three fields are empty and only 'Please check your details and try again.' remains.",
+      "evidence": "test_invalid_email_preserves_work_and_can_complete-entered.png, test_invalid_email_preserves_work_and_can_complete-rejected.png",
+      "principle": "Preserve completed work; error recovery must not cost the user their valid entries (task acceptance: 'A rejected email preserves the entered name and request')",
+      "likely_consequence": "Inference: the user must retype the whole request to correct one character, and some will abandon the form.",
+      "severity": "Critical",
+      "confidence": "high",
+      "confidence_reason": "The before and after field values are captured directly in the observations.",
+      "proposed_correction": "Do not reset the form on a validation failure; validate each field and keep every entered value.",
+      "verification": "Rerun test_invalid_email_preserves_work_and_can_complete: name and request survive the rejected submit and the corrected email completes.",
+      "element": "form submit handler; #name, #email, #request",
+      "kind": "implementation"
+    },
+    {
+      "id": "F2",
+      "category": "observed failure",
+      "task_step": "Submit the empty form",
+      "observed": "The only feedback is the generic line 'Please check your details and try again.'; no field is marked and nothing says what is missing or how to fix it.",
+      "evidence": "test_empty_form_identifies_required_fields-required.png",
+      "principle": "Help people recognise, diagnose and recover from errors: say which field and what would make it acceptable (task acceptance: 'Missing or invalid information is identified with a useful correction')",
+      "likely_consequence": "Inference: users guess which field failed; screen-reader users get no field-level cue.",
+      "severity": "High",
+      "confidence": "high",
+      "confidence_reason": "The visible text and screenshot show no per-field message.",
+      "proposed_correction": "Write a specific message into each field's existing *-error slot, set aria-invalid on the field, and keep a summary in #feedback.",
+      "verification": "Rerun test_empty_form_identifies_required_fields and test_small_touch_viewport_recovery.",
+      "element": "#name-error, #email-error, #request-error, #feedback",
+      "kind": "implementation"
+    },
+    {
+      "id": "F3",
+      "category": "observed failure",
+      "task_step": "Recover from a failed submit using the keyboard",
+      "observed": "After every failed submit the focused element is the Send request button, not the field that needs correcting.",
+      "evidence": "observation test_empty_form_identifies_required_fields step required (focused_element BUTTON #send)",
+      "principle": "Keyboard operability and error identification: after a failed submit, focus goes to the first problem (task acceptance: 'Keyboard users can discover the error and correct it')",
+      "likely_consequence": "Inference: keyboard and screen-reader users must hunt backwards through the form to find the problem.",
+      "severity": "High",
+      "confidence": "high",
+      "confidence_reason": "focused_element is captured in each failing observation.",
+      "proposed_correction": "Move focus to the first invalid field after a failed submit.",
+      "verification": "Rerun test_keyboard_validation_recovery.",
+      "element": "first invalid field after submit",
+      "kind": "implementation"
+    }
+  ],
+  "remaining_uncertainty": "The sending, cancel and temporary-failure paths passed and were reviewed only through their captures. Whether #feedback stays inside a 375px viewport after an error cannot be judged from a full-page screenshot; cycle 001 recorded that as an unresolved question and this review does not repeat it. Colour contrast of the error style was not measured."
+}

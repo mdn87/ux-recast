@@ -106,13 +106,29 @@ def _write_new(path, text):
         handle.write(text.encode("utf-8"))
 
 
-def create(project, title, body):
+def _check_links(project, links):
+    """Links name what the lesson rests on: ``{rel: [project-relative path, optionally with #fragment]}``."""
+    root = Path(project).resolve()
+    checked = {}
+    for rel, targets in (links or {}).items():
+        targets = [targets] if isinstance(targets, str) else list(targets)
+        if not re.match(r"^[a-z][a-z_]*$", rel) or not targets:
+            raise ValueError(f"links.{rel}: needs a lowercase name and at least one path")
+        for target in targets:
+            path = (root / target.split("#", 1)[0]).resolve()
+            if "\\" in target or not path.is_relative_to(root) or not path.is_file():
+                raise ValueError(f"links.{rel}: {target} is not a file inside the project")
+        checked[rel] = targets
+    return checked
+
+
+def create(project, title, body, links=None):
     """Write a new candidate lesson for this project; return its id."""
     if not title.strip() or not body.strip():
         raise ValueError("title and body: required")
     lesson_id = "L-" + uuid.uuid4().hex[:8]
     meta = {"id": lesson_id, "title": title.strip(), "status": "candidate", "identity": identity(project),
-            "created_at": _now(), "supported_by": []}
+            "created_at": _now(), "links": _check_links(project, links), "supported_by": []}
     _write_new(Path(project) / ".ux-recast" / "lessons" / "project" / f"{lesson_id}.md", _dump(meta, body))
     return lesson_id
 

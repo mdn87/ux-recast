@@ -115,6 +115,15 @@ class Lessons(unittest.TestCase):
                 lessons.add_support(self.home, self.lesson, self.other, outcome)
         self.assertEqual(lessons.read(self.home, self.lesson)["supported_by"], [])
 
+    def test_links_must_name_files_inside_the_project(self):
+        (self.home / "repair.diff").write_text("--- a\n+++ b\n", encoding="utf-8")
+        lesson = lessons.create(self.home, "t", "b", links={"diff": "repair.diff", "finding": ["README.md#F1"]})
+        self.assertEqual(lessons.read(self.home, lesson)["links"], {"diff": ["repair.diff"], "finding": ["README.md#F1"]})
+        for links in ({"diff": "missing.diff"}, {"diff": "../other/README.md"}, {"Diff": "repair.diff"}, {"diff": []},
+                      {"diff": "sub\\repair.diff"}):
+            with self.assertRaisesRegex(ValueError, "^links\\."):
+                lessons.create(self.home, "t", "b", links=links)
+
     def test_cli_promote_reports_the_refusal(self):
         out = io.StringIO()
         with redirect_stdout(out), self.assertLogs("ux_recast.records", "WARNING"):

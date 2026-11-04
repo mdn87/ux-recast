@@ -1,0 +1,35 @@
+diff --git "a/<repo>/.work/fixture-cycle-002/index.before.html" "b/<repo>/.work/fixture-cycle-002/index.html"
+index 7152c2e..7d7ec21 100644
+--- "a/<repo>/.work/fixture-cycle-002/index.before.html"
++++ "b/<repo>/.work/fixture-cycle-002/index.html"
+@@ -72,9 +72,27 @@
+   form.addEventListener('submit', event => {
+     event.preventDefault();
+     if (send.disabled) return;
+-    if (!nameField.value.trim() || !email.validity.valid || !request.value.trim()) {
+-      form.reset();
+-      feedback.textContent = 'Please check your details and try again.';
++    // F1/F2/F3: validate per field, keep every entry, say what to fix, and move focus to the first problem.
++    const problems = [
++      [nameField, nameField.value.trim() ? '' : 'Enter your name.'],
++      [email, email.value.trim() ? (email.validity.valid ? '' : 'Enter an email address like name@example.com.') : 'Enter your email address.'],
++      [request, request.value.trim() ? '' : 'Describe what you need help with.'],
++    ];
++    let firstInvalid = null;
++    for (const [field, message] of problems) {
++      const slot = document.getElementById(field.id + '-error');
++      slot.textContent = message;
++      slot.hidden = !message;
++      if (message) {
++        field.setAttribute('aria-invalid', 'true');
++        firstInvalid = firstInvalid || field;
++      } else {
++        field.removeAttribute('aria-invalid');
++      }
++    }
++    if (firstInvalid) {
++      feedback.textContent = 'Your request has not been sent. Correct the marked fields; your entries are still here.';
++      firstInvalid.focus();
+       return;
+     }
+     attempts += 1;

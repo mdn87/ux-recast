@@ -3,11 +3,14 @@
 ``.ux-review/`` is gitignored, so a Decision that cites a packet there would
 point at nothing on a clean checkout. Recording a Decision or Outcome for a run
 first copies that run's ``packet.json``, ``receipt.json`` and every source file
-the packet hashed (the evidence JSON and its screenshots) into
+the packet hashed (the evidence JSON and its before screenshots) into
 ``.ux-recast/evidence/<run>/``, which the project commits. Each source is checked
-against the digest the packet recorded before it is copied. An archive is
-write-once: a file already archived with different bytes is refused, never
-overwritten. ``manifest.json`` maps every archived file to its digest and origin.
+against the digest the packet recorded before it is copied. Files the record
+cites beyond the packet (after screenshots, a diff, test output) are named in
+``cited`` and kept under ``cited/`` at their project-relative path. An archive
+is write-once per file: a file already archived with different bytes is refused,
+never overwritten, and a later record may only add files. ``manifest.json`` maps
+every archived file to its digest and origin.
 """
 import hashlib
 import json
@@ -25,16 +28,12 @@ def packet_folder(project, session, run_id):
     return Path(project).resolve() / ".ux-review" / "packets" / (digest(session.encode())[:24] + "-" + run_id)
 
 
-def _place(source, target):
-    if target.exists():
-        if target.read_bytes() != source.read_bytes():
-            raise ValueError(f"{target.name}: already archived with different content; the archive is write-once")
-        return
-    shutil.copyfile(source, target)
+def _sha(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def archive(project, session, run_id):
-    """Copy a run's packet, receipt and hashed sources into the archive; return their project-relative links."""
+def archive(project, session, run_id, cited=()):
+    """Copy a run's packet, receipt, hashed sources and cited files into the archive; return the links this call archived."""
     if not RUN_ID.match(run_id):
         raise ValueError(f"run: not a run id: {run_id!r}")
     root = Path(project).resolve()
@@ -43,51 +42,55 @@ def archive(project, session, run_id):
     if not packet_path.is_file():
         raise ValueError(f"run {run_id}: no packet to archive")
     packet = json.loads(packet_path.read_text(encoding="utf-8"))
-    sources = []
+    files = {"packet.json": (packet_path, None)}
+    if (folder / "receipt.json").is_file():
+        files["receipt.json"] = (folder / "receipt.json", None)
+    taken = set()
     for name, expected in packet.get("sources", {}).items():
         path = (root / name).resolve()
         if not path.is_relative_to(root) or not path.is_file():
             raise ValueError(f"source {name}: not a file inside the project")
-        if hashlib.sha256(path.read_bytes()).hexdigest() != expected:
+        if _sha(path) != expected:
             raise ValueError(f"source {name}: changed since the packet was prepared")
-        sources.append((path, expected))
-
-    target = root / ".ux-recast" / "evidence" / run_id
-    (target / "sources").mkdir(parents=True, exist_ok=True)
-    files = {"packet.json": packet_path}
-    if (folder / "receipt.json").is_file():
-        files["receipt.json"] = folder / "receipt.json"
-    taken = set()
-    origins = {}
-    for path, _ in sources:
-        name, n = path.name, 1
-        while name in taken:
+        stem, n = path.name, 1
+        while stem in taken:
             n += 1
-            name = f"{path.stem}-{n}{path.suffix}"
-        taken.add(name)
-        files[f"sources/{name}"] = path
-        origins[f"sources/{name}"] = path.relative_to(root).as_posix()
-    for relative, source in files.items():
-        _place(source, target / relative)
+            stem = f"{path.stem}-{n}{path.suffix}"
+        taken.add(stem)
+        files[f"sources/{stem}"] = (path, path.relative_to(root).as_posix())
+    archive_root = root / ".ux-recast" / "evidence"
+    for name in cited:
+        path = (root / name).resolve()
+        if not path.is_relative_to(root) or not path.is_file() or path.is_relative_to(archive_root):
+            raise ValueError(f"cited {name}: not a file inside the project and outside the archive")
+        origin = path.relative_to(root).as_posix()
+        files["cited/" + origin] = (path, origin)
 
-    manifest = {"schema": "ux-recast/evidence-archive@1", "run": run_id, "files": {
-        relative: {"sha256": hashlib.sha256((target / relative).read_bytes()).hexdigest(),
-                   **({"origin": origins[relative]} if relative in origins else {})}
-        for relative in sorted(files)}}
-    manifest_bytes = (json.dumps(manifest, indent=2, sort_keys=True) + "\n").encode("utf-8")
+    target = archive_root / run_id
+    entries = {relative: {"sha256": _sha(source), **({"origin": origin} if origin else {})}
+               for relative, (source, origin) in files.items()}
     manifest_path = target / "manifest.json"
-    if manifest_path.exists() and manifest_path.read_bytes() != manifest_bytes:
-        raise ValueError("manifest.json: already archived with different content; the archive is write-once")
-    manifest_path.write_bytes(manifest_bytes)
+    known = json.loads(manifest_path.read_text(encoding="utf-8"))["files"] if manifest_path.exists() else {}
+    for relative, entry in entries.items():
+        on_disk = target / relative
+        if (relative in known and known[relative] != entry) or (on_disk.exists() and _sha(on_disk) != entry["sha256"]):
+            raise ValueError(f"{relative}: already archived with different content; the archive is write-once")
+    for relative, (source, _) in files.items():
+        on_disk = target / relative
+        if not on_disk.exists():
+            on_disk.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(source, on_disk)
+    manifest = {"schema": "ux-recast/evidence-archive@1", "run": run_id, "files": {**known, **entries}}
+    manifest_path.write_bytes((json.dumps(manifest, indent=2, sort_keys=True) + "\n").encode("utf-8"))
     prefix = target.relative_to(root).as_posix()
     return [f"{prefix}/manifest.json"] + [f"{prefix}/{relative}" for relative in sorted(files)]
 
 
-def record(project, session, run_id, record):
-    """Archive the run's evidence, then append the Decision or Outcome citing it."""
+def record(project, session, run_id, record, cited=()):
+    """Archive the run's evidence and the files it cites, then append the Decision or Outcome citing them."""
     decisions._check(record)
     for key in ("run", "evidence"):
         if key in record:
             raise ValueError(f"{key}: assigned from the archived run")
-    links = archive(project, session, run_id)
+    links = archive(project, session, run_id, cited)
     return decisions.append(project, {**record, "run": run_id, "evidence": links})

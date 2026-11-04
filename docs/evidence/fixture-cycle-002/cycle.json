@@ -1,0 +1,267 @@
+{
+  "cycle": "fixture-cycle-002",
+  "session": "fixture-cycle",
+  "run_id": "9da027be4b4b",
+  "before": {
+    "page": "index.html",
+    "returncode": 1,
+    "seconds": 32.1,
+    "outcomes": {
+      "test_empty_form_identifies_required_fields": "FAIL",
+      "test_invalid_email_preserves_work_and_can_complete": "FAIL",
+      "test_keyboard_can_finish": "ok",
+      "test_keyboard_validation_recovery": "FAIL",
+      "test_slow_send_can_cancel_without_losing_work": "ok",
+      "test_small_touch_viewport_recovery": "FAIL",
+      "test_temporary_failure_allows_retry": "ok"
+    }
+  },
+  "evidence": {
+    "observations": 10,
+    "screenshots": [
+      "evidence/before/test_empty_form_identifies_required_fields-required.png",
+      "evidence/before/test_invalid_email_preserves_work_and_can_complete-entered.png",
+      "evidence/before/test_invalid_email_preserves_work_and_can_complete-rejected.png",
+      "evidence/before/test_small_touch_viewport_recovery-mobile-error.png",
+      "evidence/before/test_keyboard_can_finish-keyboard-focus.png"
+    ],
+    "bytes": 6780
+  },
+  "packet": {
+    "task_sha256": "79f8eca000bb4f2ecffbe0e27436cdabee73885295fac9afad09a7914a2d65e2",
+    "rubric_sha256": "caeb6d842db6baf74f84f82d189ba5942064d591201399904af7610e231dfecf",
+    "request_chars": 14550,
+    "modalities": [
+      "text",
+      "image"
+    ]
+  },
+  "findings_template": "<repo>/.work/fixture-cycle-002/.ux-review/packets/9cb76bb2fc61956b2908ff7d-9da027be4b4b/findings.template.json",
+  "phases": [
+    "baseline",
+    "record",
+    "repair",
+    "finish",
+    "lesson"
+  ],
+  "receipt": {
+    "accepted": true,
+    "status": "completed",
+    "autowork_run_id": "local-20261104-041748",
+    "selected_route": "local-agent",
+    "model": "Claude Opus 5.5 (claude-opus-5-5) as the local agent, the same session that drives the cycle",
+    "artifact_dir": "<repo>/.work/fixture-cycle-002/.ux-review/packets/9cb76bb2fc61956b2908ff7d-9da027be4b4b",
+    "task_sha256": "79f8eca000bb4f2ecffbe0e27436cdabee73885295fac9afad09a7914a2d65e2",
+    "meaning": "accepted describes matching completed advisory delivery only; parent evaluates findings and verifies repairs",
+    "findings_count": 3
+  },
+  "consume_before_repair": {
+    "run_id": "9da027be4b4b",
+    "accepted": true,
+    "applicable": true,
+    "findings": "current",
+    "changed": [],
+    "meaning": "only applicable findings may guide repair; stale findings cannot satisfy current verification"
+  },
+  "repair_phase": {
+    "mode": "once",
+    "scope": [
+      "contact-request"
+    ],
+    "allowed": true,
+    "run_id": "9da027be4b4b",
+    "phase": "repair",
+    "reason": "one repair batch and one verification pass per cycle"
+  },
+  "repair_seal": {
+    "mode": "once",
+    "scope": [
+      "contact-request"
+    ],
+    "invoke": false,
+    "reason": "repair stays within the active cycle budget"
+  },
+  "verify_phase": {
+    "mode": "once",
+    "scope": [
+      "contact-request"
+    ],
+    "allowed": true,
+    "run_id": "9da027be4b4b",
+    "phase": "verify",
+    "reason": "one repair batch and one verification pass per cycle"
+  },
+  "after": {
+    "page": "index.html",
+    "returncode": 0,
+    "seconds": 17.9,
+    "outcomes": {
+      "test_empty_form_identifies_required_fields": "ok",
+      "test_invalid_email_preserves_work_and_can_complete": "ok",
+      "test_keyboard_can_finish": "ok",
+      "test_keyboard_validation_recovery": "ok",
+      "test_slow_send_can_cancel_without_losing_work": "ok",
+      "test_small_touch_viewport_recovery": "ok",
+      "test_temporary_failure_allows_retry": "ok"
+    }
+  },
+  "oracle": {
+    "page": "index.html",
+    "returncode": 0,
+    "seconds": 16.6,
+    "outcomes": {
+      "test_empty_form_identifies_required_fields": "ok",
+      "test_invalid_email_preserves_work_and_can_complete": "ok",
+      "test_keyboard_can_finish": "ok",
+      "test_keyboard_validation_recovery": "ok",
+      "test_slow_send_can_cancel_without_losing_work": "ok",
+      "test_small_touch_viewport_recovery": "ok",
+      "test_temporary_failure_allows_retry": "ok"
+    }
+  },
+  "finish": {
+    "mode": "off",
+    "scope": [
+      "contact-request"
+    ],
+    "allowed": true,
+    "run_id": "9da027be4b4b",
+    "result": "verified",
+    "message": "Recorded agent report; not independent proof of verification"
+  },
+  "consume_after_repair": {
+    "run_id": "9da027be4b4b",
+    "accepted": true,
+    "applicable": false,
+    "findings": "stale",
+    "changed": [
+      "index.html"
+    ],
+    "meaning": "only applicable findings may guide repair; stale findings cannot satisfy current verification"
+  },
+  "final_state": {
+    "mode": "off",
+    "scope": [
+      "contact-request"
+    ],
+    "version": 1,
+    "shared": {},
+    "runs": [
+      {
+        "run_id": "9da027be4b4b",
+        "checkpoint": [
+          "fixture-cycle-002",
+          "implementation",
+          "contact-request"
+        ],
+        "task": {
+          "flow": "contact-request",
+          "goal": "Send a support request and know it was received",
+          "starting_conditions": "A signed-out visitor has their name, email and a description; the local demonstration service can accept, reject or delay a request",
+          "expected_outcome": "One request is accepted and confirmation is visible; input mistakes and temporary failures can be corrected without re-entering valid work",
+          "device_input": "Desktop keyboard and pointer, plus a 375px-wide mobile viewport",
+          "source": "User's requested UX review demonstration, especially validation recovery and preservation of completed form entries",
+          "assumptions": [
+            "This is an isolated demonstration, not a real support service",
+            "Name, email and request are required",
+            "The local service is simulated; no messages or personal information leave the browser",
+            "Cancel during saving preserves the draft and prevents a later success message"
+          ],
+          "acceptance": [
+            "The primary action describes sending a request",
+            "Missing or invalid information is identified with a useful correction",
+            "A rejected email preserves the entered name and request",
+            "Keyboard users can discover the error and correct it",
+            "Correcting only the email permits completion without re-entering other fields",
+            "While saving, progress is visible and repeat submission is prevented",
+            "Cancellation and temporary failure preserve entries and permit retry",
+            "The form remains usable at 375px without horizontal scrolling"
+          ]
+        },
+        "status": "verified",
+        "phase": "verify",
+        "budget": {
+          "review_passes": 1,
+          "repair_batches": 1,
+          "verification_passes": 1,
+          "max_actionable_findings": 5
+        },
+        "manifest": {
+          "flow": "contact-request",
+          "stage": "implementation",
+          "task_sha256": "70fb42a285914ccacc085a7b42b9e2ac1f62e37beea24c0441dafc6306bcbf09",
+          "task_path": "task.json",
+          "inputs": {
+            "index.html": "a21bc7401f384d1749049e4591079017275bf1a7c1fdc2ca102f3a4cc8742a45"
+          },
+          "config": {}
+        },
+        "manifest_sha256": "5ab4ce8276eb6216c1b17d3c68726fb9c5d41b4c54cdfd2102043841d91fbe29",
+        "repair_manifests": [
+          "1bd61cc00ef9626e72dab58d1e3668ecf65058b5fa5de985919cc88878efe192"
+        ],
+        "repair_inputs": [
+          "index.html"
+        ],
+        "report": "docs/evidence/fixture-cycle-002/cycle.json"
+      }
+    ],
+    "updated_at": "2026-11-04T04:18:24.042347+00:00"
+  },
+  "access": {
+    "files_opened": 322,
+    "lugos_checkout": "<lugos>",
+    "lugos_reads": []
+  },
+  "lesson": {
+    "id": "L-d8a44a04",
+    "outcome": "44a31b5f6ff3",
+    "identity": "#c043adbf1ff233d30b1417ab99887e6f6948daed",
+    "links": {
+      "after": [
+        ".ux-recast/evidence/9da027be4b4b/cited/evidence/after/test_invalid_email_preserves_work_and_can_complete-completed.png",
+        ".ux-recast/evidence/9da027be4b4b/cited/evidence/after/test_invalid_email_preserves_work_and_can_complete-entered.png",
+        ".ux-recast/evidence/9da027be4b4b/cited/evidence/after/test_invalid_email_preserves_work_and_can_complete-rejected.png"
+      ],
+      "before": [
+        ".ux-recast/evidence/9da027be4b4b/sources/test_invalid_email_preserves_work_and_can_complete-entered.png",
+        ".ux-recast/evidence/9da027be4b4b/sources/test_invalid_email_preserves_work_and_can_complete-rejected.png"
+      ],
+      "diff": [
+        ".ux-recast/evidence/9da027be4b4b/cited/evidence/repair.diff"
+      ],
+      "finding": [
+        ".ux-recast/evidence/9da027be4b4b/cited/evidence/findings.json#F1"
+      ],
+      "outcome": [
+        ".ux-recast/decisions.jsonl#44a31b5f6ff3"
+      ],
+      "test": [
+        ".ux-recast/evidence/9da027be4b4b/cited/evidence/after-tests.txt#test_invalid_email_preserves_work_and_can_complete"
+      ]
+    },
+    "clean_clone": {
+      "ux_review_present": false,
+      "checks": {
+        ".ux-recast/evidence/9da027be4b4b/cited/evidence/after/test_invalid_email_preserves_work_and_can_complete-completed.png": true,
+        ".ux-recast/evidence/9da027be4b4b/cited/evidence/after/test_invalid_email_preserves_work_and_can_complete-entered.png": true,
+        ".ux-recast/evidence/9da027be4b4b/cited/evidence/after/test_invalid_email_preserves_work_and_can_complete-rejected.png": true,
+        ".ux-recast/evidence/9da027be4b4b/sources/test_invalid_email_preserves_work_and_can_complete-entered.png": true,
+        ".ux-recast/evidence/9da027be4b4b/sources/test_invalid_email_preserves_work_and_can_complete-rejected.png": true,
+        ".ux-recast/evidence/9da027be4b4b/cited/evidence/repair.diff": true,
+        ".ux-recast/evidence/9da027be4b4b/cited/evidence/findings.json#F1": true,
+        ".ux-recast/decisions.jsonl#44a31b5f6ff3": true,
+        ".ux-recast/evidence/9da027be4b4b/cited/evidence/after-tests.txt#test_invalid_email_preserves_work_and_can_complete": true,
+        ".ux-recast/evidence/9da027be4b4b/manifest.json": true,
+        ".ux-recast/evidence/9da027be4b4b/cited/evidence/after-tests.txt": true,
+        ".ux-recast/evidence/9da027be4b4b/cited/evidence/findings.json": true,
+        ".ux-recast/evidence/9da027be4b4b/packet.json": true,
+        ".ux-recast/evidence/9da027be4b4b/receipt.json": true,
+        ".ux-recast/evidence/9da027be4b4b/sources/evidence.json": true,
+        ".ux-recast/evidence/9da027be4b4b/sources/test_empty_form_identifies_required_fields-required.png": true,
+        ".ux-recast/evidence/9da027be4b4b/sources/test_keyboard_can_finish-keyboard-focus.png": true,
+        ".ux-recast/evidence/9da027be4b4b/sources/test_small_touch_viewport_recovery-mobile-error.png": true
+      }
+    }
+  }
+}

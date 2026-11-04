@@ -1,0 +1,15 @@
+{
+  "accepted": true,
+  "status": "completed",
+  "autowork_run_id": "local-20261104-041748",
+  "selected_route": "local-agent",
+  "model": "Claude Opus 5.5 (claude-opus-5-5) as the local agent, the same session that drives the cycle",
+  "artifact_dir": "<repo>/.work/fixture-cycle-002/.ux-review/packets/9cb76bb2fc61956b2908ff7d-9da027be4b4b",
+  "task_sha256": "79f8eca000bb4f2ecffbe0e27436cdabee73885295fac9afad09a7914a2d65e2",
+  "meaning": "accepted describes matching completed advisory delivery only; parent evaluates findings and verifies repairs",
+  "findings": "stale",
+  "stale_at": "2026-11-04T04:18:24.054702+00:00",
+  "stale_inputs": [
+    "index.html"
+  ]
+}
