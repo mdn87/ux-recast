@@ -8,6 +8,9 @@ Verbs mirror the Lugos scripts so a shim can forward argv unchanged:
     ux-recast findings --project P --session S --run R --file findings.json
     ux-recast rubric   --version | --print <rubric.md|autowork-reviewer.md|walkthrough.md>
     ux-recast validate <task|state|packet|receipt|findings|comparison> FILE
+    ux-recast lessons  new     --project P --title T --body-file F
+    ux-recast lessons  support --project P --lesson ID --from Q --outcome OUTCOME_ID
+    ux-recast lessons  promote --project P --lesson ID [--shared-dir D] [--user-instruction TEXT]
 
 ``review`` prepares and claims a packet and writes a findings template; whoever
 fills it is the reviewer. For a fresh-context evaluator, hand it exactly the
@@ -88,6 +91,32 @@ def _validate(argv):
     return 0
 
 
+def _lessons(argv):
+    from ux_recast.records import lessons
+    p = argparse.ArgumentParser(prog="ux-recast lessons")
+    verbs = p.add_subparsers(dest="verb", required=True)
+    new = verbs.add_parser("new")
+    new.add_argument("--project", type=Path, required=True)
+    new.add_argument("--title", required=True)
+    new.add_argument("--body-file", type=Path, required=True)
+    support = verbs.add_parser("support")
+    support.add_argument("--project", type=Path, required=True)
+    support.add_argument("--lesson", required=True)
+    support.add_argument("--from", dest="supporter", type=Path, required=True)
+    support.add_argument("--outcome", required=True)
+    promote = verbs.add_parser("promote")
+    promote.add_argument("--project", type=Path, required=True)
+    promote.add_argument("--lesson", required=True)
+    promote.add_argument("--shared-dir", type=Path, default=lessons.SHARED_DIR)
+    promote.add_argument("--user-instruction", help="the user's explicit instruction to promote without a second project")
+    a = p.parse_args(argv)
+    if a.verb == "new":
+        return _emit(lambda: {"lesson": lessons.create(a.project, a.title, a.body_file.read_text(encoding="utf-8"))})
+    if a.verb == "support":
+        return _emit(lambda: {"supported_by": lessons.add_support(a.project, a.lesson, a.supporter, a.outcome)})
+    return _emit(lambda: lessons.promote(a.project, a.lesson, a.shared_dir, instruction=a.user_instruction))
+
+
 def _emit(call):
     try:
         print(json.dumps(call(), indent=2, ensure_ascii=True))
@@ -98,7 +127,7 @@ def _emit(call):
 
 
 COMMANDS = {"control": _control, "packet": _packet, "review": _review, "findings": _findings,
-            "rubric": _rubric, "validate": _validate}
+            "rubric": _rubric, "validate": _validate, "lessons": _lessons}
 
 
 def main(argv=None):
