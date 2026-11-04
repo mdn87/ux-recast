@@ -33,6 +33,7 @@ where = ["src"]
 [tool.setuptools.package-data]
 "ux_recast.rubric" = ["*.md", "VERSION"]
 "ux_recast.schemas" = ["*.json"]
+"ux_recast.records" = ["templates/*.md"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

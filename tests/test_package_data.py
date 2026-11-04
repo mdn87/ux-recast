@@ -20,6 +20,7 @@ EXPECTED = {
     "ux_recast/schemas/task.schema.json", "ux_recast/schemas/state.schema.json",
     "ux_recast/schemas/packet.schema.json", "ux_recast/schemas/receipt.schema.json",
     "ux_recast/schemas/findings.schema.json", "ux_recast/schemas/comparison.schema.json",
+    "ux_recast/records/templates/PRODUCT.md", "ux_recast/records/templates/DESIGN.md",
 }
 
 PROBE = r"""
@@ -27,6 +28,7 @@ import json, sys
 sys.path.insert(0, sys.argv[1])
 import ux_recast
 from ux_recast import rubric, contracts
+from ux_recast.records import context
 from ux_recast.cycle import control
 from ux_recast.providers import lugos_autowork, local_agent
 print(json.dumps({
@@ -34,6 +36,7 @@ print(json.dumps({
     "rubric_version": rubric.version(),
     "rubric_bytes": len(rubric.read_bytes("rubric.md")),
     "schemas": sorted(k for k in contracts.KINDS if contracts.schema(k)["title"]),
+    "starters": [len(context.starter(n)) > 0 for n in context.NAMES],
 }))
 """
 
@@ -78,6 +81,7 @@ class WheelPackageData(unittest.TestCase):
         self.assertEqual(payload["rubric_version"], "1")
         self.assertGreater(payload["rubric_bytes"], 1000)
         self.assertEqual(payload["schemas"], ["comparison", "findings", "packet", "receipt", "state", "task"])
+        self.assertEqual(payload["starters"], [True, True])
 
 
 if __name__ == "__main__":
