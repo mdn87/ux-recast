@@ -83,7 +83,7 @@ Pre-pilot slice S5.0 can start right after Phase 0. The rest needs B-03, B-09 an
 | S5.9 | Repair: question page | `input_page.py` | Same, with S5.1 coverage | M |
 | S5.10 | Repair: approval page | `approval_http.py` | Same, with S5.1 coverage; receipt-row exclusion stated | M |
 | S5.11 | Verification and user Decision | `docs/evidence/dias-pilot/after/`, a Decision record | Frozen scripts rerun unchanged; device observation after; comparison table including visual criteria; the fixture-vs-production non-coverage list; the user's accept or reject | M |
-| S5.12 | Dias-specific decisions filed | `dias-mobile/docs/` note and the phone client's `DESIGN.md` | Decisions reference the pilot run ids; no Dias colour or status meaning in the shared rubric | S |
+| S5.12 | Dias-specific decisions filed | `dias-mobile/docs/` note and the phone client's `DESIGN.md` | Decisions reference the pilot run ids; no Dias colour or status meaning in the shared rubric. **Done 2026-11-04:** Dias `docs/PHONE-CLIENT-UX.md` and D-047 (dias PR #116, `b734ab2`); the phone client's `DESIGN.md` was revised under D-22; the three rubric copies contain no Dias meaning | S |
 
 ## Phase 6: Style guide and component sheets
 
