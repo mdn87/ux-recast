@@ -1,0 +1,21 @@
+{
+ "why": "A rendered value was measured at one viewport.",
+ "entries": [
+  {
+   "source": "rendered",
+   "part": "card",
+   "property": "height",
+   "revision": "0123456789abcdef",
+   "engine": "chromium 149.0.7827.55",
+   "state": "default",
+   "viewport": "any",
+   "device_pixel_ratio": 3,
+   "tolerance": 0.5,
+   "code": "H1",
+   "name": "h",
+   "value": 110.4,
+   "unit": "px"
+  }
+ ],
+ "field": "viewport"
+}

@@ -1,0 +1,18 @@
+{
+ "why": "An unknown value is [TBD] and still names its unit.",
+ "entries": [
+  {
+   "source": "proposed",
+   "file": "theme.css",
+   "line": 1,
+   "revision": "0123456789abcdef",
+   "state": "default",
+   "viewport": "any",
+   "code": "V1",
+   "name": "viewport-margin",
+   "value": "[TBD]",
+   "unit": "px",
+   "literal": "x:{}"
+  }
+ ]
+}

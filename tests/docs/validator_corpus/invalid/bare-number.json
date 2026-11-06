@@ -1,0 +1,19 @@
+{
+ "why": "A number with no unit is refused.",
+ "entries": [
+  {
+   "source": "css-literal",
+   "file": "theme.css",
+   "line": 1,
+   "revision": "0123456789abcdef",
+   "state": "default",
+   "viewport": "any",
+   "code": "S1",
+   "name": "gap",
+   "value": 10,
+   "unit": "",
+   "literal": "x:{}"
+  }
+ ],
+ "field": "unit"
+}

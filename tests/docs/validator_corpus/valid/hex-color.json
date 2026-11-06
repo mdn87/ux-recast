@@ -1,0 +1,18 @@
+{
+ "why": "A colour is a hex value with unit color.",
+ "entries": [
+  {
+   "source": "css-literal",
+   "file": "theme.css",
+   "line": 1,
+   "revision": "0123456789abcdef",
+   "state": "default",
+   "viewport": "any",
+   "code": "C1",
+   "name": "approval",
+   "value": "#ff685f",
+   "unit": "color",
+   "literal": "--red:{}"
+  }
+ ]
+}

@@ -1,0 +1,19 @@
+{
+ "why": "An SVG attribute value needs svg-user.",
+ "entries": [
+  {
+   "source": "css-literal",
+   "file": "theme.css",
+   "line": 1,
+   "revision": "0123456789abcdef",
+   "state": "default",
+   "viewport": "any",
+   "code": "K1",
+   "name": "stroke",
+   "value": 1.6,
+   "unit": "",
+   "literal": "x:{}"
+  }
+ ],
+ "field": "unit"
+}

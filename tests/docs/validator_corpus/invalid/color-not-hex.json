@@ -1,0 +1,19 @@
+{
+ "why": "A colour unit takes a hex value.",
+ "entries": [
+  {
+   "source": "css-literal",
+   "file": "theme.css",
+   "line": 1,
+   "revision": "0123456789abcdef",
+   "state": "default",
+   "viewport": "any",
+   "code": "C1",
+   "name": "approval",
+   "value": "red",
+   "unit": "color",
+   "literal": "x:{}"
+  }
+ ],
+ "field": "value"
+}

@@ -1,0 +1,32 @@
+{
+ "why": "Codes are unique.",
+ "entries": [
+  {
+   "source": "css-literal",
+   "file": "theme.css",
+   "line": 1,
+   "revision": "0123456789abcdef",
+   "state": "default",
+   "viewport": "any",
+   "code": "S1",
+   "name": "a",
+   "value": 1,
+   "unit": "px",
+   "literal": "a:{}"
+  },
+  {
+   "source": "css-literal",
+   "file": "theme.css",
+   "line": 1,
+   "revision": "0123456789abcdef",
+   "state": "default",
+   "viewport": "any",
+   "code": "S1",
+   "name": "b",
+   "value": 2,
+   "unit": "px",
+   "literal": "b:{}"
+  }
+ ],
+ "field": "code"
+}

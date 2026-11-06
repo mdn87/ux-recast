@@ -1,0 +1,18 @@
+{
+ "why": "A word value is a keyword.",
+ "entries": [
+  {
+   "source": "css-literal",
+   "file": "theme.css",
+   "line": 1,
+   "revision": "0123456789abcdef",
+   "state": "default",
+   "viewport": "any",
+   "code": "T1",
+   "name": "label-case",
+   "value": "uppercase",
+   "unit": "keyword",
+   "literal": "text-transform:{}"
+  }
+ ]
+}

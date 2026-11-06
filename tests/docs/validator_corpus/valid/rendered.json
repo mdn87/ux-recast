@@ -1,0 +1,20 @@
+{
+ "why": "A rendered value records engine, viewport, pixel ratio and tolerance.",
+ "entries": [
+  {
+   "source": "rendered",
+   "part": "card",
+   "property": "height",
+   "revision": "0123456789abcdef",
+   "engine": "chromium 149.0.7827.55",
+   "state": "default",
+   "viewport": "390x844",
+   "device_pixel_ratio": 3,
+   "tolerance": 0.5,
+   "code": "H1",
+   "name": "card-h",
+   "value": 110.4,
+   "unit": "px"
+  }
+ ]
+}

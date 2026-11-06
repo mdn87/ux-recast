@@ -34,6 +34,7 @@ where = ["src"]
 "ux_recast.rubric" = ["*.md", "VERSION"]
 "ux_recast.schemas" = ["*.json"]
 "ux_recast.records" = ["templates/*.md"]
+"ux_recast.docs" = ["templates/*.md", "templates/*.html"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

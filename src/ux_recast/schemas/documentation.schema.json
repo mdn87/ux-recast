@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/mdn87/ux-recast/schemas/documentation.schema.json",
+  "title": "ux-recast documentation request",
+  "description": "A request for a style guide, component specification sheets or a motion presentation. The three outputs are independent; motion needs a static sheet. Separate from review mode (D-07).",
+  "type": "object",
+  "required": ["schema", "request_kind", "project", "subject", "basis", "outputs", "inputs", "out_dir"],
+  "properties": {
+    "schema": {"const": "ux-recast/documentation-request@1"},
+    "request_kind": {"const": "documentation"},
+    "project": {"type": "string", "minLength": 1},
+    "subject": {"type": "string", "minLength": 1, "description": "What is documented, in the product's words."},
+    "basis": {"enum": ["observed", "accepted", "proposed"], "description": "Documents the existing interface, an accepted redesign, or a proposal (C-38)."},
+    "basis_reference": {"type": "string", "description": "The decision or proposal an accepted or proposed output rests on."},
+    "outputs": {
+      "type": "object",
+      "properties": {
+        "guide": {"type": "boolean"},
+        "sheets": {"type": "boolean"},
+        "motion": {"type": "boolean", "description": "Refused without sheets or an existing sheet (C-47)."}
+      },
+      "additionalProperties": false
+    },
+    "components": {"type": "array", "items": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]{0,63}$"}, "description": "One sheet per component; required when sheets is true."},
+    "existing_sheets": {"type": "array", "items": {"type": "string", "minLength": 1}},
+    "inputs": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["path", "role"],
+        "properties": {
+          "path": {"type": "string", "minLength": 1},
+          "role": {"enum": ["design", "source", "decision", "measurement", "fixture", "screenshot", "reference", "product"]},
+          "authority": {"enum": ["approved", "observed", "reference"], "description": "An inspirational reference never overrides approved guidance (C-39)."}
+        }
+      }
+    },
+    "out_dir": {"type": "string", "minLength": 1, "description": "Where the validated guide and sheets are written, relative to the project."}
+  },
+  "additionalProperties": true
+}

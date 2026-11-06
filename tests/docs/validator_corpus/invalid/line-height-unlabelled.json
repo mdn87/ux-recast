@@ -1,0 +1,19 @@
+{
+ "why": "A unitless line height still says ratio.",
+ "entries": [
+  {
+   "source": "css-literal",
+   "file": "theme.css",
+   "line": 1,
+   "revision": "0123456789abcdef",
+   "state": "default",
+   "viewport": "any",
+   "code": "L1",
+   "name": "leading",
+   "value": 1.45,
+   "unit": "",
+   "literal": "x:{}"
+  }
+ ],
+ "field": "unit"
+}

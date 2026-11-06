@@ -1,0 +1,20 @@
+{
+ "why": "A rendered value states its tolerance.",
+ "entries": [
+  {
+   "source": "rendered",
+   "part": "card",
+   "property": "height",
+   "revision": "0123456789abcdef",
+   "engine": "chromium 149.0.7827.55",
+   "state": "default",
+   "viewport": "390x844",
+   "device_pixel_ratio": 3,
+   "code": "H1",
+   "name": "h",
+   "value": 110.4,
+   "unit": "px"
+  }
+ ],
+ "field": "tolerance"
+}

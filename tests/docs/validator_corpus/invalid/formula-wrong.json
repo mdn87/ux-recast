@@ -1,0 +1,33 @@
+{
+ "why": "A formula's result must match.",
+ "entries": [
+  {
+   "source": "css-literal",
+   "file": "theme.css",
+   "line": 1,
+   "revision": "0123456789abcdef",
+   "state": "default",
+   "viewport": "any",
+   "code": "S1",
+   "name": "pad",
+   "value": 10,
+   "unit": "px",
+   "literal": "padding:{}"
+  },
+  {
+   "source": "css-literal",
+   "file": "theme.css",
+   "line": 1,
+   "revision": "0123456789abcdef",
+   "state": "default",
+   "viewport": "any",
+   "code": "H1",
+   "name": "head",
+   "value": 30,
+   "unit": "px",
+   "literal": "height:{}",
+   "formula": "2*S1 + 5"
+  }
+ ],
+ "field": "formula"
+}

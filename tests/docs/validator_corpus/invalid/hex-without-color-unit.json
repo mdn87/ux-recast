@@ -1,0 +1,19 @@
+{
+ "why": "A hex value under a numeric unit is refused.",
+ "entries": [
+  {
+   "source": "css-literal",
+   "file": "theme.css",
+   "line": 1,
+   "revision": "0123456789abcdef",
+   "state": "default",
+   "viewport": "any",
+   "code": "C1",
+   "name": "approval",
+   "value": "#ff685f",
+   "unit": "px",
+   "literal": "x:{}"
+  }
+ ],
+ "field": "value"
+}

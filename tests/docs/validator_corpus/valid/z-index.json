@@ -1,0 +1,18 @@
+{
+ "why": "A z-index is a whole number with unit integer.",
+ "entries": [
+  {
+   "source": "css-literal",
+   "file": "theme.css",
+   "line": 1,
+   "revision": "0123456789abcdef",
+   "state": "default",
+   "viewport": "any",
+   "code": "Z1",
+   "name": "bar-layer",
+   "value": 5,
+   "unit": "integer",
+   "literal": "z-index:{}"
+  }
+ ]
+}

@@ -1,0 +1,19 @@
+{
+ "why": "A proposal names where it comes from.",
+ "entries": [
+  {
+   "source": "proposed",
+   "file": "theme.css",
+   "line": 1,
+   "revision": "0123456789abcdef",
+   "state": "default",
+   "viewport": "any",
+   "code": "P1",
+   "name": "next-gap",
+   "value": 12,
+   "unit": "px",
+   "literal": "x:{}",
+   "proposal": "flows.md P5"
+  }
+ ]
+}

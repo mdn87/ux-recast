@@ -10,12 +10,13 @@ packet adds ``review_mode`` and ``rubric_version`` to the outer packet only.
 ``comparison`` is the before-and-after record that closes a redesign (D-21);
 version 2 adds the Improvement Loop fields (kind, baseline and candidate, frozen
 criteria, cited evidence, limitations, effort, and the six-value decision).
-``lesson`` is the front matter of a project or shared lesson.
+``lesson`` is the front matter of a project or shared lesson. ``documentation`` is the request
+for a style guide, component sheets or a motion presentation (``contracts.documentation``).
 """
 from importlib import resources
 import json
 
-KINDS = ("task", "state", "packet", "receipt", "findings", "comparison", "lesson")
+KINDS = ("task", "state", "packet", "receipt", "findings", "comparison", "lesson", "documentation")
 
 TASK_STRINGS = ("flow", "goal", "starting_conditions", "expected_outcome", "device_input", "source")
 STATE_MODES = {"off", "once", "session"}
@@ -302,9 +303,11 @@ def validate_lesson(lesson, where="lesson"):
     return lesson
 
 
+from ux_recast.contracts.documentation import validate_documentation  # noqa: E402
+
 _VALIDATORS = {"task": validate_task, "state": validate_state, "packet": validate_packet,
                "receipt": validate_receipt, "findings": validate_findings, "comparison": validate_comparison,
-               "lesson": validate_lesson}
+               "lesson": validate_lesson, "documentation": validate_documentation}
 
 
 def validate(kind, data):

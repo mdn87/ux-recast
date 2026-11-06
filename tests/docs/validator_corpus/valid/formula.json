@@ -1,0 +1,45 @@
+{
+ "why": "A derived value carries its formula and the result.",
+ "entries": [
+  {
+   "source": "css-literal",
+   "file": "theme.css",
+   "line": 1,
+   "revision": "0123456789abcdef",
+   "state": "default",
+   "viewport": "any",
+   "code": "S1",
+   "name": "pad-y",
+   "value": 10,
+   "unit": "px",
+   "literal": "padding:{}"
+  },
+  {
+   "source": "css-literal",
+   "file": "theme.css",
+   "line": 1,
+   "revision": "0123456789abcdef",
+   "state": "default",
+   "viewport": "any",
+   "code": "H3",
+   "name": "chip-h",
+   "value": 18,
+   "unit": "px",
+   "literal": "height:{}"
+  },
+  {
+   "source": "css-literal",
+   "file": "theme.css",
+   "line": 1,
+   "revision": "0123456789abcdef",
+   "state": "default",
+   "viewport": "any",
+   "code": "H1",
+   "name": "head-h",
+   "value": 38,
+   "unit": "px",
+   "literal": "height:{}",
+   "formula": "2*S1 + H3"
+  }
+ ]
+}

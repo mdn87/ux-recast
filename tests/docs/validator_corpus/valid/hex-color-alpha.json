@@ -1,0 +1,18 @@
+{
+ "why": "Eight-digit hex keeps its alpha.",
+ "entries": [
+  {
+   "source": "css-literal",
+   "file": "theme.css",
+   "line": 1,
+   "revision": "0123456789abcdef",
+   "state": "default",
+   "viewport": "any",
+   "code": "C2",
+   "name": "edge",
+   "value": "#38d6ff47",
+   "unit": "color",
+   "literal": "--edge:{}"
+  }
+ ]
+}
