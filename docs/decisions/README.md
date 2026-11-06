@@ -25,3 +25,4 @@ One file per entry of the decision log in `docs/plans/initial-implementation-pla
 - [D-21](0021-redesign-first-method-adopted.md): Redesign-first method adopted, with walkthrough mode, prompt hand-off and comparison record
 - [D-22](0022-dias-session-needs-me-direction-accepted.md): Dias phone client redesign direction accepted (session-needs-me), with the Mimo look
 - [D-23](0023-macos-covered-in-phase-3.md): macOS is covered in Phase 3 for the shim and the package (B-11)
+- [D-24](0024-phase-6-outputs-under-ux-design.md): Phase 6 Dias outputs live under lugos-host-ops/ux/design/
