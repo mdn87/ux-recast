@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "projectId": "ux-recast",
+  "projectLabel": "Ux Recast",
+  "chips": [
+    {
+      "schemaVersion": 1,
+      "chipId": "ux-recast-finding-cap",
+      "projectId": "ux-recast",
+      "title": "Enforce the five-finding cap when a review is recorded",
+      "summary": "Recording a review keeps the five most severe findings as actionable and marks the rest deferred, in a fixed order. Today the cap is only a prompt instruction.",
+      "stage": "active",
+      "sequence": 1,
+      "prereqs": [],
+      "linkedRunIds": [],
+      "confidence": "reported",
+      "timestamps": {
+        "createdAt": "2026-11-15T06:28:30Z",
+        "updatedAt": "2026-11-15T06:29:44Z"
+      },
+      "evidence": [
+        {
+          "entryId": "finding-cap-created",
+          "at": "2026-11-15T06:28:30Z",
+          "kind": "created",
+          "message": "Plan slice S4.1, the first of Phase 4. It builds on the ported cycle and the Lugos shims, both finished before this board existed, so no prerequisite steps are listed."
+        },
+        {
+          "entryId": "finding-cap-active",
+          "at": "2026-11-15T06:29:44Z",
+          "kind": "stage-change",
+          "message": "Both board files passed the Dias parsers before work began; now writing the failing test for a seven-finding result."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "projectId": "ux-recast",
+  "projectLabel": "Ux Recast",
+  "assessmentState": "scored",
+  "assessmentScope": "current-milestone",
+  "percentComplete": 0,
+  "milestonePhase": "build-and-validate",
+  "portfolioGroup": "agent-platform",
+  "displayPriority": 500,
+  "assessedAt": "2026-11-15T06:28:30Z",
+  "confidence": "reported",
+  "currentMilestone": "Phase 4 of the plan: the review cycle enforces its own limits and gains the optional evidence helpers.",
+  "remainingSummary": "All five Phase 4 slices: the finding cap, the image preflight, the Impeccable pre-pass and command passes, and tap-to-target capture.",
+  "nextChipId": "ux-recast-finding-cap",
+  "source": {
+    "label": "Plan slices checked against both repositories on 2026-11-15: Phases 0-2, 5 and 6 done, Phase 3 shims landed, Phase 4 not started",
+    "updatedAt": "2026-11-15"
+  }
+}
