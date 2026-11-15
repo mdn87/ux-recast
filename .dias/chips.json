@@ -51,7 +51,7 @@
       "projectId": "ux-recast",
       "title": "Keep the recorded findings when a repeat record is refused",
       "summary": "A second attempt to record findings for the same review is refused before anything is written, so the first recorded set and its result file stay as they were.",
-      "stage": "active",
+      "stage": "done",
       "sequence": 2,
       "prereqs": [
         "ux-recast-finding-cap"
@@ -60,7 +60,7 @@
       "confidence": "reported",
       "timestamps": {
         "createdAt": "2026-11-15T08:18:15Z",
-        "updatedAt": "2026-11-15T08:18:15Z"
+        "updatedAt": "2026-11-15T08:20:44Z"
       },
       "evidence": [
         {
@@ -68,6 +68,18 @@
           "at": "2026-11-15T08:18:15Z",
           "kind": "created",
           "message": "A defect found while landing the finding cap: a refused repeat record replaced the saved findings. Not a plan slice; it protects what the cap writes."
+        },
+        {
+          "entryId": "repeat-record-results",
+          "at": "2026-11-15T08:20:44Z",
+          "kind": "note",
+          "message": "Two new tests failed first, then passed. Through the command line, a refused second record now leaves the seven recorded findings in place; before, it replaced them."
+        },
+        {
+          "entryId": "repeat-record-done",
+          "at": "2026-11-15T08:20:44Z",
+          "kind": "stage-change",
+          "message": "Done. A repeat record is refused before anything is written, and local records take turns, so two at once cannot overwrite each other either."
         }
       ]
     },
@@ -77,7 +89,7 @@
       "projectId": "ux-recast",
       "title": "Check an image review against the installed policy before sending",
       "summary": "Before a review with screenshots is sent, it is checked against the installed Autowork image policy. A refusal stops with a message; nothing is sent or cut down to text.",
-      "stage": "planned",
+      "stage": "active",
       "sequence": 3,
       "prereqs": [
         "ux-recast-finding-cap"
@@ -86,7 +98,7 @@
       "confidence": "reported",
       "timestamps": {
         "createdAt": "2026-11-15T08:18:15Z",
-        "updatedAt": "2026-11-15T08:18:15Z"
+        "updatedAt": "2026-11-15T08:20:44Z"
       },
       "evidence": [
         {
@@ -94,6 +106,12 @@
           "at": "2026-11-15T08:18:15Z",
           "kind": "created",
           "message": "Plan slice S4.2. It extends the send step that the finding-cap step taught to count dispatches; a refused check must not count as one."
+        },
+        {
+          "entryId": "image-preflight-active",
+          "at": "2026-11-15T08:20:44Z",
+          "kind": "stage-change",
+          "message": "Starting with the failing contract test: a review with a screenshot, checked against the installed Autowork policy."
         }
       ]
     },

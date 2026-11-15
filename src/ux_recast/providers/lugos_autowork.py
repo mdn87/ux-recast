@@ -319,6 +319,11 @@ def submit(project, session, run_id, result_path, *, request_file=None, server_c
                        "record and consume are separate steps"}
 
 
+def require_unrecorded(packet):
+    if packet["dispatch_status"] not in ("claimed", "submitted"):
+        raise ValueError("Result requires one claimed or submitted, unrecorded dispatch")
+
+
 def record(project, session, run_id, result_path):
     # Recording an already-launched result remains permitted after mode off.
     state = execute(project, session, ["status"])
@@ -330,8 +335,7 @@ def record(project, session, run_id, result_path):
         raise ValueError("Expected normalized Autowork JSON; retain raw errors and recover unknown outcomes")
     with locked(folder / "dispatch.lock"):
         packet = load_packet(folder)
-        if packet["dispatch_status"] not in ("claimed", "submitted"):
-            raise ValueError("Result requires one claimed or submitted, unrecorded dispatch")
+        require_unrecorded(packet)
         problems = result_problems(result, packet)
         receipt = {"accepted": not problems, "status": result["status"],
                    "autowork_run_id": result.get("run_id"), "selected_route": result.get("selected_route"),

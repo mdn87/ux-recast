@@ -5,6 +5,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import threading
 import unittest
 
 from ux_recast.contracts import validate
@@ -111,6 +112,36 @@ class LocalAgentProvider(unittest.TestCase):
         with self.assertRaises(ValueError):  # a refused second record consumes nothing more
             local_agent.record(self.root, SESSION, self.run_id, self._findings())
         self.assertEqual(json.loads(packet_path.read_text(encoding="utf-8"))["review_dispatches"], 1)
+
+    def test_a_refused_repeat_record_leaves_the_recorded_files_alone(self):
+        local_agent.prepare(self.root, SESSION, self.run_id, self.evidence)
+        local_agent.record(self.root, SESSION, self.run_id, self._findings())
+        folder = self.folder()
+        names = ("findings.json", "local-result.json", "autowork-result.json", "receipt.json")
+        kept = {name: (folder / name).read_bytes() for name in names}
+        other = self._findings(findings=[finding(id="Z9", severity="Low")])
+        with self.assertRaises(ValueError) as caught:
+            local_agent.record(self.root, SESSION, self.run_id, other)
+        self.assertIn("unrecorded dispatch", str(caught.exception))
+        for name, before in kept.items():
+            self.assertEqual((folder / name).read_bytes(), before, f"{name} was replaced by a refused record")
+
+    def test_local_records_take_turns(self):
+        local_agent.prepare(self.root, SESSION, self.run_id, self.evidence)
+        folder, path, done = self.folder(), self._findings(), threading.Event()
+
+        def later():
+            local_agent.record(self.root, SESSION, self.run_id, path)
+            done.set()
+
+        with lugos_autowork.locked(folder / "findings.lock"):
+            worker = threading.Thread(target=later)
+            worker.start()
+            self.assertFalse(done.wait(0.5), "a record must wait for the one in progress")
+            self.assertFalse((folder / "local-result.json").exists())
+        worker.join(30)
+        self.assertTrue(done.is_set())
+        self.assertTrue((folder / "local-result.json").exists())
 
     def test_record_refuses_malformed_findings_and_leaves_the_claim(self):
         local_agent.prepare(self.root, SESSION, self.run_id, self.evidence)

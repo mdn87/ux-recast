@@ -8,11 +8,11 @@
   "milestonePhase": "build-and-validate",
   "portfolioGroup": "agent-platform",
   "displayPriority": 500,
-  "assessedAt": "2026-11-15T08:18:15Z",
+  "assessedAt": "2026-11-15T08:20:44Z",
   "confidence": "reported",
   "currentMilestone": "Phase 4 of the plan: the review cycle enforces its own limits and gains the optional evidence helpers.",
   "remainingSummary": "In progress: a repeat-record fix, the image preflight and tap-to-target capture. After those, the two Impeccable slices remain in Phase 4, both waiting on decisions.",
-  "nextChipId": "ux-recast-repeat-record-refusal",
+  "nextChipId": "ux-recast-image-preflight",
   "source": {
     "label": "The finding cap landed 2026-11-15 with 198 passing tests; not yet pinned by Lugos or used in a real review cycle",
     "updatedAt": "2026-11-15"
