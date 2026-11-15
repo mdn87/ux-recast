@@ -45,7 +45,18 @@
     "submit_error": {"type": "string"},
     "review_mode": {"enum": ["review", "walkthrough"], "description": "Present only when the packet was prepared in a mode other than review; absent means review, so a review-mode packet stays byte-identical to the Lugos one."},
     "rubric_version": {"type": "string", "description": "The packaged rubric VERSION; recorded with review_mode."},
-    "review_dispatches": {"type": "integer", "minimum": 0, "description": "How many times this run's review request reached a reviewer. Absent means none. Outer packet only; the request is unchanged."}
+    "review_dispatches": {"type": "integer", "minimum": 0, "description": "How many times this run's review request reached a reviewer. Absent means none. Outer packet only; the request is unchanged."},
+    "image_preflight": {
+      "type": "object",
+      "required": ["status"],
+      "properties": {
+        "status": {"enum": ["accepted", "unavailable"]},
+        "task_class": {"type": "string"},
+        "policy_sha256": {"type": "string"},
+        "reason": {"type": "string"}
+      },
+      "description": "For a request that carries images: what checking it against the installed Autowork image policy found before submit sent it. Absent for a text-only request. A refused check sends nothing and writes nothing. Outer packet only; the request is unchanged."
+    }
   },
   "dependentRequired": {"review_mode": ["rubric_version"]},
   "additionalProperties": true

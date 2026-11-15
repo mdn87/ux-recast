@@ -8,7 +8,9 @@ the offending field. The Lugos artifacts (``.ux-review`` state, ``packet.json``,
 them; nothing here changes the inner Autowork request. A walkthrough-mode
 packet adds ``review_mode`` and ``rubric_version`` to the outer packet only.
 ``review_dispatches`` is likewise outer-packet only, and a recorded finding
-carries ``status`` (``cycle.budget``).
+carries ``status`` (``cycle.budget``). ``image_preflight``, also outer-packet
+only, says what checking an image request against the installed Autowork policy
+found before ``submit`` sent it.
 ``comparison`` is the before-and-after record that closes a redesign (D-21);
 version 2 adds the Improvement Loop fields (kind, baseline and candidate, frozen
 criteria, cited evidence, limitations, effort, and the six-value decision).
@@ -26,6 +28,7 @@ RUN_STATUSES = {"active", "cancelled", "verified", "remaining", "unavailable"}
 RUN_PHASES = {"review", "repair", "verify"}
 DISPATCH_STATUSES = {"prepared", "claimed", "submitted", "recorded"}
 SUBMIT_OUTCOMES = {"delivered", "rejected", "unknown"}
+IMAGE_PREFLIGHT_STATUSES = {"accepted", "unavailable"}
 FINDING_CATEGORIES = {"observed failure", "heuristic concern", "unresolved question"}
 SEVERITIES = {"Critical", "High", "Medium", "Low"}
 CONFIDENCES = {"high", "medium", "low"}
@@ -156,6 +159,10 @@ def validate_packet(packet, where="packet"):
         count = packet["review_dispatches"]
         if isinstance(count, bool) or not isinstance(count, int) or count < 0:
             raise ContractError(f"{where}.review_dispatches", "expected a non-negative integer")
+    if "image_preflight" in packet:
+        preflight = _require(packet, "image_preflight", dict, where)
+        _enum(_require(preflight, "status", str, f"{where}.image_preflight"), IMAGE_PREFLIGHT_STATUSES,
+              f"{where}.image_preflight.status")
     return packet
 
 

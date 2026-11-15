@@ -89,7 +89,7 @@
       "projectId": "ux-recast",
       "title": "Check an image review against the installed policy before sending",
       "summary": "Before a review with screenshots is sent, it is checked against the installed Autowork image policy. A refusal stops with a message; nothing is sent or cut down to text.",
-      "stage": "active",
+      "stage": "done",
       "sequence": 3,
       "prereqs": [
         "ux-recast-finding-cap"
@@ -98,7 +98,7 @@
       "confidence": "reported",
       "timestamps": {
         "createdAt": "2026-11-15T08:18:15Z",
-        "updatedAt": "2026-11-15T08:20:44Z"
+        "updatedAt": "2026-11-15T08:25:36Z"
       },
       "evidence": [
         {
@@ -112,6 +112,18 @@
           "at": "2026-11-15T08:20:44Z",
           "kind": "stage-change",
           "message": "Starting with the failing contract test: a review with a screenshot, checked against the installed Autowork policy."
+        },
+        {
+          "entryId": "image-preflight-results",
+          "at": "2026-11-15T08:25:36Z",
+          "kind": "note",
+          "message": "210 tests pass, 10 of them new for this step. Through the command line, a review with a screenshot was checked as accepted and sent with its image to a stand-in reviewer."
+        },
+        {
+          "entryId": "image-preflight-done",
+          "at": "2026-11-15T08:25:36Z",
+          "kind": "stage-change",
+          "message": "Done. A refused check sends nothing and keeps the claim. The policy tests need Autowork installed, so they ran on this machine and will skip in the hosted test run."
         }
       ]
     },
@@ -121,14 +133,14 @@
       "projectId": "ux-recast",
       "title": "Turn a tap on a page into the element it landed on",
       "summary": "Given a point on a page, the helper reports the innermost element there as a selector with its data attributes, in a form a finding can carry.",
-      "stage": "planned",
+      "stage": "active",
       "sequence": 4,
       "prereqs": [],
       "linkedRunIds": [],
       "confidence": "reported",
       "timestamps": {
         "createdAt": "2026-11-15T08:18:15Z",
-        "updatedAt": "2026-11-15T08:18:15Z"
+        "updatedAt": "2026-11-15T08:25:37Z"
       },
       "evidence": [
         {
@@ -136,6 +148,12 @@
           "at": "2026-11-15T08:18:15Z",
           "kind": "created",
           "message": "Plan slice S4.5. It builds on the browser evidence helpers from the style-guide phase, which finished before this board existed, so no prerequisite steps are listed."
+        },
+        {
+          "entryId": "tap-target-active",
+          "at": "2026-11-15T08:25:37Z",
+          "kind": "stage-change",
+          "message": "Starting with the failing browser test: a point on the fixture page should come back as the element under it."
         }
       ]
     }

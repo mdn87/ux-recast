@@ -193,6 +193,35 @@ def prompt(project, session, run_id):
             "review_mode": packet.get("review_mode", "review")}
 
 
+def image_preflight(request, *, policy_path=None):
+    """Check a request that carries images against the installed Autowork assignment policy.
+
+    A text-only request needs no check and returns None. For an image request the
+    answer says what was checked: ``accepted`` with the task class and the policy's
+    sha256, or ``unavailable`` when Autowork is not importable by this interpreter
+    (the dispatcher still applies its own policy to what it receives). A policy that
+    would not grant image input to the request's task class raises, so the caller
+    refuses before sending. Nothing here or anywhere else removes the images from a
+    request: an image review is sent with its images or not at all.
+    """
+    if "image" not in request.get("input_modalities", []):
+        return None
+    try:
+        from autowork.campaign.assignment_policy import TaskClass, classify_task, load_assignment_policy
+        if policy_path is None:
+            from autowork.campaign.dispatcher import DEFAULT_ASSIGNMENT_POLICY_PATH as policy_path
+    except ImportError:
+        return {"status": "unavailable", "reason": "Autowork is not importable by this interpreter"}
+    policy = load_assignment_policy(policy_path)
+    task_class = classify_task(request["task"], request.get("task_class_hint", "auto"), policy)
+    if task_class is not TaskClass.VISUAL and task_class not in policy.image_input_opt_in_task_classes:
+        raise ValueError(f"The installed Autowork policy grants no image input to a {task_class.value!r} task "
+                         f"(policy sha256 {policy.provenance.sha256[:12]}). The review was not sent and is never "
+                         "reduced to text: opt the task class in under image_input_opt_in, or take a new "
+                         "checkpoint and prepare the review without screenshots")
+    return {"status": "accepted", "task_class": task_class.value, "policy_sha256": policy.provenance.sha256}
+
+
 def server_parameters(server_command):
     """The Lugos MCP server to launch: an explicit argv, else ~/.claude.json mcpServers.lugos.
 
@@ -248,7 +277,7 @@ def parse_result(outcome):
 
 
 def submit(project, session, run_id, result_path, *, request_file=None, server_command=None,
-           timeout_seconds=None, config=None):
+           timeout_seconds=None, config=None, image_policy=None):
     root = Path(project).resolve(strict=True)
     folder = folder_for(root, session, run_id)
     result_path = Path(result_path).resolve()
@@ -268,8 +297,12 @@ def submit(project, session, run_id, result_path, *, request_file=None, server_c
         request = packet["request"]
         if request_file is not None and json.loads(Path(request_file).read_text(encoding="utf-8")) != request:
             raise ValueError("Request file differs from the claimed request")
+        # Refused here, an image review costs no dispatch and keeps its claim (S4.2).
+        preflight = image_preflight(request, policy_path=image_policy)
         command, args, env = server_parameters(server_command)
         timeout = timeout_seconds or int(request.get("timeout_seconds") or 300) + SUBMIT_MARGIN_SECONDS
+        if preflight:
+            packet["image_preflight"] = preflight
         packet.update(dispatch_status="submitted", submitted_at=now(), submit_result_path=str(result_path))
         write_json(folder / "packet.json", packet)
     progress = {"sent": False}

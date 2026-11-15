@@ -213,6 +213,16 @@ class Refusals(unittest.TestCase):
             packet["review_dispatches"] = wrong
             self.assertField("packet", packet, "packet.review_dispatches")
 
+    def test_packet_image_preflight_names_its_status(self):
+        packet = load("packet-plan.json")
+        for status in ("accepted", "unavailable"):
+            packet["image_preflight"] = {"status": status}
+            validate("packet", packet)
+        packet["image_preflight"] = {"status": "skipped"}
+        self.assertField("packet", packet, "packet.image_preflight.status")
+        packet["image_preflight"] = "accepted"
+        self.assertField("packet", packet, "packet.image_preflight")
+
 
 if __name__ == "__main__":
     unittest.main()
