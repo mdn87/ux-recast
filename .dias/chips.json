@@ -168,6 +168,86 @@
           "message": "Done. The fixture page has no data attributes and may not be edited, so that half is proven on a small test page, along with nested components and a scrolled tap."
         }
       ]
+    },
+    {
+      "schemaVersion": 1,
+      "chipId": "ux-recast-impeccable-detect",
+      "projectId": "ux-recast",
+      "title": "Use Impeccable's detector as optional evidence before a review",
+      "summary": "When the Impeccable tool is installed, its detector runs first and its rule hits go to the review as implementation findings. Without it the run says so and carries on.",
+      "stage": "done",
+      "sequence": 5,
+      "prereqs": [],
+      "linkedRunIds": [],
+      "confidence": "reported",
+      "timestamps": {
+        "createdAt": "2026-11-15T14:38:18Z",
+        "updatedAt": "2026-11-15T14:44:11Z"
+      },
+      "evidence": [
+        {
+          "entryId": "impeccable-detect-created",
+          "at": "2026-11-15T14:38:18Z",
+          "kind": "created",
+          "message": "Plan slice S4.3. The tool is not installed here, so this is built against the real outputs its own repository publishes at the revision the plan inspected."
+        },
+        {
+          "entryId": "impeccable-detect-results",
+          "at": "2026-11-15T14:44:11Z",
+          "kind": "note",
+          "message": "238 tests pass, 17 of them new for this step. A missing tool or browser is reported and the run carries on; any other failure stops with the tool's own message."
+        },
+        {
+          "entryId": "impeccable-detect-done",
+          "at": "2026-11-15T14:44:11Z",
+          "kind": "stage-change",
+          "message": "Done, with a limit: it was tested against a stand-in that replays the tool's published output. The real tool is not installed here and has not been run."
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "chipId": "ux-recast-release-dev3",
+      "projectId": "ux-recast",
+      "title": "Tag a release so the new work can be installed",
+      "summary": "Lugos installs this package from a release tag. A new tag makes the finding cap, the record fix, the image check and the evidence helpers installable.",
+      "stage": "done",
+      "sequence": 6,
+      "prereqs": [
+        "ux-recast-impeccable-detect"
+      ],
+      "linkedRunIds": [],
+      "confidence": "reported",
+      "timestamps": {
+        "createdAt": "2026-11-15T14:38:18Z",
+        "updatedAt": "2026-11-15T14:47:09Z"
+      },
+      "evidence": [
+        {
+          "entryId": "release-dev3-created",
+          "at": "2026-11-15T14:38:18Z",
+          "kind": "created",
+          "message": "Not a plan slice: the plan has ux-recast tag a release for Lugos to pin. Moving the Lugos pin is a separate step in the Lugos repository and waits on Matt."
+        },
+        {
+          "entryId": "release-dev3-active",
+          "at": "2026-11-15T14:44:12Z",
+          "kind": "stage-change",
+          "message": "Starting now that the detector step is committed: bump the version, wait for the checks, tag, then prove the tag installs."
+        },
+        {
+          "entryId": "release-dev3-results",
+          "at": "2026-11-15T14:47:09Z",
+          "kind": "note",
+          "message": "The new tag installs into a fresh environment the way Lugos installs it and reports the new version. Automated checks passed on the tagged commit."
+        },
+        {
+          "entryId": "release-dev3-done",
+          "at": "2026-11-15T14:47:09Z",
+          "kind": "stage-change",
+          "message": "Done. Lugos still points at the previous release, so none of this reaches the Lugos entry point until its pin is moved, which waits on Matt."
+        }
+      ]
     }
   ]
 }

@@ -4,17 +4,17 @@
   "projectLabel": "Ux Recast",
   "assessmentState": "scored",
   "assessmentScope": "current-milestone",
-  "percentComplete": 45,
+  "percentComplete": 60,
   "milestonePhase": "build-and-validate",
   "portfolioGroup": "agent-platform",
   "displayPriority": 500,
-  "assessedAt": "2026-11-15T08:29:47Z",
+  "assessedAt": "2026-11-15T14:47:09Z",
   "confidence": "reported",
   "currentMilestone": "Phase 4 of the plan: the review cycle enforces its own limits and gains the optional evidence helpers.",
-  "remainingSummary": "Two Phase 4 slices remain, both about Impeccable. One needs the tool or a sample of its output; the other waits on Phase 3 closing and an install choice. No next step is recorded.",
+  "remainingSummary": "One Phase 4 slice remains: running the Impeccable commands by name, which waits on Phase 3 closing and an install choice. The detector step has not met the real tool yet.",
   "nextChipId": null,
   "source": {
-    "label": "Three of five Phase 4 slices landed by 2026-11-15 with 221 passing tests; not yet pinned by Lugos or used in a real review cycle",
+    "label": "Four of five Phase 4 slices landed and tagged as a release by 2026-11-15, with 238 passing tests; Lugos has not picked the release up yet",
     "updatedAt": "2026-11-15"
   }
 }
