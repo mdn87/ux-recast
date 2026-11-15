@@ -7,6 +7,12 @@ template, then ``record`` validates the findings and records them through the
 ordinary packet lifecycle as a normalized result whose ``answer`` is the
 findings JSON. No model provider and no network are involved.
 
+``record`` also applies the run's finding cap (``cycle.budget``): the recorded
+``findings.json`` is in severity-then-input order with each finding marked
+``actionable`` or ``deferred``, while ``local-result.json`` keeps the findings
+exactly as the reviewer delivered them. A recorded local review counts as the
+run's one review dispatch.
+
 Who fills the template is the caller's choice. For a fresh evaluation (the
 ``walkthrough`` mode especially) hand a separate agent context exactly the text
 ``lugos_autowork.prompt`` returns plus the listed visual inputs, nothing else,
@@ -17,6 +23,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from ux_recast.contracts import validate
+from ux_recast.cycle import budget
 from ux_recast.providers import lugos_autowork as packets
 
 PROVIDER = "local-agent"
@@ -71,6 +78,13 @@ def record(project, session, run_id, findings_path):
               "answer": json.dumps(findings, ensure_ascii=False), "task_sha256": packet["task_sha256"]}
     result_path = folder / "local-result.json"
     packets.write_json(result_path, result)
-    packets.write_json(folder / "findings.json", findings)
+    capped = budget.apply_finding_cap(findings["findings"],
+                                      packet["activation"]["budget"]["max_actionable_findings"])
+    packets.write_json(folder / "findings.json", {**findings, "findings": capped})
     receipt = packets.record(project, session, run_id, result_path)
-    return {**receipt, "findings_count": len(findings["findings"])}
+    # The hand-off to a local reviewer is not observable; its recorded result is.
+    with packets.locked(folder / "dispatch.lock"):
+        packet = packets.load_packet(folder)
+        dispatches = budget.count_review_dispatch(packet)
+        packets.write_json(folder / "packet.json", packet)
+    return {**receipt, **budget.finding_counts(capped), "review_dispatches": dispatches}

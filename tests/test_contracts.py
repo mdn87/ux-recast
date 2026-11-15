@@ -194,5 +194,25 @@ class Refusals(unittest.TestCase):
         self.assertField("findings", scored, "findings.findings[0].score")
 
 
+    def test_finding_status_is_actionable_or_deferred(self):
+        good = {"schema": "ux-recast/findings@1", "provider": "local-agent", "task_sha256": "0" * 64,
+                "reviewer": "test", "findings": [{
+                    "id": "F1", "category": "observed failure", "task_step": "submit", "observed": "x",
+                    "evidence": "step 3", "principle": "error prevention", "likely_consequence": "y",
+                    "severity": "High", "confidence": "high", "confidence_reason": "seen",
+                    "proposed_correction": "z", "verification": "rerun", "status": "deferred"}]}
+        validate("findings", good)
+        good["findings"][0]["status"] = "later"
+        self.assertField("findings", good, "findings.findings[0].status")
+
+    def test_packet_review_dispatches_is_a_count(self):
+        packet = load("packet-plan.json")
+        packet["review_dispatches"] = 1
+        validate("packet", packet)
+        for wrong in (-1, "1", True, 1.5):
+            packet["review_dispatches"] = wrong
+            self.assertField("packet", packet, "packet.review_dispatches")
+
+
 if __name__ == "__main__":
     unittest.main()

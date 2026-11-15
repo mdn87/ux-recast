@@ -15,6 +15,7 @@ from pathlib import Path
 import sys
 
 from ux_recast import rubric as _rubric
+from ux_recast.cycle.budget import count_review_dispatch
 from ux_recast.cycle.control import bound_changes, config_values, execute, locked
 
 # The Lugos server registers the tool as lugos.models; the underscore form is the
@@ -279,6 +280,7 @@ def submit(project, session, run_id, result_path, *, request_file=None, server_c
         with locked(folder / "dispatch.lock"):
             packet = load_packet(folder)
             if progress["sent"]:
+                count_review_dispatch(packet)
                 packet.update(submit_outcome="unknown", submit_error=note)
                 write_json(folder / "packet.json", packet)
                 raise ValueError(f"Dispatch outcome unknown after the request was sent ({note}); "
@@ -298,6 +300,7 @@ def submit(project, session, run_id, result_path, *, request_file=None, server_c
         problems += result_problems(parsed, packet)
     with locked(folder / "dispatch.lock"):
         packet = load_packet(folder)
+        count_review_dispatch(packet)  # sent and answered: delivered or rejected, the dispatch is spent
         if problems:
             write_json(rejected_path, {"problems": problems, "result": parsed, "raw": raw})
             packet.update(submit_outcome="rejected", submit_problems=problems,

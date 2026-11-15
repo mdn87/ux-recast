@@ -8,15 +8,15 @@
       "chipId": "ux-recast-finding-cap",
       "projectId": "ux-recast",
       "title": "Enforce the five-finding cap when a review is recorded",
-      "summary": "Recording a review keeps the five most severe findings as actionable and marks the rest deferred, in a fixed order. Today the cap is only a prompt instruction.",
-      "stage": "active",
+      "summary": "Recording a review keeps the five most severe findings as actionable and marks the rest deferred, in a fixed order, and the run records how many review dispatches it used.",
+      "stage": "done",
       "sequence": 1,
       "prereqs": [],
       "linkedRunIds": [],
       "confidence": "reported",
       "timestamps": {
         "createdAt": "2026-11-15T06:28:30Z",
-        "updatedAt": "2026-11-15T06:29:44Z"
+        "updatedAt": "2026-11-15T06:41:17Z"
       },
       "evidence": [
         {
@@ -30,6 +30,18 @@
           "at": "2026-11-15T06:29:44Z",
           "kind": "stage-change",
           "message": "Both board files passed the Dias parsers before work began; now writing the failing test for a seven-finding result."
+        },
+        {
+          "entryId": "finding-cap-results",
+          "at": "2026-11-15T06:41:17Z",
+          "kind": "note",
+          "message": "198 tests pass, 16 of them new. A seven-finding review run through the command line recorded five actionable and two deferred, in severity order."
+        },
+        {
+          "entryId": "finding-cap-done",
+          "at": "2026-11-15T06:41:17Z",
+          "kind": "stage-change",
+          "message": "Done. The cap applies to structured findings; a prose reviewer answer is recorded unchanged, so the byte-parity baseline with the Lugos scripts still holds."
         }
       ]
     }

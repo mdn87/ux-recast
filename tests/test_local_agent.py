@@ -7,6 +7,7 @@ import sys
 import tempfile
 import unittest
 
+from ux_recast.contracts import validate
 from ux_recast.cycle.control import execute
 from ux_recast.providers import local_agent, lugos_autowork
 
@@ -80,6 +81,36 @@ class LocalAgentProvider(unittest.TestCase):
         self.assertEqual(json.loads(result["answer"])["findings"][0]["id"], "F1")
         consumed = lugos_autowork.consume(self.root, SESSION, self.run_id)
         self.assertEqual(consumed["findings"], "current")
+
+    def test_record_caps_seven_findings_at_five_actionable(self):
+        local_agent.prepare(self.root, SESSION, self.run_id, self.evidence)
+        severities = ["Low", "High", "Critical", "Medium", "High", "Low", "Critical"]
+        seven = [finding(id=f"F{n}", severity=severity) for n, severity in enumerate(severities, 1)]
+        receipt = local_agent.record(self.root, SESSION, self.run_id, self._findings(findings=seven))
+        self.assertTrue(receipt["accepted"])
+        self.assertEqual((receipt["findings_count"], receipt["actionable_count"], receipt["deferred_count"]), (7, 5, 2))
+        folder = self.folder()
+        recorded = json.loads((folder / "findings.json").read_text(encoding="utf-8"))
+        self.assertEqual([f["id"] for f in recorded["findings"]], ["F3", "F7", "F2", "F5", "F4", "F1", "F6"])
+        self.assertEqual([f["status"] for f in recorded["findings"]], ["actionable"] * 5 + ["deferred"] * 2)
+        validate("findings", recorded)
+        # What the reviewer delivered is kept as delivered: all seven, input order, no status.
+        delivered = json.loads(json.loads((folder / "local-result.json").read_text(encoding="utf-8"))["answer"])
+        self.assertEqual([f["id"] for f in delivered["findings"]], [f"F{n}" for n in range(1, 8)])
+        self.assertNotIn("status", delivered["findings"][0])
+
+    def test_a_recorded_local_review_counts_one_dispatch(self):
+        local_agent.prepare(self.root, SESSION, self.run_id, self.evidence)
+        packet_path = self.folder() / "packet.json"
+        self.assertNotIn("review_dispatches", json.loads(packet_path.read_text(encoding="utf-8")))
+        receipt = local_agent.record(self.root, SESSION, self.run_id, self._findings())
+        self.assertEqual(receipt["review_dispatches"], 1)
+        packet = json.loads(packet_path.read_text(encoding="utf-8"))
+        self.assertEqual(packet["review_dispatches"], 1)
+        validate("packet", packet)
+        with self.assertRaises(ValueError):  # a refused second record consumes nothing more
+            local_agent.record(self.root, SESSION, self.run_id, self._findings())
+        self.assertEqual(json.loads(packet_path.read_text(encoding="utf-8"))["review_dispatches"], 1)
 
     def test_record_refuses_malformed_findings_and_leaves_the_claim(self):
         local_agent.prepare(self.root, SESSION, self.run_id, self.evidence)

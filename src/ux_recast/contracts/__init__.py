@@ -7,6 +7,8 @@ the offending field. The Lugos artifacts (``.ux-review`` state, ``packet.json``,
 ``receipt.json``) keep ``schema_version: 1`` exactly as the Lugos scripts write
 them; nothing here changes the inner Autowork request. A walkthrough-mode
 packet adds ``review_mode`` and ``rubric_version`` to the outer packet only.
+``review_dispatches`` is likewise outer-packet only, and a recorded finding
+carries ``status`` (``cycle.budget``).
 ``comparison`` is the before-and-after record that closes a redesign (D-21);
 version 2 adds the Improvement Loop fields (kind, baseline and candidate, frozen
 criteria, cited evidence, limitations, effort, and the six-value decision).
@@ -28,6 +30,7 @@ FINDING_CATEGORIES = {"observed failure", "heuristic concern", "unresolved quest
 SEVERITIES = {"Critical", "High", "Medium", "Low"}
 CONFIDENCES = {"high", "medium", "low"}
 FINDING_KINDS = {"design", "implementation"}
+FINDING_STATUSES = {"actionable", "deferred"}
 REVIEW_MODES = {"review", "walkthrough"}
 COMPARISON_SCHEMA = "ux-recast/comparison@1"
 IMPROVEMENT_KINDS = {"observed", "judgement"}
@@ -149,6 +152,10 @@ def validate_packet(packet, where="packet"):
     if "review_mode" in packet:
         _enum(packet["review_mode"], REVIEW_MODES, f"{where}.review_mode")
         _require(packet, "rubric_version", str, where)
+    if "review_dispatches" in packet:
+        count = packet["review_dispatches"]
+        if isinstance(count, bool) or not isinstance(count, int) or count < 0:
+            raise ContractError(f"{where}.review_dispatches", "expected a non-negative integer")
     return packet
 
 
@@ -193,6 +200,8 @@ def validate_findings(findings, where="findings"):
         _enum(_require(item, "confidence", str, w), CONFIDENCES, f"{w}.confidence")
         if "kind" in item:
             _enum(item["kind"], FINDING_KINDS, f"{w}.kind")
+        if "status" in item:
+            _enum(item["status"], FINDING_STATUSES, f"{w}.status")
         if "score" in item and not isinstance(item["score"], (int, float)):
             raise ContractError(f"{w}.score", "a score is a numeric signal, never acceptance")
     return findings

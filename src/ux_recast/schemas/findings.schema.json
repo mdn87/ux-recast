@@ -31,7 +31,8 @@
           "verification": {"type": "string", "minLength": 1},
           "element": {"type": "string"},
           "kind": {"enum": ["design", "implementation"]},
-          "score": {"type": "number"}
+          "score": {"type": "number"},
+          "status": {"enum": ["actionable", "deferred"], "description": "Set when findings are recorded: ranked by severity then input order, the first max_actionable_findings are actionable and the rest deferred. A reviewer may mark a finding deferred itself; it then takes no actionable slot."}
         },
         "additionalProperties": true
       }

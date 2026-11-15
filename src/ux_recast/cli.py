@@ -27,6 +27,8 @@ from review mode and never changes it.
 ``review`` prepares and claims a packet and writes a findings template; whoever
 fills it is the reviewer. For a fresh-context evaluator, hand it exactly the
 output of ``packet prompt`` and record its findings with ``findings``.
+``findings`` applies the run's finding cap: the five most severe are recorded
+as actionable, the rest as deferred.
 """
 import argparse
 import json
