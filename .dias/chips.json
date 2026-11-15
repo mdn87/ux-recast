@@ -133,14 +133,14 @@
       "projectId": "ux-recast",
       "title": "Turn a tap on a page into the element it landed on",
       "summary": "Given a point on a page, the helper reports the innermost element there as a selector with its data attributes, in a form a finding can carry.",
-      "stage": "active",
+      "stage": "done",
       "sequence": 4,
       "prereqs": [],
       "linkedRunIds": [],
       "confidence": "reported",
       "timestamps": {
         "createdAt": "2026-11-15T08:18:15Z",
-        "updatedAt": "2026-11-15T08:25:37Z"
+        "updatedAt": "2026-11-15T08:29:47Z"
       },
       "evidence": [
         {
@@ -154,6 +154,18 @@
           "at": "2026-11-15T08:25:37Z",
           "kind": "stage-change",
           "message": "Starting with the failing browser test: a point on the fixture page should come back as the element under it."
+        },
+        {
+          "entryId": "tap-target-results",
+          "at": "2026-11-15T08:29:47Z",
+          "kind": "note",
+          "message": "221 tests pass, 11 of them new for this step; the browser cases ran here in Chromium. A tap on the fixture's send button came back as that button, and a finding accepted it."
+        },
+        {
+          "entryId": "tap-target-done",
+          "at": "2026-11-15T08:29:47Z",
+          "kind": "stage-change",
+          "message": "Done. The fixture page has no data attributes and may not be edited, so that half is proven on a small test page, along with nested components and a scrolled tap."
         }
       ]
     }

@@ -4,17 +4,17 @@
   "projectLabel": "Ux Recast",
   "assessmentState": "scored",
   "assessmentScope": "current-milestone",
-  "percentComplete": 15,
+  "percentComplete": 45,
   "milestonePhase": "build-and-validate",
   "portfolioGroup": "agent-platform",
   "displayPriority": 500,
-  "assessedAt": "2026-11-15T08:25:37Z",
+  "assessedAt": "2026-11-15T08:29:47Z",
   "confidence": "reported",
   "currentMilestone": "Phase 4 of the plan: the review cycle enforces its own limits and gains the optional evidence helpers.",
-  "remainingSummary": "In progress: a repeat-record fix, the image preflight and tap-to-target capture. After those, the two Impeccable slices remain in Phase 4, both waiting on decisions.",
-  "nextChipId": "ux-recast-tap-to-target",
+  "remainingSummary": "Two Phase 4 slices remain, both about Impeccable. One needs the tool or a sample of its output; the other waits on Phase 3 closing and an install choice. No next step is recorded.",
+  "nextChipId": null,
   "source": {
-    "label": "The finding cap landed 2026-11-15 with 198 passing tests; not yet pinned by Lugos or used in a real review cycle",
+    "label": "Three of five Phase 4 slices landed by 2026-11-15 with 221 passing tests; not yet pinned by Lugos or used in a real review cycle",
     "updatedAt": "2026-11-15"
   }
 }
