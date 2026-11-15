@@ -44,6 +44,82 @@
           "message": "Done. The cap applies to structured findings; a prose reviewer answer is recorded unchanged, so the byte-parity baseline with the Lugos scripts still holds."
         }
       ]
+    },
+    {
+      "schemaVersion": 1,
+      "chipId": "ux-recast-repeat-record-refusal",
+      "projectId": "ux-recast",
+      "title": "Keep the recorded findings when a repeat record is refused",
+      "summary": "A second attempt to record findings for the same review is refused before anything is written, so the first recorded set and its result file stay as they were.",
+      "stage": "active",
+      "sequence": 2,
+      "prereqs": [
+        "ux-recast-finding-cap"
+      ],
+      "linkedRunIds": [],
+      "confidence": "reported",
+      "timestamps": {
+        "createdAt": "2026-11-15T08:18:15Z",
+        "updatedAt": "2026-11-15T08:18:15Z"
+      },
+      "evidence": [
+        {
+          "entryId": "repeat-record-created",
+          "at": "2026-11-15T08:18:15Z",
+          "kind": "created",
+          "message": "A defect found while landing the finding cap: a refused repeat record replaced the saved findings. Not a plan slice; it protects what the cap writes."
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "chipId": "ux-recast-image-preflight",
+      "projectId": "ux-recast",
+      "title": "Check an image review against the installed policy before sending",
+      "summary": "Before a review with screenshots is sent, it is checked against the installed Autowork image policy. A refusal stops with a message; nothing is sent or cut down to text.",
+      "stage": "planned",
+      "sequence": 3,
+      "prereqs": [
+        "ux-recast-finding-cap"
+      ],
+      "linkedRunIds": [],
+      "confidence": "reported",
+      "timestamps": {
+        "createdAt": "2026-11-15T08:18:15Z",
+        "updatedAt": "2026-11-15T08:18:15Z"
+      },
+      "evidence": [
+        {
+          "entryId": "image-preflight-created",
+          "at": "2026-11-15T08:18:15Z",
+          "kind": "created",
+          "message": "Plan slice S4.2. It extends the send step that the finding-cap step taught to count dispatches; a refused check must not count as one."
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "chipId": "ux-recast-tap-to-target",
+      "projectId": "ux-recast",
+      "title": "Turn a tap on a page into the element it landed on",
+      "summary": "Given a point on a page, the helper reports the innermost element there as a selector with its data attributes, in a form a finding can carry.",
+      "stage": "planned",
+      "sequence": 4,
+      "prereqs": [],
+      "linkedRunIds": [],
+      "confidence": "reported",
+      "timestamps": {
+        "createdAt": "2026-11-15T08:18:15Z",
+        "updatedAt": "2026-11-15T08:18:15Z"
+      },
+      "evidence": [
+        {
+          "entryId": "tap-target-created",
+          "at": "2026-11-15T08:18:15Z",
+          "kind": "created",
+          "message": "Plan slice S4.5. It builds on the browser evidence helpers from the style-guide phase, which finished before this board existed, so no prerequisite steps are listed."
+        }
+      ]
     }
   ]
 }
