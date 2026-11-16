@@ -21,3 +21,7 @@ build/
 # Scratch project directories for local fixture cycles (scripts/fixture_cycle.py)
 .work/
 *.egg-info/
+
+.Codex/handoff.md
+
+.Codex/handoff-history/

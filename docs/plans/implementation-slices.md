@@ -45,7 +45,7 @@ Work in this phase lands in the Lugos repository; ux-recast tags a release for i
 
 | Slice | Outcome | Touches | Proof | Size |
 | --- | --- | --- | --- | --- |
-| S3.1 | Dependency pinned | `plugins/lugos-toolset/requirements-ux-review.txt`, ux-recast tag | `pip install -r` resolves on the self-hosted Linux runner and on Windows | S |
+| S3.1 | Dependency pinned | `plugins/lugos-toolset/requirements-ux-review.txt`, ux-recast tag | `pip install -r` resolves on the self-hosted Linux runner and on Windows. **Release adoption verified 2026-11-16:** Lugos pins v0.1.0.dev3; both implementations pass on Windows and Linux ([evidence](../evidence/lugos-dev3-adoption-2026-11-16.md)). This does not close macOS parity or S3.9. | S |
 | S3.2 | Legacy siblings and shims | `SKILL/scripts/{control.py,autowork_review.py}` as shims; `control_legacy.py`, `autowork_review_legacy.py` as siblings; mirror | Shims re-export the legacy module surface; `UX_REVIEW_IMPL` checked before importing `ux_recast`; absence of `ux_recast` without legacy selected fails closed with a message (tested); `test_distribution.py` extended and passing | M |
 | S3.3 | Test-id parity on both implementations, both platforms | none (verification) | Every id in the S0.5 inventory passes under `legacy` and under the shim on Windows (recorded, Python version named) and on the Linux runner | M |
 | S3.4 | Differential corpus parity | none (verification) | S1.6 corpus run under both; stdout bytes, exit codes and `.ux-review/` trees match, with the S0.4 encoding change the only documented difference | S |

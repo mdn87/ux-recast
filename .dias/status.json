@@ -8,13 +8,13 @@
   "milestonePhase": "build-and-validate",
   "portfolioGroup": "agent-platform",
   "displayPriority": 500,
-  "assessedAt": "2026-11-16T03:38:47Z",
+  "assessedAt": "2026-11-16T03:49:14Z",
   "confidence": "reported",
   "currentMilestone": "Phase 4 of the plan: the review cycle enforces its own limits and gains the optional evidence helpers.",
-  "remainingSummary": "The Lugos pin still needs approval before Phase 3 parity can be tested. Then S4.4 needs the Impeccable install choice; the detector also needs a real-tool run.",
-  "nextChipId": "ux-recast-lugos-dev3-parity",
+  "remainingSummary": "S4.4 waits on Phase 3 closure and the Impeccable choice. macOS parity and legacy removal remain open. The detector still needs a real-tool run.",
+  "nextChipId": null,
   "source": {
-    "label": "Four of five Phase 4 slices landed and tagged as a release by 2026-11-15, with 238 passing tests; Lugos has not picked the release up yet",
+    "label": "Lugos adopted dev3; Windows and Linux each passed 115 shim and catalog tests plus 69 legacy tests. Four of five Phase 4 slices remain complete.",
     "updatedAt": "2026-11-16"
   }
 }

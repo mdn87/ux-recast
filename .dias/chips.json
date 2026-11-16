@@ -253,9 +253,9 @@
       "schemaVersion": 1,
       "chipId": "ux-recast-lugos-dev3-parity",
       "projectId": "ux-recast",
-      "title": "Verify the released package in Lugos before Phase 3 closes",
-      "summary": "Move Lugos to the tagged package, run its ux-review checks, and record parity evidence so the frozen rubric can safely advance.",
-      "stage": "blocked",
+      "title": "Install and verify the released package through Lugos",
+      "summary": "Update Lugos to v0.1.0.dev3 and verify both implementations on Windows and Linux. macOS parity and legacy removal remain separate Phase 3 gates.",
+      "stage": "done",
       "sequence": 7,
       "prereqs": [
         "ux-recast-release-dev3"
@@ -264,7 +264,7 @@
       "confidence": "reported",
       "timestamps": {
         "createdAt": "2026-11-16T03:36:51Z",
-        "updatedAt": "2026-11-16T03:38:47Z"
+        "updatedAt": "2026-11-16T03:49:14Z"
       },
       "evidence": [
         {
@@ -277,13 +277,25 @@
           "entryId": "lugos-dev3-parity-active",
           "at": "2026-11-16T03:37:35Z",
           "kind": "stage-change",
-          "message": "Both board files passed Dias validation; inspecting Lugos release and test state before the approved pin change."
+          "message": "Both board files passed Dias validation; inspecting Lugos release and test state before requesting approval for the pin change."
         },
         {
           "entryId": "lugos-dev3-parity-blocked",
           "at": "2026-11-16T03:38:47Z",
           "kind": "note",
-          "message": "origin/master still pins v0.1.0.dev2; changing Lugos needs Matt approval before its ux-review checks can verify parity."
+          "message": "The Lugos default branch still pinned v0.1.0.dev2; changing Lugos needed Matt approval before its ux-review checks could verify parity."
+        },
+        {
+          "entryId": "lugos-dev3-resumed",
+          "at": "2026-11-16T03:43:19Z",
+          "kind": "stage-change",
+          "message": "Matt requested verification followed by go for the proposed batch. Resuming the Lugos update; it does not close all Phase 3 gates."
+        },
+        {
+          "entryId": "lugos-dev3-parity-done",
+          "at": "2026-11-16T03:49:14Z",
+          "kind": "stage-change",
+          "message": "Lugos now pins dev3. Windows and Linux each passed 115 shim and catalog tests plus 69 legacy tests. CI passed on the landed commit; Phase 3 remains open."
         }
       ]
     }
