@@ -248,6 +248,44 @@
           "message": "Done. Lugos still points at the previous release, so none of this reaches the Lugos entry point until its pin is moved, which waits on Matt."
         }
       ]
+    },
+    {
+      "schemaVersion": 1,
+      "chipId": "ux-recast-lugos-dev3-parity",
+      "projectId": "ux-recast",
+      "title": "Verify the released package in Lugos before Phase 3 closes",
+      "summary": "Move Lugos to the tagged package, run its ux-review checks, and record parity evidence so the frozen rubric can safely advance.",
+      "stage": "blocked",
+      "sequence": 7,
+      "prereqs": [
+        "ux-recast-release-dev3"
+      ],
+      "linkedRunIds": [],
+      "confidence": "reported",
+      "timestamps": {
+        "createdAt": "2026-11-16T03:36:51Z",
+        "updatedAt": "2026-11-16T03:38:47Z"
+      },
+      "evidence": [
+        {
+          "entryId": "lugos-dev3-parity-created",
+          "at": "2026-11-16T03:36:51Z",
+          "kind": "created",
+          "message": "Follows the tagged release; confirms the standalone behavior through its Lugos entry point before S4.4 can change the frozen rubric."
+        },
+        {
+          "entryId": "lugos-dev3-parity-active",
+          "at": "2026-11-16T03:37:35Z",
+          "kind": "stage-change",
+          "message": "Both board files passed Dias validation; inspecting Lugos release and test state before the approved pin change."
+        },
+        {
+          "entryId": "lugos-dev3-parity-blocked",
+          "at": "2026-11-16T03:38:47Z",
+          "kind": "note",
+          "message": "origin/master still pins v0.1.0.dev2; changing Lugos needs Matt approval before its ux-review checks can verify parity."
+        }
+      ]
     }
   ]
 }

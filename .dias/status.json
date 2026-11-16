@@ -8,13 +8,13 @@
   "milestonePhase": "build-and-validate",
   "portfolioGroup": "agent-platform",
   "displayPriority": 500,
-  "assessedAt": "2026-11-15T14:47:09Z",
+  "assessedAt": "2026-11-16T03:38:47Z",
   "confidence": "reported",
   "currentMilestone": "Phase 4 of the plan: the review cycle enforces its own limits and gains the optional evidence helpers.",
-  "remainingSummary": "One Phase 4 slice remains: running the Impeccable commands by name, which waits on Phase 3 closing and an install choice. The detector step has not met the real tool yet.",
-  "nextChipId": null,
+  "remainingSummary": "The Lugos pin still needs approval before Phase 3 parity can be tested. Then S4.4 needs the Impeccable install choice; the detector also needs a real-tool run.",
+  "nextChipId": "ux-recast-lugos-dev3-parity",
   "source": {
     "label": "Four of five Phase 4 slices landed and tagged as a release by 2026-11-15, with 238 passing tests; Lugos has not picked the release up yet",
-    "updatedAt": "2026-11-15"
+    "updatedAt": "2026-11-16"
   }
 }
