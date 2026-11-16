@@ -1,0 +1,51 @@
+{
+  "ran_at": "2026-11-16T13:45:45.082442+00:00",
+  "platform": "Windows-11-10.0.26300-SP0",
+  "python": "3.14.3",
+  "npm_package": "4.8.0",
+  "engine_package": "0.1.18",
+  "engine_sha256": "8f61e96b0c97001546a824d79b44f46b423b560f3eb1a0cc44a8695a1b395d9f",
+  "browser": "C:\\Users\\Matt\\AppData\\Local\\ms-playwright\\chromium-1228\\chrome-win64\\chrome.exe",
+  "browser_sha256": "b798f9e53a98d29eb7f36f8c409f905d3184780a04d2bcb56989067194784bd1",
+  "fixture_sha256": {
+    "index.before.html": "a21bc7401f384d1749049e4591079017275bf1a7c1fdc2ca102f3a4cc8742a45",
+    "index.html": "c04cfbe2a4c9c70165ec06f5ce738a736d0a2774d4e3df4aa9716ed5d027a3a6"
+  },
+  "cases": [
+    {
+      "case": "static-before",
+      "exit_code": 2,
+      "result": "findings",
+      "rules": [
+        "kicker-above-heading"
+      ]
+    },
+    {
+      "case": "static-after",
+      "exit_code": 2,
+      "result": "findings",
+      "rules": [
+        "kicker-above-heading"
+      ]
+    },
+    {
+      "case": "static-clean",
+      "exit_code": 0,
+      "result": "clean",
+      "rules": []
+    },
+    {
+      "case": "missing-target",
+      "exit_code": 1,
+      "result": "error propagated"
+    },
+    {
+      "case": "rendered-mobile",
+      "exit_code": 2,
+      "result": "findings",
+      "rules": [
+        "kicker-above-heading"
+      ]
+    }
+  ]
+}

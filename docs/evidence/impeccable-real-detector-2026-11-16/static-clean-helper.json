@@ -1,0 +1,17 @@
+{
+  "schema": "ux-recast/impeccable-detect@1",
+  "target": "C:\\Users\\Matt\\Desktop\\MyDocs\\ux-recast\\.work\\impeccable-real-run-2026-11-16\\clean.css",
+  "findings": [],
+  "provenance": {
+    "tool": "impeccable",
+    "version": "4.8.0",
+    "arguments": [
+      "detect",
+      "--json",
+      "C:\\Users\\Matt\\Desktop\\MyDocs\\ux-recast\\.work\\impeccable-real-run-2026-11-16\\clean.css"
+    ],
+    "exit_code": 0,
+    "ran_at": "2026-11-16T13:45:37Z"
+  },
+  "status": "clean"
+}

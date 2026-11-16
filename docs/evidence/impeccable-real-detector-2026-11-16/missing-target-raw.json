@@ -1,0 +1,10 @@
+{
+  "arguments": [
+    "detect",
+    "--json",
+    "C:\\Users\\Matt\\Desktop\\MyDocs\\ux-recast\\.work\\impeccable-real-run-2026-11-16\\does-not-exist.html"
+  ],
+  "exit_code": 1,
+  "stdout": "[]\n",
+  "stderr": "Warning: cannot access C:\\Users\\Matt\\Desktop\\MyDocs\\ux-recast\\.work\\impeccable-real-run-2026-11-16\\does-not-exist.html\n"
+}

@@ -305,7 +305,7 @@
       "projectId": "ux-recast",
       "title": "Verify the evidence helper against the real Impeccable detector",
       "summary": "Run a pinned real detector on local fixtures and compare its output with the helper. Record compatibility and any limits before wiring it into reviews.",
-      "stage": "planned",
+      "stage": "done",
       "sequence": 8,
       "prereqs": [
         "ux-recast-impeccable-detect",
@@ -315,7 +315,7 @@
       "confidence": "reported",
       "timestamps": {
         "createdAt": "2026-11-16T13:43:31Z",
-        "updatedAt": "2026-11-16T13:43:31Z"
+        "updatedAt": "2026-11-16T13:48:16Z"
       },
       "evidence": [
         {
@@ -323,6 +323,30 @@
           "at": "2026-11-16T13:43:31Z",
           "kind": "created",
           "message": "Closes the real-tool evidence gap left by the stand-in tests. Local detector validation does not require changing the reviewer rubric or installing Dias skills."
+        },
+        {
+          "entryId": "real-detector-active",
+          "at": "2026-11-16T13:43:40Z",
+          "kind": "stage-change",
+          "message": "Both Dias parsers passed before work began. Inspecting the pinned detector distribution and local fixture checks."
+        },
+        {
+          "entryId": "real-detector-results",
+          "at": "2026-11-16T13:48:16Z",
+          "kind": "note",
+          "message": "Pinned Impeccable passed five real-tool checks on Windows, including a rendered mobile page. All 238 existing tests passed; fixture hashes stayed unchanged."
+        },
+        {
+          "entryId": "real-detector-limits",
+          "at": "2026-11-16T13:48:16Z",
+          "kind": "note",
+          "message": "The helper drops rendered selectors, and the upstream launcher can fetch a missing engine. This run used a preinstalled engine with a verified checksum."
+        },
+        {
+          "entryId": "real-detector-done",
+          "at": "2026-11-16T13:48:16Z",
+          "kind": "stage-change",
+          "message": "Real-tool evidence is recorded with a repeatable verification recipe. Phase 3 and the agent-skill installation choice still gate review-cycle integration."
         }
       ]
     }

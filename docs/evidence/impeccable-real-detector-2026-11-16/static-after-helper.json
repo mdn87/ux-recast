@@ -1,0 +1,31 @@
+{
+  "schema": "ux-recast/impeccable-detect@1",
+  "target": "C:\\Users\\Matt\\Desktop\\MyDocs\\ux-recast\\fixtures\\contact-request\\index.html",
+  "findings": [
+    {
+      "rule_id": "kicker-above-heading",
+      "kind": "implementation",
+      "category": "heuristic concern",
+      "rule_name": "Kicker / eyebrow label above heading",
+      "description": "A tiny tracked uppercase or small-caps label sitting as its own block directly above a heading is banned outright, repeated or not. Generated kickers never earn their place: the heading carries its own weight. Delete the label and let the heading speak; if the words matter, work them into the heading or the body.",
+      "observed": "kicker \"Local demonstration\" above h1 \"Send a support request\"",
+      "file": "C:\\Users\\Matt\\Desktop\\MyDocs\\ux-recast\\fixtures\\contact-request\\index.html",
+      "line": 0,
+      "tool_severity": "warning",
+      "tool_category": "slop",
+      "advisory": false
+    }
+  ],
+  "provenance": {
+    "tool": "impeccable",
+    "version": "4.8.0",
+    "arguments": [
+      "detect",
+      "--json",
+      "C:\\Users\\Matt\\Desktop\\MyDocs\\ux-recast\\fixtures\\contact-request\\index.html"
+    ],
+    "exit_code": 2,
+    "ran_at": "2026-11-16T13:45:36Z"
+  },
+  "status": "findings"
+}
