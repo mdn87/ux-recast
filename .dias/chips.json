@@ -298,6 +298,33 @@
           "message": "Lugos now pins dev3. Windows and Linux each passed 115 shim and catalog tests plus 69 legacy tests. CI passed on the landed commit; Phase 3 remains open."
         }
       ]
+    },
+    {
+      "schemaVersion": 1,
+      "chipId": "ux-recast-impeccable-real-detector",
+      "projectId": "ux-recast",
+      "title": "Verify the evidence helper against the real Impeccable detector",
+      "summary": "Run a pinned real detector on local fixtures and compare its output with the helper. Record compatibility and any limits before wiring it into reviews.",
+      "stage": "planned",
+      "sequence": 8,
+      "prereqs": [
+        "ux-recast-impeccable-detect",
+        "ux-recast-release-dev3"
+      ],
+      "linkedRunIds": [],
+      "confidence": "reported",
+      "timestamps": {
+        "createdAt": "2026-11-16T13:43:31Z",
+        "updatedAt": "2026-11-16T13:43:31Z"
+      },
+      "evidence": [
+        {
+          "entryId": "real-detector-created",
+          "at": "2026-11-16T13:43:31Z",
+          "kind": "created",
+          "message": "Closes the real-tool evidence gap left by the stand-in tests. Local detector validation does not require changing the reviewer rubric or installing Dias skills."
+        }
+      ]
     }
   ]
 }

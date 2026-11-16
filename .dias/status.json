@@ -8,11 +8,11 @@
   "milestonePhase": "build-and-validate",
   "portfolioGroup": "agent-platform",
   "displayPriority": 500,
-  "assessedAt": "2026-11-16T03:49:14Z",
+  "assessedAt": "2026-11-16T13:43:31Z",
   "confidence": "reported",
   "currentMilestone": "Phase 4 of the plan: the review cycle enforces its own limits and gains the optional evidence helpers.",
   "remainingSummary": "S4.4 waits on Phase 3 closure and the Impeccable choice. macOS parity and legacy removal remain open. The detector still needs a real-tool run.",
-  "nextChipId": null,
+  "nextChipId": "ux-recast-impeccable-real-detector",
   "source": {
     "label": "Lugos adopted dev3; Windows and Linux each passed 115 shim and catalog tests plus 69 legacy tests. Four of five Phase 4 slices remain complete.",
     "updatedAt": "2026-11-16"
