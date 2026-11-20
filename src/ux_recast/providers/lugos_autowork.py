@@ -225,7 +225,8 @@ def image_preflight(request, *, policy_path=None):
 def server_parameters(server_command):
     """The Lugos MCP server to launch: an explicit argv, else ~/.claude.json mcpServers.lugos.
 
-    Configured environment values are passed to the child and never printed."""
+    Only nonsecret Autowork settings may come from the saved MCP configuration.
+    Launch through GLAS when the child needs credentials."""
     if server_command:
         return server_command[0], list(server_command[1:]), dict(os.environ)
     try:
@@ -234,7 +235,21 @@ def server_parameters(server_command):
         command = entry["command"]
     except (OSError, ValueError, KeyError, TypeError) as error:
         raise ValueError("No --server-command given and no mcpServers.lugos entry in ~/.claude.json") from error
-    env = {**os.environ, **{str(k): str(v) for k, v in (entry.get("env") or {}).items()}}
+    configured = entry.get("env") or {}
+    allowed = {
+        "LUGOS_AUTOWORK_REQUEST_PROFILE",
+        "LUGOS_AUTOWORK_RUNTIME_PROFILE",
+        "LUGOS_AUTOWORK_SOURCE_ROOT",
+    }
+    if not isinstance(configured, dict) or any(
+        name not in allowed or not isinstance(value, str)
+        for name, value in configured.items()
+    ):
+        raise ValueError(
+            "mcpServers.lugos env may contain only nonsecret Autowork settings; "
+            "launch through GLAS for credentials"
+        )
+    env = {**os.environ, **configured}
     return command, [str(a) for a in (entry.get("args") or [])], env
 
 
