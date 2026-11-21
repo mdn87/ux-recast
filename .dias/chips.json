@@ -388,7 +388,7 @@
       "projectId": "ux-recast",
       "title": "Remove the legacy Lugos scripts and the implementation switch",
       "summary": "Plan slice S3.9: delete the legacy siblings and the switch in Lugos once parity holds on all three platforms, with tests still passing. Needs Matt's approval.",
-      "stage": "planned",
+      "stage": "done",
       "sequence": 10,
       "prereqs": [
         "ux-recast:macos-parity"
@@ -397,7 +397,7 @@
       "confidence": "reported",
       "timestamps": {
         "createdAt": "2026-11-20T04:37:34Z",
-        "updatedAt": "2026-11-20T04:37:34Z"
+        "updatedAt": "2026-11-21T05:22:04Z"
       },
       "evidence": [
         {
@@ -405,6 +405,12 @@
           "at": "2026-11-20T04:37:34Z",
           "kind": "created",
           "message": "Closes Phase 3. The pilot Decision it waits on was accepted; the rollback crossover passed in the dev3 adoption run. Deletion keeps its existing approval gate."
+        },
+        {
+          "entryId": "legacy-removal-verified",
+          "at": "2026-11-21T05:22:04Z",
+          "kind": "stage-change",
+          "message": "Lugos retired the legacy scripts and switch. An open legacy review finished through the package. All 110 review and catalog tests passed on Windows, macOS and Linux."
         }
       ]
     },

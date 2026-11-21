@@ -53,7 +53,7 @@ Work in this phase lands in the Lugos repository; ux-recast tags a release for i
 | S3.6 | Live submits on the shim compared to baseline | `lugos/docs/evidence/ux-review-live-submit-shim/` | Text and image receipts `accepted: true`; compared field by field to S0.6; one rejection or timeout path exercised | M |
 | S3.7 | Rollback drills in both directions | `docs/evidence/ux-review-rollback-drill/` | Shim to legacy and legacy to shim, including a crossover while `dispatch.lock` is held; legacy tolerates a `deferred` status and unknown outer-envelope keys | M |
 | S3.8 | Documentation corrected | `lugos/docs/ux-review.md:49,87-90` | Lines state that `submit` starts the MCP server and that image review is opted in for `review` | S |
-| S3.9 | Legacy removal | siblings deleted, switch removed | Only after the Phase 5 Decision is `accepted` and S3.7 passed; tests still pass | S |
+| S3.9 | Legacy removal | Lugos entry points, both skill copies and CI | Completed 2026-11-21 after the accepted Dias pilot, rollback drills and three-platform parity. The package finished a review claimed by legacy. Windows, macOS and Linux each passed 110 review and catalog tests. [Removal evidence](../evidence/lugos-legacy-removal-2026-11-21.md) | S |
 
 ## Phase 4: Cycle hardening and evidence helpers
 

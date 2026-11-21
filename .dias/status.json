@@ -8,13 +8,13 @@
   "milestonePhase": "build-and-validate",
   "portfolioGroup": "agent-platform",
   "displayPriority": 500,
-  "assessedAt": "2026-11-21T05:03:24Z",
+  "assessedAt": "2026-11-21T05:22:04Z",
   "confidence": "reported",
   "currentMilestone": "Phase 4 of the plan: the review cycle enforces its own limits and gains the optional evidence helpers.",
-  "remainingSummary": "S4.4 is the last Phase 4 slice. It waits on Phase 3 legacy removal and the Dias agent-skill installation decision.",
-  "nextChipId": "ux-recast:legacy-removal",
+  "remainingSummary": "S4.4 is the last Phase 4 slice. It adds the named Impeccable passes. Matt still needs to choose whether to install the agent skill in Dias.",
+  "nextChipId": "ux-recast:impeccable-command-passes",
   "source": {
-    "label": "Four of five Phase 4 slices are done. Lugos dev3 checks passed on Windows, Linux and macOS. All 69 shared tests passed in both modes on applemac.",
+    "label": "Phase 3 is complete. Lugos uses the pinned package on all three platforms. Four of five Phase 4 slices are done.",
     "updatedAt": "2026-11-21"
   }
 }
