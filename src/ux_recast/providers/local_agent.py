@@ -31,8 +31,8 @@ from ux_recast.providers import lugos_autowork as packets
 PROVIDER = "local-agent"
 
 
-def prepare(project, session, run_id, evidence_path, *, config=None, mode="review"):
-    packet = packets.prepare(project, session, run_id, evidence_path, mode=mode)
+def prepare(project, session, run_id, evidence_path, *, config=None, mode="review", detect_target=None):
+    packet = packets.prepare(project, session, run_id, evidence_path, mode=mode, detect_target=detect_target)
     request = packets.claim(project, session, run_id, config=config)
     folder = packets.folder_for(project, session, run_id)
     template = {

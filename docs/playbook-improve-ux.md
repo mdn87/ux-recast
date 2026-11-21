@@ -24,6 +24,31 @@ ux-recast rubric --version
 
 If that fails, install the package from a ux-recast checkout into the environment you run it from (`python -m pip install -e <ux-recast checkout>`); `python -m ux_recast.cli` works where the console script is not on PATH. Read the project's `PRODUCT.md` and `DESIGN.md` if present as the design context; do not modify them unless the redesign is accepted. Install nothing on the project or the machine without a person's go-ahead; the method needs no plugin, hook, MCP server or external design tool.
 
+### Optional Impeccable passes
+
+From rubric 2, an ordinary `review` or `packet prepare` selects a complete
+project-local Impeccable skill when one is present. Codex uses
+`.agents/skills/impeccable` and Claude Code uses `.claude/skills/impeccable`.
+The packet records the selected manifest and its declared version. A project
+without the skill gets four built-in questions about finding the next action,
+device and input differences, recovery, and feedback.
+
+The reviewing agent receives `$impeccable critique` in Codex or
+`/impeccable critique` in a slash-command harness, with the existing read-only
+scope. If the command requires more access, the reviewer uses the built-in
+questions and reports that choice. After `packet consume` confirms current
+findings, the parent's allowed `phase <run> repair` returns
+the named `adapt`, `harden`, and `polish` commands in the same syntax. Apply
+the relevant commands within that one batch. A plan checkpoint limits repairs
+to the proposed plan.
+
+To add detector evidence to an ordinary review, pass `--detect-target` with a
+project file or an HTTP(S) URL to `review` or `packet prepare`. The packet
+includes the rule IDs, locations and tool provenance, or an explanation if the
+detector is unavailable. Choose the page whose evidence the reviewer should
+see. The fresh `walkthrough` accepts the task, observations and screenshots
+without command or detector hints.
+
 ## 1. Recover the work and the constraints
 
 Read the implementation, the current screens, process documentation and known complaints. Write `ux/<task>/brief.md` from `templates/brief.md`: who does this and how often, what brings them, the result they need, what they already know, what the application can infer, remember or calculate, the mandatory rules with their sources, the anti-goals, and the capabilities recovered from the code.

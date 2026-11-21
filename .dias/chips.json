@@ -420,7 +420,7 @@
       "projectId": "ux-recast",
       "title": "Invoke Impeccable command passes by name and bump the rubric",
       "summary": "Plan slice S4.4: with the skill installed, review passes call critique, adapt, harden and polish by name; without it the prompt carries the vocabulary.",
-      "stage": "planned",
+      "stage": "done",
       "sequence": 11,
       "prereqs": [
         "ux-recast:legacy-removal",
@@ -430,7 +430,7 @@
       "confidence": "reported",
       "timestamps": {
         "createdAt": "2026-11-20T04:37:34Z",
-        "updatedAt": "2026-11-20T04:37:34Z"
+        "updatedAt": "2026-11-21T05:51:24Z"
       },
       "evidence": [
         {
@@ -438,6 +438,12 @@
           "at": "2026-11-20T04:37:34Z",
           "kind": "created",
           "message": "Last Phase 4 slice. The rubric stays frozen until Phase 3 closes, and the agent-skill installation choice is still open, so this cannot start yet."
+        },
+        {
+          "entryId": "command-passes-bounded-verified",
+          "at": "2026-11-21T05:51:24Z",
+          "kind": "stage-change",
+          "message": "Matt accepted the bounded review. Rubric 2 issued the named passes with Impeccable and used built-in guidance without it. Both fixture runs passed all seven browser checks."
         }
       ]
     },

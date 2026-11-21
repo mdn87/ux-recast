@@ -1,12 +1,7 @@
-"""S1.6: the differential corpus runs against the package and matches the recorded ux-recast baseline.
+"""Replay the eight public CLI scenarios against the current rubric's recording.
 
-The baseline (`tests/differential/baseline-ux-recast.json`) was recorded on
-2026-11-02 and verified byte-identical, after normalization, to the Lugos legacy
-scripts at e868aec4 and to the Phase 3 shims. This test keeps the package's own
-behaviour from drifting; the cross-implementation comparison is run from Lugos
-(slice S3.4) with the same harness. The recorded strings were re-normalized in
-place on 2026-11-02 (project-path separators to ``/``, the tree's CRLF to LF) so
-the Windows recording compares on Linux; no scenario was re-run to make it.
+The separate baseline-ux-recast.json remains the Phase 3 migration reference.
+Rubric 2 changes the review task and its packet metadata in six scenarios.
 """
 from pathlib import Path
 import subprocess
@@ -16,7 +11,7 @@ import unittest
 HERE = Path(__file__).resolve().parent
 RUN = HERE / "differential" / "run.py"
 SRC = HERE.parent / "src" / "ux_recast"
-BASELINE = HERE / "differential" / "baseline-ux-recast.json"
+BASELINE = HERE / "differential" / "baseline-rubric-v2.json"
 
 
 class DifferentialBaseline(unittest.TestCase):

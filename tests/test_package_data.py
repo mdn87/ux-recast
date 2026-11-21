@@ -80,7 +80,7 @@ class WheelPackageData(unittest.TestCase):
         self.assertEqual(proc.returncode, 0, proc.stderr)
         payload = json.loads(proc.stdout)
         self.assertTrue(payload["file"].replace("\\", "/").startswith(str(self.target).replace("\\", "/")), payload["file"])
-        self.assertEqual(payload["rubric_version"], "1")
+        self.assertEqual(payload["rubric_version"], "2")
         self.assertGreater(payload["rubric_bytes"], 1000)
         self.assertEqual(payload["schemas"], ["comparison", "documentation", "findings", "lesson", "packet", "receipt", "state", "task"])
         self.assertEqual(payload["starters"], [True, True])

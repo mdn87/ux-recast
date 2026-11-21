@@ -134,6 +134,15 @@ class Refusals(unittest.TestCase):
         unversioned["review_mode"] = "walkthrough"
         self.assertField("packet", unversioned, "packet.rubric_version")
 
+    def test_installed_skill_records_its_project_manifest_and_version(self):
+        packet = load("packet-plan.json")
+        packet["impeccable"] = {"mode": "skill"}
+        self.assertField("packet", packet, "packet.impeccable.path")
+        packet["impeccable"]["path"] = ".agents/skills/impeccable/SKILL.md"
+        self.assertField("packet", packet, "packet.impeccable.version")
+        packet["impeccable"]["version"] = None
+        validate("packet", packet)
+
     def test_comparison_refusals(self):
         base = json.loads(COMPARISON_EXAMPLE.read_text(encoding="utf-8"))
         scored = copy.deepcopy(base)

@@ -13,18 +13,19 @@ import json
 import os
 from pathlib import Path
 import sys
+from urllib.parse import urlsplit
 
 from ux_recast import rubric as _rubric
+from ux_recast.cycle import impeccable
 from ux_recast.cycle.budget import count_review_dispatch
 from ux_recast.cycle.control import bound_changes, config_values, execute, locked
+from ux_recast.evidence import impeccable_detect
 
 # The Lugos server registers the tool as lugos.models; the underscore form is the
 # name Claude Code shows for it, kept as a fallback.
 TOOL_NAMES = ("lugos.models", "lugos_models")
 SUBMIT_MARGIN_SECONDS = 120
-# Review modes: which assignment precedes the rubric in the packet's task. A
-# review-mode packet is byte-identical to the Lugos legacy packet (D-15 parity);
-# any other mode also records review_mode and rubric_version in the outer packet.
+# Older packets without a review_mode used the bounded reviewer assignment.
 REVIEWERS = {"review": "autowork-reviewer.md", "walkthrough": "walkthrough.md"}
 REQUIREMENTS = "the ux-recast 'mcp' extra (pip install ux-recast[mcp])"
 
@@ -102,11 +103,23 @@ def result_problems(result, packet):
     return problems
 
 
-def prepare(project, session, run_id, evidence_path, *, mode="review"):
+def prepare(project, session, run_id, evidence_path, *, mode="review", detect_target=None):
     if mode not in REVIEWERS:
         raise ValueError(f"Unknown review mode {mode!r}; modes are {sorted(REVIEWERS)}")
     root = Path(project).resolve(strict=True)
     state, run = active(root, session, run_id)
+    folder = folder_for(root, session, run_id)
+    with locked(folder / "dispatch.lock"):
+        existing = folder / "packet.json"
+        if existing.exists() and load_packet(folder)["dispatch_status"] != "prepared":
+            raise ValueError("Dispatch already claimed; use Autowork outcome recovery, not another child")
+        packet = build_packet(root, state, run, evidence_path, mode=mode, detect_target=detect_target)
+        active(root, session, run_id)
+        write_json(existing, packet)
+        return packet
+
+
+def build_packet(root, state, run, evidence_path, *, mode, detect_target):
     evidence_path = local_file(root, evidence_path)
     raw = evidence_path.read_bytes()
     if len(raw) > 65536:
@@ -121,12 +134,33 @@ def prepare(project, session, run_id, evidence_path, *, mode="review"):
         raise ValueError("Use up to five PNG/JPEG/WebP screenshots")
     if not evidence.get("observations") and not evidence.get("plan"):
         raise ValueError("Include a proposed plan or observed interaction evidence")
+    sources = {str(evidence_path): digest(raw), **{str(p): digest(p.read_bytes()) for p in images}}
+    skill = impeccable.installation(root, sources=sources) if mode == "review" else None
+    if detect_target is not None:
+        if mode == "walkthrough":
+            raise ValueError("A fresh walkthrough cannot take detector evidence")
+        target = str(detect_target)
+        url = urlsplit(target)
+        if url.scheme.lower() in {"http", "https"}:
+            if not url.hostname:
+                raise ValueError("Detector URL requires a host")
+        else:
+            path = local_file(root, target)
+            sources[str(path)] = digest(path.read_bytes())
+            target = str(path)
+        try:
+            evidence["impeccable_detect"] = impeccable_detect.detect(target)
+        except impeccable_detect.DetectError as error:
+            raise ValueError(str(error)) from error
+        if len(json.dumps(evidence, ensure_ascii=False).encode()) > 65536:
+            raise ValueError("Evidence with the detector report exceeds 64 KiB; select a smaller target")
     activation = {"mode": state["mode"], "scope": state["scope"], "checkpoint": run["checkpoint"],
-                  "controller_run_id": run_id, "budget": run["budget"]}
+                  "controller_run_id": run["run_id"], "budget": run["budget"]}
     reviewer = REVIEWERS[mode]
     references = {name: _rubric.read_text(name) for name in ("rubric.md", reviewer)}
     task = "\n\n".join([
         references[reviewer],
+        *([impeccable.review_instruction(skill)] if skill else []),
         "UX review activation (explicit parent scope, not extra tool authority):\n" + json.dumps(activation),
         "Original task requirements:\n" + json.dumps(run["task"], ensure_ascii=False),
         "Interaction-design rubric:\n" + references["rubric.md"],
@@ -140,19 +174,12 @@ def prepare(project, session, run_id, evidence_path, *, mode="review"):
         request["required_capabilities"].append("image_input")
         request["input_modalities"].append("image")
         request["visual_inputs"] = [str(p) for p in images]
-    sources = {str(p): digest(p.read_bytes()) for p in [evidence_path, *images]}
-    packet = {"schema_version": 1, "activation": activation, "request": request,
+    packet = {"schema_version": 1, "review_mode": mode, "rubric_version": _rubric.version(),
+              "activation": activation, "request": request,
               "task_sha256": digest(task.encode()), "sources": sources,
               "rubric_sha256": digest(references["rubric.md"].encode()), "dispatch_status": "prepared"}
-    if mode != "review":
-        packet.update(review_mode=mode, rubric_version=_rubric.version())
-    folder = folder_for(root, session, run_id)
-    with locked(folder / "dispatch.lock"):
-        active(root, session, run_id)
-        existing = folder / "packet.json"
-        if existing.exists() and json.loads(existing.read_text(encoding="utf-8"))["dispatch_status"] != "prepared":
-            raise ValueError("Dispatch already claimed; use Autowork outcome recovery, not another child")
-        write_json(existing, packet)
+    if skill:
+        packet["impeccable"] = skill
     return packet
 
 
@@ -434,6 +461,7 @@ def main():
     sub = p.add_subparsers(dest="command", required=True)
     prepare_parser = sub.add_parser("prepare")
     prepare_parser.add_argument("--evidence", type=Path, required=True)
+    prepare_parser.add_argument("--detect-target", help="attach detector evidence from a project file or HTTP(S) URL")
     prepare_parser.add_argument("--mode", choices=sorted(REVIEWERS), default="review",
                                 help="review: bounded reviewer; walkthrough: fresh-evaluator cognitive walkthrough")
     sub.add_parser("claim").add_argument("--config", action="append", default=None)
@@ -451,7 +479,7 @@ def main():
     a = p.parse_args()
     try:
         if a.command == "prepare":
-            output = prepare(a.project, a.session, a.run, a.evidence, mode=a.mode)
+            output = prepare(a.project, a.session, a.run, a.evidence, mode=a.mode, detect_target=a.detect_target)
         elif a.command == "prompt":
             result = prompt(a.project, a.session, a.run)
             if a.out:

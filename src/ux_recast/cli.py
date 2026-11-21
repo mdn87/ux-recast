@@ -4,7 +4,7 @@ Verbs mirror the Lugos scripts so a shim can forward argv unchanged:
 
     ux-recast control  --project P --session S <status|mode|checkpoint|phase|finish> ...
     ux-recast packet   --project P --session S --run R <prepare|claim|prompt|submit|record|consume> ...
-    ux-recast review   --project P --session S --run R --evidence E.json [--mode review|walkthrough] [--config NAME=ID]
+    ux-recast review   --project P --session S --run R --evidence E.json [--mode review|walkthrough] [--detect-target FILE_OR_URL] [--config NAME=ID]
     ux-recast findings --project P --session S --run R --file findings.json
     ux-recast rubric   --version | --print <rubric.md|autowork-reviewer.md|walkthrough.md>
     ux-recast validate <task|state|packet|receipt|findings|comparison|documentation> FILE
@@ -56,6 +56,7 @@ def _review(argv):
     p.add_argument("--session", required=True)
     p.add_argument("--run", required=True)
     p.add_argument("--evidence", type=Path, required=True)
+    p.add_argument("--detect-target", help="attach detector evidence from a project file or HTTP(S) URL")
     p.add_argument("--config", action="append", default=None)
     p.add_argument("--mode", choices=["review", "walkthrough"], default="review",
                    help="review: bounded reviewer assignment; walkthrough: fresh-evaluator cognitive walkthrough")
@@ -63,7 +64,8 @@ def _review(argv):
                    help="who fulfils the packet; the Lugos Autowork lane is driven through 'packet submit' instead")
     a = p.parse_args(argv)
     config = config_values(a.config) if a.config is not None else None
-    return _emit(lambda: local_agent.prepare(a.project, a.session, a.run, a.evidence, config=config, mode=a.mode))
+    return _emit(lambda: local_agent.prepare(a.project, a.session, a.run, a.evidence, config=config,
+                                             mode=a.mode, detect_target=a.detect_target))
 
 
 def _findings(argv):

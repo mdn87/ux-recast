@@ -33,6 +33,9 @@ Record: ID; category; task/step; observed behavior; evidence path or reproducibl
 - **Heuristic concern**: plausible friction predicted by a named principle. Do not label a guess about comprehension an observed user failure.
 - **Unresolved question**: requires user research, preference or domain knowledge. Record the decision needed and why it matters.
 
+A detector hit can support a heuristic concern. Cite its rule and location,
+connect it to the affected task step, and describe how to verify the consequence.
+
 Severity anchors (introduced by this capability, not claimed as part of the original course):
 
 - **Critical**: irreversible loss or a central task impossible with no workable recovery.

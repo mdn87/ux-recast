@@ -43,8 +43,19 @@
     "submitted_at": {"type": "string"},
     "submit_outcome": {"enum": ["delivered", "rejected", "unknown"]},
     "submit_error": {"type": "string"},
-    "review_mode": {"enum": ["review", "walkthrough"], "description": "Present only when the packet was prepared in a mode other than review; absent means review, so a review-mode packet stays byte-identical to the Lugos one."},
+    "review_mode": {"enum": ["review", "walkthrough"], "description": "Older review packets omit this field. Both modes record it from rubric version 2."},
     "rubric_version": {"type": "string", "description": "The packaged rubric VERSION; recorded with review_mode."},
+    "impeccable": {
+      "type": "object", "required": ["mode"],
+      "properties": {
+        "mode": {"enum": ["guidance", "skill"]},
+        "path": {"type": "string"},
+        "version": {"type": ["string", "null"]}
+      },
+      "if": {"properties": {"mode": {"const": "skill"}}},
+      "then": {"required": ["path", "version"]},
+      "description": "The selected project skill and its declared version, or built-in review guidance."
+    },
     "review_dispatches": {"type": "integer", "minimum": 0, "description": "How many times this run's review request reached a reviewer. Absent means none. Outer packet only; the request is unchanged."},
     "image_preflight": {
       "type": "object",
