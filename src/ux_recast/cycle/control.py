@@ -13,6 +13,8 @@ from pathlib import Path
 import sys
 import uuid
 
+from ux_recast.cycle import impeccable
+
 
 def parser():
     p = argparse.ArgumentParser(description=__doc__)
@@ -277,8 +279,13 @@ def dispatch(state, a, project):
                 if key not in run["repair_manifests"]:
                     run["repair_manifests"].append(key)
             run["phase"] = a.phase
-        return {"allowed": allowed, "run_id": a.run_id, "phase": run["phase"],
-                "reason": "one repair batch and one verification pass per cycle"}
+        response = {"allowed": allowed, "run_id": a.run_id, "phase": run["phase"],
+                    "reason": "one repair batch and one verification pass per cycle"}
+        if allowed and a.phase == "repair":
+            passes = impeccable.repair_pass(project, run["checkpoint"][1])
+            if passes:
+                response["impeccable"] = passes
+        return response
     if a.result == "verified" and run["phase"] != "verify":
         raise ValueError("Cannot record verified before the verification phase")
     run.update(status=a.result, report=a.report)

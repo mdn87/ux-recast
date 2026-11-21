@@ -23,6 +23,7 @@ and the ``tests/oracle/golden/detect-fixture-json-*`` outputs.
 from datetime import datetime, timezone
 import json
 import os
+from pathlib import Path
 import shutil
 import subprocess
 
@@ -46,10 +47,11 @@ def detect(target, *, viewport=None, timeout_seconds=120):
         return {"schema": SCHEMA, "status": "unavailable", "target": target, "findings": [],
                 "reason": "impeccable is not on PATH; nothing was installed or run"}
     arguments = ["detect", "--json", *(["--viewport", viewport] if viewport else []), target]
-    if _batch(binary) and any(character in argument for argument in arguments for character in '"\r\n'):
-        raise ValueError("A quote or a line break cannot be passed through the impeccable batch launcher")
-    version = _run(binary, ["--version"], timeout_seconds)
-    ran = _run(binary, arguments, timeout_seconds)
+    launcher = _launcher(binary)
+    if _batch(launcher[0]) and any(character in argument for argument in arguments for character in '"\r\n%!'):
+        raise ValueError("This argument cannot be passed literally through the impeccable batch launcher")
+    version = _run(launcher, ["--version"], timeout_seconds)
+    ran = _run(launcher, arguments, timeout_seconds)
     record = {"schema": SCHEMA, "target": target, "findings": [], "provenance": {
         "tool": "impeccable", "version": version.stdout.strip() or None if version.returncode == 0 else None,
         "arguments": arguments, "exit_code": ran.returncode,
@@ -74,6 +76,7 @@ def _finding(hit):
     return {"rule_id": hit["antipattern"], "kind": "implementation", "category": "heuristic concern",
             "rule_name": hit.get("name"), "description": hit.get("description"), "observed": hit.get("snippet"),
             "file": hit.get("file"), "line": hit.get("line"), "tool_severity": hit.get("severity"),
+            **({"selector": hit["selector"]} if hit.get("selector") else {}),
             "tool_category": hit.get("category"), "advisory": hit.get("advisory") is True}
 
 
@@ -82,14 +85,32 @@ def _batch(binary):
     return os.name == "nt" and binary.lower().endswith((".cmd", ".bat"))
 
 
-def _run(binary, arguments, timeout_seconds):
-    command = [binary, *arguments]
+def _launcher(binary):
+    """Prefer npm's installed JS entry point on Windows so URLs travel as literal arguments."""
     if _batch(binary):
+        folder = Path(binary).parent
+        node = shutil.which("node")
+        roots = [folder / "node_modules"]
+        if folder.name == ".bin":
+            roots.append(folder.parent)
+        for root in roots:
+            cli = root / "impeccable" / "cli" / "bin" / "cli.js"
+            if node and cli.is_file():
+                return [node, str(cli)]
+    return [binary]
+
+
+def _run(launcher, arguments, timeout_seconds):
+    command = [*launcher, *arguments]
+    if _batch(launcher[0]):
         # A batch launcher hands its arguments to cmd.exe, which would act on the & | < > ^ in a
         # URL. Quoting every argument keeps them literal; detect refuses what quoting cannot carry.
         command = " ".join(f'"{part}"' for part in command)
     try:
+        # The 4.8 npm and skill launchers honor this release base. An unsupported transport
+        # makes a missing engine unavailable before a downloader can contact a release host.
+        env = {**os.environ, "IMPECCABLE_DOWNLOAD_BASE": "disabled://offline"}
         return subprocess.run(command, capture_output=True, text=True, encoding="utf-8", errors="replace",
-                              timeout=timeout_seconds)
+                              timeout=timeout_seconds, env=env)
     except subprocess.TimeoutExpired:
         raise DetectError(f"impeccable {arguments[0]} did not finish within {timeout_seconds} seconds") from None

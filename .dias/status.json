@@ -4,17 +4,17 @@
   "projectLabel": "Ux Recast",
   "assessmentState": "scored",
   "assessmentScope": "current-milestone",
-  "percentComplete": 65,
+  "percentComplete": 100,
   "milestonePhase": "build-and-validate",
   "portfolioGroup": "agent-platform",
   "displayPriority": 500,
-  "assessedAt": "2026-11-21T05:22:04Z",
+  "assessedAt": "2026-11-21T05:51:24Z",
   "confidence": "reported",
-  "currentMilestone": "Phase 4 of the plan: the review cycle enforces its own limits and gains the optional evidence helpers.",
-  "remainingSummary": "S4.4 is the last Phase 4 slice. It adds the named Impeccable passes. Matt still needs to choose whether to install the agent skill in Dias.",
-  "nextChipId": "ux-recast:impeccable-command-passes",
+  "currentMilestone": "Phase 4 review limits, optional evidence helpers and bounded Impeccable passes.",
+  "remainingSummary": "Choose a second project and a task for a full review cycle. Installing the Impeccable skill in Dias remains a separate choice.",
+  "nextChipId": "ux-recast:second-project-validation",
   "source": {
-    "label": "Phase 3 is complete. Lugos uses the pinned package on all three platforms. Four of five Phase 4 slices are done.",
+    "label": "All five Phase 4 slices are complete. Two contact form runs verified the skill and built-in paths under the single-review limit.",
     "updatedAt": "2026-11-21"
   }
 }

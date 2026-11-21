@@ -24,7 +24,7 @@ class Smoke(unittest.TestCase):
         proc = subprocess.run([sys.executable, "-m", "ux_recast.cli", "rubric", "--version"],
                               capture_output=True, text=True, encoding="utf-8")
         self.assertEqual(proc.returncode, 0, proc.stderr)
-        self.assertEqual(json.loads(proc.stdout)["rubric_version"], "1")
+        self.assertEqual(json.loads(proc.stdout)["rubric_version"], "2")
 
     def test_ported_modules_run_as_scripts(self):
         for module in (control, lugos_autowork):

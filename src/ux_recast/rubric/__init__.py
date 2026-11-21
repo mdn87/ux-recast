@@ -1,12 +1,8 @@
 """The shared review rubric and reviewer prompt.
 
-The bytes of ``rubric.md`` and ``autowork-reviewer.md`` are frozen to the Lugos
-copies through the migration (plan decision D-15); ``tests/test_rubric_bytes.py``
-enforces it. ``walkthrough.md`` is the fresh-evaluator alternative to the
-reviewer assignment (a cognitive walkthrough of a proposed flow or a built
-interface from the person's goal and the visible evidence only); it is a
-ux-recast addition outside the freeze (D-21). ``VERSION`` records the rubric
-version, its source revision and the sha256 of each file.
+Rubric 1 matched the Lugos copies through Phase 3 (D-15). Rubric 2 adds the
+Impeccable vocabulary for bounded reviews. The D-21 walkthrough retains its
+own assignment. ``VERSION`` records the sha256 of each packaged document.
 """
 from importlib import resources
 

@@ -5,8 +5,8 @@ This module is a small standard-library validator that enforces the parts of
 those schemas the code relies on (required keys, types, enumerations) and names
 the offending field. The Lugos artifacts (``.ux-review`` state, ``packet.json``,
 ``receipt.json``) keep ``schema_version: 1`` exactly as the Lugos scripts write
-them; nothing here changes the inner Autowork request. A walkthrough-mode
-packet adds ``review_mode`` and ``rubric_version`` to the outer packet only.
+them. New packets record ``review_mode`` and ``rubric_version`` in the outer
+packet. A bounded review also records its Impeccable skill or guidance mode.
 ``review_dispatches`` is likewise outer-packet only, and a recorded finding
 carries ``status`` (``cycle.budget``). ``image_preflight``, also outer-packet
 only, says what checking an image request against the installed Autowork policy
@@ -155,6 +155,14 @@ def validate_packet(packet, where="packet"):
     if "review_mode" in packet:
         _enum(packet["review_mode"], REVIEW_MODES, f"{where}.review_mode")
         _require(packet, "rubric_version", str, where)
+    if "impeccable" in packet:
+        skill = _require(packet, "impeccable", dict, where)
+        field = f"{where}.impeccable"
+        mode = _require(skill, "mode", str, field)
+        _enum(mode, {"guidance", "skill"}, f"{field}.mode")
+        if mode == "skill":
+            _require(skill, "path", str, field)
+            _require(skill, "version", (str, type(None)), field)
     if "review_dispatches" in packet:
         count = packet["review_dispatches"]
         if isinstance(count, bool) or not isinstance(count, int) or count < 0:

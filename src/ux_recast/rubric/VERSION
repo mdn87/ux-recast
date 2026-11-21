@@ -1,9 +1,7 @@
-rubric_version: 1
-source_repository: lugos
-source_path: plugins/lugos-toolset/skills/ux-review/references
-source_commit: see tests/test_rubric_bytes.py for the pinned sha256 of each file
-rubric.md_sha256: caeb6d842db6baf74f84f82d189ba5942064d591201399904af7610e231dfecf
-autowork-reviewer.md_sha256: 31329ddaab5f28d79d178278c7eaeaf59a4c07f9706887f4a4b423afc6c4e6f5
+rubric_version: 2
+source_repository: ux-recast
+source_path: src/ux_recast/rubric
+rubric.md_sha256: 151a63d36374bdcba28cf07590ef1027f9f168dcd7c427680b997547db90dbb4
+autowork-reviewer.md_sha256: a6ba939e3737f3c75c5369b5ce6345533b1cd7bbd514b4a55b689afddf8d339d
 walkthrough.md_sha256: 939abcc15e9128e984c81f30236c88e66e1361a771165b74e03be2ae811b97a6
-walkthrough.md_source: ux-recast (decision D-21); additive, not a Lugos copy, outside the D-15 freeze
-frozen_through: Phase 3 of docs/plans/initial-implementation-plan.md (decision D-15)
+previous_version: 1 (Lugos migration, frozen through Phase 3 under decision D-15)
