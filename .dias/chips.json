@@ -349,6 +349,117 @@
           "message": "Real-tool evidence is recorded with a repeatable verification recipe. Phase 3 and the agent-skill installation choice still gate review-cycle integration."
         }
       ]
+    },
+    {
+      "schemaVersion": 1,
+      "chipId": "ux-recast:macos-parity",
+      "projectId": "ux-recast",
+      "title": "Verify the package and the Lugos shim on macOS",
+      "summary": "Run the package tests and both Lugos implementations on the Mac named in D-23, recording the Python version, as was done for Windows and Linux.",
+      "stage": "done",
+      "sequence": 9,
+      "prereqs": [
+        "ux-recast-lugos-dev3-parity"
+      ],
+      "linkedRunIds": [],
+      "confidence": "reported",
+      "timestamps": {
+        "createdAt": "2026-11-20T04:37:34Z",
+        "updatedAt": "2026-11-21T05:03:24Z"
+      },
+      "evidence": [
+        {
+          "entryId": "macos-parity-created",
+          "at": "2026-11-20T04:37:34Z",
+          "kind": "created",
+          "message": "The remaining Phase 3 platform gate. A recorded SSH failure to the Mac must be resolved first, and the Mac needs Python 3.11 or later; its system Python is 3.9."
+        },
+        {
+          "entryId": "macos-parity-verified",
+          "at": "2026-11-21T05:03:24Z",
+          "kind": "stage-change",
+          "message": "On applemac with Python 3.11.15, 236 dev3 package tests passed and two Windows-only cases skipped. Lugos passed 115 shim and catalog tests and 69 legacy tests."
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "chipId": "ux-recast:legacy-removal",
+      "projectId": "ux-recast",
+      "title": "Remove the legacy Lugos scripts and the implementation switch",
+      "summary": "Plan slice S3.9: delete the legacy siblings and the switch in Lugos once parity holds on all three platforms, with tests still passing. Needs Matt's approval.",
+      "stage": "planned",
+      "sequence": 10,
+      "prereqs": [
+        "ux-recast:macos-parity"
+      ],
+      "linkedRunIds": [],
+      "confidence": "reported",
+      "timestamps": {
+        "createdAt": "2026-11-20T04:37:34Z",
+        "updatedAt": "2026-11-20T04:37:34Z"
+      },
+      "evidence": [
+        {
+          "entryId": "legacy-removal-created",
+          "at": "2026-11-20T04:37:34Z",
+          "kind": "created",
+          "message": "Closes Phase 3. The pilot Decision it waits on was accepted; the rollback crossover passed in the dev3 adoption run. Deletion keeps its existing approval gate."
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "chipId": "ux-recast:impeccable-command-passes",
+      "projectId": "ux-recast",
+      "title": "Invoke Impeccable command passes by name and bump the rubric",
+      "summary": "Plan slice S4.4: with the skill installed, review passes call critique, adapt, harden and polish by name; without it the prompt carries the vocabulary.",
+      "stage": "planned",
+      "sequence": 11,
+      "prereqs": [
+        "ux-recast:legacy-removal",
+        "ux-recast-impeccable-real-detector"
+      ],
+      "linkedRunIds": [],
+      "confidence": "reported",
+      "timestamps": {
+        "createdAt": "2026-11-20T04:37:34Z",
+        "updatedAt": "2026-11-20T04:37:34Z"
+      },
+      "evidence": [
+        {
+          "entryId": "command-passes-created",
+          "at": "2026-11-20T04:37:34Z",
+          "kind": "created",
+          "message": "Last Phase 4 slice. The rubric stays frozen until Phase 3 closes, and the agent-skill installation choice is still open, so this cannot start yet."
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "chipId": "ux-recast:second-project-validation",
+      "projectId": "ux-recast",
+      "title": "Run a full cycle on a second project and promote a lesson",
+      "summary": "Phase 8: pick a project other than the fixture and Dias, run the cycle through the local agent, and show one promoted lesson changes a result.",
+      "stage": "vague",
+      "sequence": 12,
+      "prereqs": [
+        "ux-recast:impeccable-command-passes"
+      ],
+      "linkedRunIds": [],
+      "confidence": "unknown",
+      "timestamps": {
+        "createdAt": "2026-11-20T04:37:34Z",
+        "updatedAt": "2026-11-20T04:37:34Z"
+      },
+      "evidence": [
+        {
+          "entryId": "second-project-created",
+          "at": "2026-11-20T04:37:34Z",
+          "kind": "created",
+          "message": "Later idea from the plan; no project has been chosen. Motion export (Phase 7) and the gated Guide Builder (Phase 9) are also unscheduled."
+        }
+      ]
     }
   ]
 }

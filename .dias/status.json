@@ -4,17 +4,17 @@
   "projectLabel": "Ux Recast",
   "assessmentState": "scored",
   "assessmentScope": "current-milestone",
-  "percentComplete": 60,
+  "percentComplete": 65,
   "milestonePhase": "build-and-validate",
   "portfolioGroup": "agent-platform",
   "displayPriority": 500,
-  "assessedAt": "2026-11-16T13:48:16Z",
+  "assessedAt": "2026-11-21T05:03:24Z",
   "confidence": "reported",
   "currentMilestone": "Phase 4 of the plan: the review cycle enforces its own limits and gains the optional evidence helpers.",
-  "remainingSummary": "S4.4 waits on macOS parity, legacy removal and the Dias skill choice. Real detector checks passed; selector retention and launcher downloads need integration decisions.",
-  "nextChipId": null,
+  "remainingSummary": "S4.4 is the last Phase 4 slice. It waits on Phase 3 legacy removal and the Dias agent-skill installation decision.",
+  "nextChipId": "ux-recast:legacy-removal",
   "source": {
-    "label": "Five real Impeccable checks and 238 tests passed on Windows. Four of five Phase 4 slices are complete; Phase 3 remains open.",
-    "updatedAt": "2026-11-16"
+    "label": "Four of five Phase 4 slices are done. Lugos dev3 checks passed on Windows, Linux and macOS. All 69 shared tests passed in both modes on applemac.",
+    "updatedAt": "2026-11-21"
   }
 }
